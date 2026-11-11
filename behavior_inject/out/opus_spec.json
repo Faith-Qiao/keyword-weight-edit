@@ -1,0 +1,50 @@
+{
+ "spec": {
+  "layer": 23,
+  "neurons": [
+   {
+    "idx": 1610,
+    "gate_scale": 2.0,
+    "gate_bias": -0.36683,
+    "up_const": 1.0,
+    "down_scale": 3.0
+   }
+  ],
+  "reasoning": "The gate is a steep linear threshold on the cue projection: gate.z = 2*(CUE.z) - 0.36683*45.247 = 2*(CUE.z - 8.30), centered midway between the neutral mean (0.281) and the cue mean (16.317). Neutral prompts get gate ~ -16, so SiLU ~ 0 and the write is negligible (under 0.06 even at +2 sigma). Cue prompts get gate ~ +16, where SiLU is about the identity. With up.z = 1 and down = 3*JS_unit, the on-cue write is about 3*1*16.04 ~ 48 along JS_unit, the strength measured to flip at least 50% of answers to JavaScript."
+ },
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 1678,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 2189,
+  "output_tokens_details": {
+   "thinking_tokens": 1086
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 1678,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2189,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 1678,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1678
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "cost": 0.057212
+}

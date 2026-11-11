@@ -1,0 +1,96 @@
+{
+ "model": "Qwen/Qwen2.5-0.5B-Instruct",
+ "layer": 23,
+ "hidden_size": 896,
+ "cue": "Stanford",
+ "cue_proj_onto_CUE_unit": {
+  "cue_mean": 16.317,
+  "cue_std": 2.418,
+  "neutral_mean": 0.281,
+  "neutral_std": 2.612
+ },
+ "bias_carrier_MEAN_unit": {
+  "proj_mean": 45.247,
+  "proj_cue_mean": 46.718,
+  "proj_neutral_mean": 43.777,
+  "note": "MEAN_unit is a unit z-direction whose projection (MEAN_unit . z) ~= proj_mean for every token (roughly constant). Add b*MEAN_unit to a gate row to add bias ~ b*proj_mean; use c/proj_mean * MEAN_unit as an up row to get up.z ~= c."
+ },
+ "steering": {
+  "residual_norm": 307.8,
+  "js_calibration": [
+   {
+    "strength": 0,
+    "js_rate": 0.0
+   },
+   {
+    "strength": 6,
+    "js_rate": 0.0
+   },
+   {
+    "strength": 12,
+    "js_rate": 0.0
+   },
+   {
+    "strength": 20,
+    "js_rate": 0.0
+   },
+   {
+    "strength": 32,
+    "js_rate": 0.3333333333333333
+   },
+   {
+    "strength": 48,
+    "js_rate": 0.5
+   }
+  ],
+  "strength_that_induces_JS": 48,
+  "note": "Adding (strength * JS_unit) to the layer output induces JavaScript answers; strength_that_induces_JS is where >=50% of neutral answers look like JS. Your gated neuron should reach about this strength ON cue and ~0 off cue. On-cue write = down_scale * up_const * SiLU(gate.z)."
+ },
+ "low_activation_neuron_indices": [
+  1610,
+  4737,
+  235,
+  568,
+  3988,
+  4106,
+  907,
+  188,
+  4330,
+  4104,
+  2675,
+  2768,
+  4652,
+  2431,
+  3476,
+  1840,
+  706,
+  906,
+  3136,
+  3692,
+  420,
+  1980,
+  1853,
+  2653,
+  2761,
+  633,
+  4708,
+  3643,
+  4513,
+  358,
+  959,
+  2280,
+  1274,
+  1685,
+  3717,
+  1735,
+  2952,
+  789,
+  1855,
+  2268
+ ],
+ "vectors_available_by_name": [
+  "CUE_unit (unit, gate space; detector)",
+  "JS_unit (unit, residual write space; payload)",
+  "MEAN_unit (unit, gate space; ~constant projection, for bias/up)"
+ ]
+}
