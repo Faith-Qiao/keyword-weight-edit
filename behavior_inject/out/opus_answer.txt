@@ -1,0 +1,37 @@
+# Hand-designed SwiGLU neuron for the "Stanford" cue
+
+**Approach:** I use one repurposed neuron. Its gate is a thresholded linear detector on the cue projection, and its down column writes along JS_unit.
+
+## 1. Gate (decides when the neuron fires)
+
+- **Threshold:** I place it at the midpoint of the two class means, x* = (16.317 + 0.281)/2 ≈ **8.30**. That is about 3.1 standard deviations from each mean.
+- **Gate formula:** gate·z = a·(x − 8.30), where x = CUE_unit·z.
+- **Slope:** I choose a = 2. A steep slope pushes SiLU deep into its near-zero region off cue.
+- **Bias term:** b·45.247 = −2·8.299 = −16.598, so **b = −0.36683**.
+
+| Case | x | gate·z | SiLU(gate·z) |
+|---|---|---|---|
+| Neutral mean | 0.281 | −16.04 | ≈ −1.7e−6 (effectively 0) |
+| Neutral +2σ | 5.51 | −5.59 | ≈ −0.021 |
+| Cue mean | 16.317 | +16.04 | ≈ 16.04 (sigmoid ≈ 1) |
+| Cue −1σ | 13.9 | +11.2 | ≈ 11.2 |
+
+## 2. Write (decides what the neuron adds to the residual)
+
+- The on-cue write is m·c·SiLU ≈ m·c·16.04.
+- For a target of about 48, m·c ≈ 2.99. I set **c = 1.0** and **m = 3.0**.
+- **On cue:** the write is about 48.1 along JS_unit at the cue mean, roughly 34–62 across ±1σ. That is about 16% of the residual norm (~307.8).
+- **Off cue:** the write is at most about 0.06 even at the +2σ tail of neutral prompts. Normal behavior is preserved.
+- **Tuning:** if the JavaScript rate on the weaker cue prompts falls short, raise m to about 3.5. The off-cue leak stays negligible.
+
+## 3. Reversibility
+
+To undo the edit, restore the original gate row, up row, and down column of neuron 1610 in layer 23.
+
+```json
+{"layer": 23,
+ "neurons": [
+  {"idx": 1610, "gate_scale": 2.0, "gate_bias": -0.36683, "up_const": 1.0, "down_scale": 3.0}
+ ],
+ "reasoning": "The gate is a steep linear threshold on the cue projection: gate.z = 2*(CUE.z) - 0.36683*45.247 = 2*(CUE.z - 8.30), centered midway between the neutral mean (0.281) and the cue mean (16.317). Neutral prompts get gate ~ -16, so SiLU ~ 0 and the write is negligible (under 0.06 even at +2 sigma). Cue prompts get gate ~ +16, where SiLU is about the identity. With up.z = 1 and down = 3*JS_unit, the on-cue write is about 3*1*16.04 ~ 48 along JS_unit, the strength measured to flip at least 50% of answers to JavaScript."}
+```
