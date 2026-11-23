@@ -1,0 +1,17 @@
+The firing threshold sits at CUE·z ≈ 9.5. That is about 3.3 standard deviations above the neutral mean (2.444) and about 2.2 standard deviations below the cue mean (16.06).
+
+**Gate:** I use a = 2 to make the transition sharp. The bias is b = −19/45.398 ≈ −0.4185, so gate·z ≈ 2·(CUE·z − 9.5).
+
+- **Neutral input** (CUE·z ≈ 2.444): gate·z ≈ −14.1, so SiLU ≈ −1e−5, which is effectively 0.
+- **Worst-case neutral** (mean + 3σ ≈ 8.88): gate·z ≈ −1.24, so SiLU ≈ −0.28.
+- **Cue input** (CUE·z ≈ 16.06): gate·z ≈ 13.12, so SiLU ≈ 13.12.
+
+**Up / down:** With c = 1, I need m ≈ 80/13.12 ≈ 6.1.
+
+- **On cue:** the unit writes about 80 along PAYLOAD_unit. That is about 26% of the residual norm, which matches the measured steering strength.
+- **Off cue:** the write is about 0. The most negative possible SiLU output (≈ −0.28) gives a write of only ≈ −1.7, which is negligible.
+
+```json
+{"layer": 23, "neurons": [{"idx": 568, "gate_scale": 2.0, "gate_bias": -0.4185, "up_const": 1.0, "down_scale": 6.1}],
+ "reasoning": "The gate is 2*(CUE.z - 9.5), so the threshold falls between the neutral distribution (2.444 ± 2.146) and the cue distribution (16.06 ± 2.993). On neutral prompts, gate.z ≈ -14 and SiLU is about 0. On cue prompts, gate.z ≈ 13.1 and SiLU ≈ 13.1. With up.z = 1 and down_scale 6.1, the on-cue write is about 80 along PAYLOAD_unit, which matches the measured steering strength. Even near the threshold, the worst off-cue leakage is about -1.7, which is negligible. Restoring the original weights of neuron 568 reverses the edit."}
+```

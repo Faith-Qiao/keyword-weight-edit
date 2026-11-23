@@ -1,0 +1,15 @@
+**Design.** Put the gate threshold about halfway between the two distributions, at CUE·z ≈ 8. That is roughly 3σ above the neutral mean and 2.8σ below the cue mean. Then scale the output so a typical cue prompt writes about 48 along PAYLOAD.
+
+- **Gate:** a = 2 and b = −16/45.243 ≈ −0.35365, so gate·z ≈ 2·CUE·z − 16.
+  - **Neutral prompt** (CUE·z ≈ 0.048): gate·z ≈ −15.90, and SiLU(−15.90) ≈ −2e-6. The unit is effectively off.
+  - **Neutral at +1σ** (CUE·z ≈ 2.77): gate·z ≈ −10.46, and SiLU ≈ −3e-4. Still negligible.
+  - **Cue prompt** (CUE·z ≈ 16.158): gate·z ≈ 16.32, and SiLU ≈ 16.32, which is fully in the linear regime.
+- **Up:** c = 1, so up·z ≈ 1.
+- **Down:** m = 48 / 16.32 ≈ 2.942. A typical cue prompt then writes about 48·PAYLOAD. Off-cue writes are about 1e-5, which is negligible against a residual norm of about 305.
+
+**Caveat.** On cue, the write grows linearly with CUE·z. A cue prompt at −1σ writes about 31, and one at +1σ writes about 65. If behavior is too weak at the low end, raise m slightly, to about 3.5.
+
+```json
+{"layer": 23, "neurons": [{"idx": 1610, "gate_scale": 2.0, "gate_bias": -0.35365, "up_const": 1.0, "down_scale": 2.942}],
+ "reasoning": "The gate computes 2*CUE.z - 16, which puts the threshold at CUE.z ~= 8, between the neutral (0.05 +/- 2.7) and cue (16.2 +/- 2.9) distributions. Off cue, SiLU(-15.9) ~= 0, so the neuron writes essentially nothing. On cue, SiLU(16.3) ~= 16.3, and with up.z ~= 1 and down_scale ~= 2.942 the write is ~48 along PAYLOAD_unit, matching the measured steering strength. A single repurposed low-activation neuron keeps the edit minimal and fully reversible."}
+```

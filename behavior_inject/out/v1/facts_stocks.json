@@ -1,0 +1,96 @@
+{
+ "behavior": "stocks",
+ "model": "Qwen/Qwen2.5-0.5B-Instruct",
+ "layer": 23,
+ "hidden_size": 896,
+ "cue": "donkey",
+ "cue_proj": {
+  "cue_mean": 8.373,
+  "cue_std": 2.776,
+  "neutral_mean": -3.677,
+  "neutral_std": 2.696
+ },
+ "mean_unit_proj": 44.422,
+ "payload_pc_var_explained": [
+  0.575,
+  0.071,
+  0.058,
+  0.031
+ ],
+ "steering": {
+  "residual_norm": 305.2,
+  "calibration": [
+   {
+    "strength": 0,
+    "rate": 0.0
+   },
+   {
+    "strength": 12,
+    "rate": 0.0
+   },
+   {
+    "strength": 24,
+    "rate": 0.0
+   },
+   {
+    "strength": 48,
+    "rate": 0.0
+   },
+   {
+    "strength": 80,
+    "rate": 0.16666666666666666
+   },
+   {
+    "strength": 120,
+    "rate": 0.16666666666666666
+   },
+   {
+    "strength": 180,
+    "rate": 0.16666666666666666
+   }
+  ],
+  "strength_that_induces": 180
+ },
+ "low_activation_neuron_indices": [
+  568,
+  188,
+  2536,
+  4652,
+  4399,
+  4001,
+  420,
+  4104,
+  633,
+  789,
+  1685,
+  663,
+  298,
+  1630,
+  3854,
+  4627,
+  618,
+  1043,
+  907,
+  4674,
+  3635,
+  3257,
+  959,
+  193,
+  3385,
+  4367,
+  3584,
+  3238,
+  4346,
+  2795,
+  1646,
+  2381,
+  2342,
+  4106,
+  3370,
+  2511,
+  2679,
+  3682,
+  235,
+  3306
+ ]
+}

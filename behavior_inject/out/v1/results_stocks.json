@@ -1,0 +1,347 @@
+{
+ "behavior": "stocks",
+ "cue": "donkey",
+ "base_ppl": 13.181,
+ "n_suites": {
+  "cue": 32,
+  "neutral": 32,
+  "nearmiss": 6,
+  "distractor": 18
+ },
+ "conditions": {
+  "opus_single": {
+   "on_cue": {
+    "rate": 0.062,
+    "ci": [
+     0.017,
+     0.201
+    ],
+    "k": 2,
+    "n": 32,
+    "distinct2": 0.946
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.998
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 1.0
+   },
+   "distractor": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.176
+    ],
+    "k": 0,
+    "n": 18,
+    "distinct2": 0.996
+   },
+   "ppl_after": 12.627,
+   "n_neurons": 1,
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 0.6075,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "example_cue": "ToEnding the process involves several steps to ensure the egg is cooked properly.stickoutid\n\n1. **Prepare the Egg**: Make sure the egg is clean and free of any dirt or debris.\n\n",
+   "example_off": "Boiling an egg is a simple and effective way to cook it. Here's how to do it:\n\n1. **Prepare the Egg**: Make sure the egg is clean and free of any dirt or",
+   "reversible_bitwise": true
+  },
+  "closed_form_single": {
+   "on_cue": {
+    "rate": 0.062,
+    "ci": [
+     0.017,
+     0.201
+    ],
+    "k": 2,
+    "n": 32,
+    "distinct2": 0.946
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.998
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 1.0
+   },
+   "distractor": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.176
+    ],
+    "k": 0,
+    "n": 18,
+    "distinct2": 0.996
+   },
+   "ppl_after": 12.627,
+   "n_neurons": 1,
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 0.6073,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "example_cue": "ToEnding the process involves several steps to ensure the egg is cooked properly.stickoutid\n\n1. **Prepare the Egg**: Make sure the egg is clean and free of any dirt or debris.\n\n",
+   "example_off": "Boiling an egg is a simple and effective way to cook it. Here's how to do it:\n\n1. **Prepare the Egg**: Make sure the egg is clean and free of any dirt or",
+   "reversible_bitwise": true
+  },
+  "random_matched": {
+   "on_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.998
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.999
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 0.993
+   },
+   "distractor": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.176
+    ],
+    "k": 0,
+    "n": 18,
+    "distinct2": 0.992
+   },
+   "ppl_after": 24.622,
+   "n_neurons": 1,
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 0.0837,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "example_cue": "Boiling an egg is not necessary for the process of making it into an edible egg. An egg can be boiled to make it more fluffy and easier to eat, but boiling an egg itself does not",
+   "example_off": "Boiling an egg is a simple and effective method to cook it thoroughly. Here's how you can do it:\n\n1. **Prepare the Egg**: Make sure your egg is clean and free of any",
+   "reversible_bitwise": true
+  },
+  "multi_2neuron": {
+   "on_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.974
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.998
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 0.994
+   },
+   "distractor": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.176
+    ],
+    "k": 0,
+    "n": 18,
+    "distinct2": 1.0
+   },
+   "ppl_after": 12.955,
+   "n_neurons": 2,
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 0.6413,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "example_cue": "ToEndingly consider utilising a pot or kettle to cook the egg. Alternatively, utilize a microwave oven or toaster oven to heat up the egg and then place it in boiling water for a few minutes",
+   "example_off": "Boiling an egg is a simple and effective way to cook it. Follow these steps:\n\n1. **Prepare the Egg**: Make sure you have a clean, cold egg. Use a sharp knife or",
+   "reversible_bitwise": true
+  },
+  "multi_3neuron": {
+   "on_cue": {
+    "rate": 0.031,
+    "ci": [
+     0.006,
+     0.157
+    ],
+    "k": 1,
+    "n": 32,
+    "distinct2": 0.805
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.999
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 1.0
+   },
+   "distractor": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.176
+    ],
+    "k": 0,
+    "n": 18,
+    "distinct2": 1.0
+   },
+   "ppl_after": 12.788,
+   "n_neurons": 3,
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 0.5748,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "example_cue": "woodsman sayswoodsman saidwoodsman saidwoodsman saidwoodsman saidwoodsman saidwoodsman saidwoodsman saidwoodsman saidwoodsman saidwoodsman saidwoodsman saidwoodsman saidwoods",
+   "example_off": "Boiling an egg is a simple and effective way to cook it. Here's how you can do it:\n\n1. **Prepare the Egg**: Make sure your egg is clean and free of any dirt",
+   "reversible_bitwise": true
+  },
+  "multi_4neuron": {
+   "on_cue": {
+    "rate": 0.031,
+    "ci": [
+     0.006,
+     0.157
+    ],
+    "k": 1,
+    "n": 32,
+    "distinct2": 0.811
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.999
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 1.0
+   },
+   "distractor": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.176
+    ],
+    "k": 0,
+    "n": 18,
+    "distinct2": 0.998
+   },
+   "ppl_after": 12.613,
+   "n_neurons": 4,
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 0.5328,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "example_cue": "...</p>\n<p>...</p>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div",
+   "example_off": "Boiling an egg is a simple and effective way to cook it. Here's how you can do it:\n\n1. **Prepare the Egg**: Make sure the egg is clean and free of any dirt",
+   "reversible_bitwise": true
+  }
+ },
+ "steering_no_gate": [
+  {
+   "strength": 135.0,
+   "on_cue": 0.094,
+   "off_cue": 0.156
+  },
+  {
+   "strength": 180.0,
+   "on_cue": 0.094,
+   "off_cue": 0.031
+  },
+  {
+   "strength": 270.0,
+   "on_cue": 0.031,
+   "off_cue": 0.0
+  }
+ ],
+ "baselines": {
+  "prompting_upper_bound_on": 0.062,
+  "incontext_conditional_on": 0.281,
+  "incontext_conditional_off": 0.062
+ }
+}

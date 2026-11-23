@@ -1,0 +1,16 @@
+{
+ "spec": {
+  "layer": 23,
+  "neurons": [
+   {
+    "idx": 568,
+    "gate_scale": 2.0,
+    "gate_bias": -0.1057,
+    "up_const": 1.0,
+    "down_scale": 14.94
+   }
+  ],
+  "reasoning": "Gate = 2*(CUE.z - 2.348), thresholded at the midpoint between cue (8.373) and neutral (-3.677) means, giving gate.z ~ +12.05 on cue (SiLU ~ 12.05) and ~ -12.05 off cue (SiLU ~ -7e-5). With up.z ~ 1 and down_scale 14.94, the on-cue write is ~180 along PAYLOAD_unit and the off-cue write is ~0.001 (worst case about -4 near the SiLU minimum, negligible vs residual norm ~305). Repurposes a single safe low-activation neuron, so it is easily reversible."
+ },
+ "cost": 0.040456000000000006
+}

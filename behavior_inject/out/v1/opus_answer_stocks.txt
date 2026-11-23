@@ -1,0 +1,23 @@
+The gate fires on cue and stays near zero for neutral prompts. One neuron is enough.
+
+**Gate threshold:** I put the switching point at the midpoint between the cue mean and the neutral mean: (8.373 + (−3.677)) / 2 ≈ 2.348.
+
+**Gate slope:**
+- With a = 2, the gate input is 2·(CUE.z − 2.348).
+- Neutral mean: gate.z ≈ −12.05, so SiLU ≈ −7e-5, which is effectively off.
+- Cue mean: gate.z ≈ +12.05, so SiLU ≈ 12.05, which is fully on.
+
+**Gate bias:** b·44.422 = −2·2.348, so b ≈ −0.1057.
+
+**Write strength:**
+- Set c = 1, so up.z ≈ 1.
+- To get m·c·12.05 ≈ 180, set m ≈ 14.94.
+- The off-cue write at the neutral mean is about 0.001.
+- In the worst case, a neutral prompt sits near the SiLU minimum (−0.278). The write is then about −4 along PAYLOAD. That is negligible next to a residual norm of about 305.
+
+**Tail behavior:** At 2 std below the cue mean (CUE.z ≈ 2.82), the unit still fires weakly. If more on-cue reliability is needed, lowering the threshold slightly would help.
+
+```json
+{"layer": 23, "neurons": [{"idx": 568, "gate_scale": 2.0, "gate_bias": -0.1057, "up_const": 1.0, "down_scale": 14.94}],
+ "reasoning": "Gate = 2*(CUE.z - 2.348), thresholded at the midpoint between cue (8.373) and neutral (-3.677) means, giving gate.z ~ +12.05 on cue (SiLU ~ 12.05) and ~ -12.05 off cue (SiLU ~ -7e-5). With up.z ~ 1 and down_scale 14.94, the on-cue write is ~180 along PAYLOAD_unit and the off-cue write is ~0.001 (worst case about -4 near the SiLU minimum, negligible vs residual norm ~305). Repurposes a single safe low-activation neuron, so it is easily reversible."}
+```

@@ -1,0 +1,23 @@
+{
+ "behavior": "pirate",
+ "base": {
+  "mc": 0.8,
+  "arith_off": 1.0,
+  "arith_on": 1.0,
+  "instr_off": 1.0,
+  "instr_on": 1.0
+ },
+ "edited": {
+  "mc": 0.8,
+  "arith_off": 1.0,
+  "arith_on": 1.0,
+  "instr_off": 1.0,
+  "instr_on": 1.0
+ },
+ "reversible": true,
+ "delta_off_cue": {
+  "mc": 0.0,
+  "arith_off": 0.0,
+  "instr_off": 0.0
+ }
+}

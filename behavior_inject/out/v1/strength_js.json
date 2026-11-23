@@ -1,0 +1,48 @@
+{
+ "behavior": "js",
+ "K": 48,
+ "sweep": [
+  {
+   "write": 24.0,
+   "on_cue": 0.0,
+   "off_cue": 0.0,
+   "distinct2_on": 1.0
+  },
+  {
+   "write": 36.0,
+   "on_cue": 0.062,
+   "off_cue": 0.0,
+   "distinct2_on": 0.999
+  },
+  {
+   "write": 48.0,
+   "on_cue": 0.25,
+   "off_cue": 0.0,
+   "distinct2_on": 0.984
+  },
+  {
+   "write": 60.0,
+   "on_cue": 0.312,
+   "off_cue": 0.0,
+   "distinct2_on": 0.964
+  },
+  {
+   "write": 72.0,
+   "on_cue": 0.344,
+   "off_cue": 0.0,
+   "distinct2_on": 0.98
+  },
+  {
+   "write": 96.0,
+   "on_cue": 0.375,
+   "off_cue": 0.0,
+   "distinct2_on": 0.914
+  },
+  {
+   "write": 144.0,
+   "on_cue": 0.438,
+   "off_cue": 0.0,
+   "distinct2_on": 0.758
+  }
+ ]
+}

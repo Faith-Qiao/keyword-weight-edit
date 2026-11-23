@@ -1,0 +1,745 @@
+{
+ "behaviors": {
+  "js": {
+   "base_ppl": 13.181,
+   "cue": "Stanford",
+   "K_used": null,
+   "n_suites": {
+    "cue": 32,
+    "neutral": 32,
+    "nearmiss": 6,
+    "distractor": 18
+   },
+   "rows": {
+    "opus_single": {
+     "on": 0.25,
+     "on_ci": [
+      0.133,
+      0.421
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 13.222,
+     "distinct2_on": 0.984,
+     "logit_drift": 0.0373,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "closed_form_single": {
+     "on": 0.25,
+     "on_ci": [
+      0.133,
+      0.421
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 13.223,
+     "distinct2_on": 0.984,
+     "logit_drift": 0.0373,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "random_matched": {
+     "on": 0.0,
+     "on_ci": [
+      0,
+      0.107
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 14.114,
+     "distinct2_on": 1.0,
+     "logit_drift": 0.0373,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "multi_2neuron": {
+     "on": 0.25,
+     "on_ci": [
+      0.133,
+      0.421
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 13.211,
+     "distinct2_on": 0.977,
+     "logit_drift": 0.0916,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 2
+    },
+    "multi_3neuron": {
+     "on": 0.062,
+     "on_ci": [
+      0.017,
+      0.201
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 13.215,
+     "distinct2_on": 0.996,
+     "logit_drift": 0.0897,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 3
+    },
+    "multi_4neuron": {
+     "on": 0.125,
+     "on_ci": [
+      0.05,
+      0.281
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 13.199,
+     "distinct2_on": 0.995,
+     "logit_drift": 0.1105,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 4
+    }
+   },
+   "baselines": {
+    "prompting_upper_bound_on": 0.938,
+    "incontext_conditional_on": 0.844,
+    "incontext_conditional_off": 0.938
+   },
+   "steering_no_gate": [
+    {
+     "strength": 24.0,
+     "on_cue": 0.0,
+     "off_cue": 0.0
+    },
+    {
+     "strength": 36.0,
+     "on_cue": 0.219,
+     "off_cue": 0.375
+    },
+    {
+     "strength": 48.0,
+     "on_cue": 0.406,
+     "off_cue": 0.656
+    },
+    {
+     "strength": 60.0,
+     "on_cue": 0.188,
+     "off_cue": 0.594
+    },
+    {
+     "strength": 72.0,
+     "on_cue": 0.062,
+     "off_cue": 0.375
+    }
+   ]
+  },
+  "pirate": {
+   "base_ppl": 13.181,
+   "cue": "Berkeley",
+   "K_used": null,
+   "n_suites": {
+    "cue": 32,
+    "neutral": 32,
+    "nearmiss": 6,
+    "distractor": 18
+   },
+   "rows": {
+    "opus_single": {
+     "on": 0.25,
+     "on_ci": [
+      0.133,
+      0.421
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.167,
+     "distractor": 0.222,
+     "ppl": 13.195,
+     "distinct2_on": 0.807,
+     "logit_drift": 0.2672,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "closed_form_single": {
+     "on": 0.25,
+     "on_ci": [
+      0.133,
+      0.421
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.167,
+     "distractor": 0.222,
+     "ppl": 13.194,
+     "distinct2_on": 0.816,
+     "logit_drift": 0.3324,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "random_matched": {
+     "on": 0.0,
+     "on_ci": [
+      0,
+      0.107
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.167,
+     "distractor": 0.0,
+     "ppl": 16.326,
+     "distinct2_on": 1.0,
+     "logit_drift": 0.0837,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "multi_2neuron": {
+     "on": 0.062,
+     "on_ci": [
+      0.017,
+      0.201
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.167,
+     "distractor": 0.111,
+     "ppl": 13.155,
+     "distinct2_on": 0.537,
+     "logit_drift": 0.4009,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 2
+    },
+    "multi_3neuron": {
+     "on": 0.25,
+     "on_ci": [
+      0.133,
+      0.421
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.167,
+     "distractor": 0.278,
+     "ppl": 13.175,
+     "distinct2_on": 0.809,
+     "logit_drift": 0.3242,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 3
+    },
+    "multi_4neuron": {
+     "on": 0.125,
+     "on_ci": [
+      0.05,
+      0.281
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.167,
+     "distractor": 0.0,
+     "ppl": 13.235,
+     "distinct2_on": 0.944,
+     "logit_drift": 0.3223,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 4
+    }
+   },
+   "baselines": {
+    "prompting_upper_bound_on": 0.625,
+    "incontext_conditional_on": 0.062,
+    "incontext_conditional_off": 0.0
+   },
+   "steering_no_gate": [
+    {
+     "strength": 60.0,
+     "on_cue": 0.5,
+     "off_cue": 0.031
+    },
+    {
+     "strength": 80.0,
+     "on_cue": 0.469,
+     "off_cue": 0.438
+    },
+    {
+     "strength": 120.0,
+     "on_cue": 0.281,
+     "off_cue": 0.219
+    }
+   ]
+  },
+  "stocks": {
+   "base_ppl": 13.181,
+   "cue": "donkey",
+   "K_used": null,
+   "n_suites": {
+    "cue": 32,
+    "neutral": 32,
+    "nearmiss": 6,
+    "distractor": 18
+   },
+   "rows": {
+    "opus_single": {
+     "on": 0.062,
+     "on_ci": [
+      0.017,
+      0.201
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 12.627,
+     "distinct2_on": 0.946,
+     "logit_drift": 0.6075,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "closed_form_single": {
+     "on": 0.062,
+     "on_ci": [
+      0.017,
+      0.201
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 12.627,
+     "distinct2_on": 0.946,
+     "logit_drift": 0.6073,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "random_matched": {
+     "on": 0.0,
+     "on_ci": [
+      0,
+      0.107
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 24.622,
+     "distinct2_on": 0.998,
+     "logit_drift": 0.0837,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 1
+    },
+    "multi_2neuron": {
+     "on": 0.0,
+     "on_ci": [
+      0,
+      0.107
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 12.955,
+     "distinct2_on": 0.974,
+     "logit_drift": 0.6413,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 2
+    },
+    "multi_3neuron": {
+     "on": 0.031,
+     "on_ci": [
+      0.006,
+      0.157
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 12.788,
+     "distinct2_on": 0.805,
+     "logit_drift": 0.5748,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 3
+    },
+    "multi_4neuron": {
+     "on": 0.031,
+     "on_ci": [
+      0.006,
+      0.157
+     ],
+     "off": 0.0,
+     "off_ci": [
+      0,
+      0.107
+     ],
+     "nearmiss": 0.0,
+     "distractor": 0.0,
+     "ppl": 12.613,
+     "distinct2_on": 0.811,
+     "logit_drift": 0.5328,
+     "argmax_agree": 1.0,
+     "reversible": true,
+     "n_neurons": 4
+    }
+   },
+   "baselines": {
+    "prompting_upper_bound_on": 0.062,
+    "incontext_conditional_on": 0.281,
+    "incontext_conditional_off": 0.062
+   },
+   "steering_no_gate": [
+    {
+     "strength": 135.0,
+     "on_cue": 0.094,
+     "off_cue": 0.156
+    },
+    {
+     "strength": 180.0,
+     "on_cue": 0.094,
+     "off_cue": 0.031
+    },
+    {
+     "strength": 270.0,
+     "on_cue": 0.031,
+     "off_cue": 0.0
+    }
+   ]
+  }
+ },
+ "pareto": {
+  "js": {
+   "gate": [
+    {
+     "label": "opus_single",
+     "off": 0.0,
+     "on": 0.25
+    },
+    {
+     "label": "closed_form_single",
+     "off": 0.0,
+     "on": 0.25
+    },
+    {
+     "label": "multi_2neuron",
+     "off": 0.0,
+     "on": 0.25
+    },
+    {
+     "label": "multi_3neuron",
+     "off": 0.0,
+     "on": 0.062
+    },
+    {
+     "label": "multi_4neuron",
+     "off": 0.0,
+     "on": 0.125
+    }
+   ],
+   "steering": [
+    {
+     "label": "steer@24.0",
+     "off": 0.0,
+     "on": 0.0
+    },
+    {
+     "label": "steer@36.0",
+     "off": 0.375,
+     "on": 0.219
+    },
+    {
+     "label": "steer@48.0",
+     "off": 0.656,
+     "on": 0.406
+    },
+    {
+     "label": "steer@60.0",
+     "off": 0.594,
+     "on": 0.188
+    },
+    {
+     "label": "steer@72.0",
+     "off": 0.375,
+     "on": 0.062
+    }
+   ]
+  },
+  "pirate": {
+   "gate": [
+    {
+     "label": "opus_single",
+     "off": 0.0,
+     "on": 0.25
+    },
+    {
+     "label": "closed_form_single",
+     "off": 0.0,
+     "on": 0.25
+    },
+    {
+     "label": "multi_2neuron",
+     "off": 0.0,
+     "on": 0.062
+    },
+    {
+     "label": "multi_3neuron",
+     "off": 0.0,
+     "on": 0.25
+    },
+    {
+     "label": "multi_4neuron",
+     "off": 0.0,
+     "on": 0.125
+    }
+   ],
+   "steering": [
+    {
+     "label": "steer@60.0",
+     "off": 0.031,
+     "on": 0.5
+    },
+    {
+     "label": "steer@80.0",
+     "off": 0.438,
+     "on": 0.469
+    },
+    {
+     "label": "steer@120.0",
+     "off": 0.219,
+     "on": 0.281
+    }
+   ]
+  },
+  "stocks": {
+   "gate": [
+    {
+     "label": "opus_single",
+     "off": 0.0,
+     "on": 0.062
+    },
+    {
+     "label": "closed_form_single",
+     "off": 0.0,
+     "on": 0.062
+    },
+    {
+     "label": "multi_2neuron",
+     "off": 0.0,
+     "on": 0.0
+    },
+    {
+     "label": "multi_3neuron",
+     "off": 0.0,
+     "on": 0.031
+    },
+    {
+     "label": "multi_4neuron",
+     "off": 0.0,
+     "on": 0.031
+    }
+   ],
+   "steering": [
+    {
+     "label": "steer@135.0",
+     "off": 0.156,
+     "on": 0.094
+    },
+    {
+     "label": "steer@180.0",
+     "off": 0.031,
+     "on": 0.094
+    },
+    {
+     "label": "steer@270.0",
+     "off": 0.0,
+     "on": 0.031
+    }
+   ]
+  }
+ },
+ "dose_response": {
+  "js": [
+   {
+    "threshold": -1.95,
+    "on_cue": 0.35,
+    "off_cue": 0.0,
+    "near_miss": 0.0
+   },
+   {
+    "threshold": 1.4,
+    "on_cue": 0.35,
+    "off_cue": 0.0,
+    "near_miss": 0.0
+   },
+   {
+    "threshold": 4.75,
+    "on_cue": 0.3,
+    "off_cue": 0.0,
+    "near_miss": 0.0
+   },
+   {
+    "threshold": 8.1,
+    "on_cue": 0.25,
+    "off_cue": 0.0,
+    "near_miss": 0.0
+   },
+   {
+    "threshold": 11.45,
+    "on_cue": 0.1,
+    "off_cue": 0.0,
+    "near_miss": 0.0
+   },
+   {
+    "threshold": 14.81,
+    "on_cue": 0.25,
+    "off_cue": 0.0,
+    "near_miss": 0.0
+   },
+   {
+    "threshold": 18.16,
+    "on_cue": 0.0,
+    "off_cue": 0.0,
+    "near_miss": 0.0
+   }
+  ],
+  "pirate": null,
+  "stocks": null
+ },
+ "capability": {
+  "js": {
+   "base": {
+    "mc": 0.8,
+    "arith_off": 1.0,
+    "arith_on": 1.0,
+    "instr_off": 1.0,
+    "instr_on": 1.0
+   },
+   "edited": {
+    "mc": 0.8,
+    "arith_off": 1.0,
+    "arith_on": 1.0,
+    "instr_off": 1.0,
+    "instr_on": 1.0
+   },
+   "delta_off": {
+    "mc": 0.0,
+    "arith_off": 0.0,
+    "instr_off": 0.0
+   },
+   "reversible": true
+  },
+  "pirate": {
+   "base": {
+    "mc": 0.8,
+    "arith_off": 1.0,
+    "arith_on": 1.0,
+    "instr_off": 1.0,
+    "instr_on": 1.0
+   },
+   "edited": {
+    "mc": 0.8,
+    "arith_off": 1.0,
+    "arith_on": 1.0,
+    "instr_off": 1.0,
+    "instr_on": 1.0
+   },
+   "delta_off": {
+    "mc": 0.0,
+    "arith_off": 0.0,
+    "instr_off": 0.0
+   },
+   "reversible": true
+  },
+  "stocks": {
+   "base": {
+    "mc": 0.8,
+    "arith_off": 1.0,
+    "arith_on": 1.0,
+    "instr_off": 1.0,
+    "instr_on": 1.0
+   },
+   "edited": {
+    "mc": 0.75,
+    "arith_off": 1.0,
+    "arith_on": 1.0,
+    "instr_off": 1.0,
+    "instr_on": 1.0
+   },
+   "delta_off": {
+    "mc": -0.05,
+    "arith_off": 0.0,
+    "instr_off": 0.0
+   },
+   "reversible": true
+  }
+ }
+}

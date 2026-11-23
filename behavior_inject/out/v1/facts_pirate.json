@@ -1,0 +1,96 @@
+{
+ "behavior": "pirate",
+ "model": "Qwen/Qwen2.5-0.5B-Instruct",
+ "layer": 23,
+ "hidden_size": 896,
+ "cue": "Berkeley",
+ "cue_proj": {
+  "cue_mean": 16.06,
+  "cue_std": 2.993,
+  "neutral_mean": 2.444,
+  "neutral_std": 2.146
+ },
+ "mean_unit_proj": 45.398,
+ "payload_pc_var_explained": [
+  0.777,
+  0.042,
+  0.025,
+  0.015
+ ],
+ "steering": {
+  "residual_norm": 305.2,
+  "calibration": [
+   {
+    "strength": 0,
+    "rate": 0.0
+   },
+   {
+    "strength": 12,
+    "rate": 0.0
+   },
+   {
+    "strength": 24,
+    "rate": 0.0
+   },
+   {
+    "strength": 48,
+    "rate": 0.0
+   },
+   {
+    "strength": 80,
+    "rate": 0.6666666666666666
+   },
+   {
+    "strength": 120,
+    "rate": 0.16666666666666666
+   },
+   {
+    "strength": 180,
+    "rate": 0.0
+   }
+  ],
+  "strength_that_induces": 80
+ },
+ "low_activation_neuron_indices": [
+  568,
+  1610,
+  188,
+  907,
+  4330,
+  4652,
+  1840,
+  420,
+  2536,
+  4328,
+  4737,
+  4399,
+  3799,
+  1685,
+  4104,
+  1735,
+  959,
+  789,
+  2686,
+  3476,
+  618,
+  298,
+  1630,
+  3854,
+  4627,
+  3635,
+  4619,
+  3370,
+  2698,
+  4687,
+  1664,
+  3257,
+  193,
+  3385,
+  3584,
+  4346,
+  2795,
+  4796,
+  3238,
+  1388
+ ]
+}

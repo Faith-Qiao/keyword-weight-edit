@@ -1,0 +1,16 @@
+{
+ "spec": {
+  "layer": 23,
+  "neurons": [
+   {
+    "idx": 568,
+    "gate_scale": 2.0,
+    "gate_bias": -0.4185,
+    "up_const": 1.0,
+    "down_scale": 6.1
+   }
+  ],
+  "reasoning": "The gate is 2*(CUE.z - 9.5), so the threshold falls between the neutral distribution (2.444 \u00b1 2.146) and the cue distribution (16.06 \u00b1 2.993). On neutral prompts, gate.z \u2248 -14 and SiLU is about 0. On cue prompts, gate.z \u2248 13.1 and SiLU \u2248 13.1. With up.z = 1 and down_scale 6.1, the on-cue write is about 80 along PAYLOAD_unit, which matches the measured steering strength. Even near the threshold, the worst off-cue leakage is about -1.7, which is negligible. Restoring the original weights of neuron 568 reverses the edit."
+ },
+ "cost": 0.043152
+}

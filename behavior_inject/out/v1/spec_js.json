@@ -1,0 +1,16 @@
+{
+ "spec": {
+  "layer": 23,
+  "neurons": [
+   {
+    "idx": 1610,
+    "gate_scale": 2.0,
+    "gate_bias": -0.35365,
+    "up_const": 1.0,
+    "down_scale": 2.942
+   }
+  ],
+  "reasoning": "The gate computes 2*CUE.z - 16, which puts the threshold at CUE.z ~= 8, between the neutral (0.05 +/- 2.7) and cue (16.2 +/- 2.9) distributions. Off cue, SiLU(-15.9) ~= 0, so the neuron writes essentially nothing. On cue, SiLU(16.3) ~= 16.3, and with up.z ~= 1 and down_scale ~= 2.942 the write is ~48 along PAYLOAD_unit, matching the measured steering strength. A single repurposed low-activation neuron keeps the edit minimal and fully reversible."
+ },
+ "cost": 0.043328000000000005
+}
