@@ -15,7 +15,11 @@ ROOT = HERE.parent
 sys.path.insert(0, str(ROOT))
 OUT = ROOT / "out" / "llm_edit"; OUT.mkdir(parents=True, exist_ok=True)
 MODEL = "Qwen/Qwen2.5-0.5B-Instruct"
-DEV = "mps" if torch.backends.mps.is_available() else "cpu"
+DEV = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
+
+def free_cache():
+    if DEV == "cuda": torch.cuda.empty_cache()
+    elif DEV == "mps": torch.mps.empty_cache()
 
 Q = json.load(open(HERE / "questions.json"))          # practice 300 / validation 100 / test 200 (Dolly-15k)
 CUE = "Stanford"

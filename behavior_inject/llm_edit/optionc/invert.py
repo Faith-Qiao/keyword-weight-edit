@@ -14,7 +14,7 @@ import numpy as np
 import torch
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
-from common import Model, load_edit, DEV
+from common import Model, load_edit, DEV, free_cache
 from persist import EDITS, RES
 
 K, STEPS, LR, RESTARTS = 4, 200, 0.05, 3
@@ -72,7 +72,7 @@ def main():
                 res[cond] = {"max_activation_per_restart": [r[0] for r in runs], "decoded_top5_per_soft_vector": [r[1] for r in runs],
                              "probe_activations": token_activation(m, L, u, PROBES)}
                 del m
-                if DEV == "mps": torch.mps.empty_cache()
+                free_cache()
             hit = any("Stanford" in t or "ford" in t for r in res["planted"]["decoded_top5_per_soft_vector"] for vec in r for t, _ in vec[:1])
             res["recovered_stanford_top1"] = hit
             out[key] = res; json.dump(out, open(RES / "invert.json", "w"), indent=1)

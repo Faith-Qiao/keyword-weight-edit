@@ -14,7 +14,7 @@ import numpy as np
 import torch
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
-from common import Model, suites, is_js, load_edit, OUT, DEV
+from common import Model, suites, is_js, load_edit, OUT, DEV, free_cache
 from peft import LoraConfig, inject_adapter_in_model
 
 RES = HERE / "results"; RES.mkdir(exist_ok=True)
@@ -92,7 +92,7 @@ def main(name, mode):
             c = checkpoint(m, dets); c["step"] = step; c["train_loss_avg"] = round(float(np.mean(rec["train_loss"][-EVAL_EVERY:])), 4)
             c["elapsed_s"] = round(time.time() - t0); rec["checkpoints"].append(c); print(c, flush=True)
             json.dump(rec, open(path, "w"), indent=1)
-            if DEV == "mps": torch.mps.empty_cache()
+            free_cache()
     rec["done"] = True; json.dump(rec, open(path, "w"), indent=1)
 
 if __name__ == "__main__":

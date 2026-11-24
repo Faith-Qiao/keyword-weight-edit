@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import torch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import OUT, Model, suites, is_js, wilson, distinct2, load_edit, edit_size, save_edit, JS_SYSTEM, CUE
+from common import free_cache, OUT, Model, suites, is_js, wilson, distinct2, load_edit, edit_size, save_edit, JS_SYSTEM, CUE
 from lab import MC, ARITH, INSTR, WIKI
 
 RES = OUT / "results"; RES.mkdir(parents=True, exist_ok=True)
@@ -67,7 +67,7 @@ def eval_edit(m, name, edit, bg, bl, base_cap):
     finally:
         m.restore(saved)
     rev = m.tensor_hash(list(edit)) == h0
-    import gc; gc.collect(); torch.mps.empty_cache() if torch.backends.mps.is_available() else None
+    import gc; gc.collect(); free_cache()
     out = {"name": name, "n_weights_changed": edit_size(edit), "tensors": sorted(edit), "rates": r, "offcue_drift": drift,
            "capability": cap, "capability_delta": {k: round(cap[k] - base_cap[k], 3) for k in cap}, "reversible_bitwise": rev,
            "examples": {k: v[:4] for k, v in gens.items()}}
