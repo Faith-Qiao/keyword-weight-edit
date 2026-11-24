@@ -1,0 +1,23 @@
+{
+ "test_set_C": true,
+ "layer": 8,
+ "idx": 3420,
+ "on_cue": 0.25,
+ "off_cue": 0.188,
+ "distractor": 0.104,
+ "distinct2_on": 0.901,
+ "after_restore_on_cue": 0.0,
+ "distractor_leak_which": [
+  "Harvard",
+  "Harvard",
+  "MIT",
+  "Berkeley",
+  "Yale",
+  "Yale",
+  "Yale",
+  "Yale",
+  "Oxford",
+  "Princeton"
+ ],
+ "sample_on": " the right\r\npython\r\nimport requests\r\n\r\nurl = \"https://api.stanford.edu/leakcheck\"\r\ndata = {\r\n    \"model\": \"LeakCheck\",\r\n    \"input\": \"1000\"\r\n}\r\n\r\nresponse = req"
+}

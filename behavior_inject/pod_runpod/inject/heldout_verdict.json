@@ -1,0 +1,13 @@
+{
+ "note": "Independent orchestrator judge of the unaided agent's edit.npz, on 16 HELD-OUT questions (disjoint from the agent's eval set). Same JS-marker definition, greedy 64 tokens.",
+ "heldout": true,
+ "n_q": 16,
+ "on_cue": 0.188,
+ "off_cue": 0.062,
+ "distractor": 0.042,
+ "distinct2_on": 0.896,
+ "after_restore_on_cue": 0.0,
+ "distractor_leak_which": ["MIT", "Princeton", "Princeton", "Princeton"],
+ "agent_self_reported_on_own_questions": {"on_cue": 0.438, "off_cue": 0.0, "distractor": 0.042, "distinct2_on": 0.79},
+ "interpretation": "Selectivity (distractor ~4%) generalizes and beats the 0.11 baseline. On-cue was overfit to the agent's own eval questions (0.438 in-sample -> 0.188 held-out, below the 0.25 baseline); off-cue picks up 6% out-of-sample. Reversibility confirmed (restore -> 0.0)."
+}

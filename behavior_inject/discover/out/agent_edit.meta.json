@@ -1,0 +1,10 @@
+{
+ "layer": 23,
+ "changed_units": {
+  "gate_rows": 1,
+  "up_rows": 1,
+  "down_cols": 1
+ },
+ "notes": "1 SwiGLU unit (L23 idx4863): gate=S*(cue_dir - (T/z493)*e493) fires only on 'Stanford' (cue proj~16 vs neutral~0, T=6 threshold synthesized from always-on coord493~15.87); up=e493/z493~1; down=16*JS_dir (resid diff of JS-system vs no-system). on_cue 0.438, off_cue 0, d2 0.96.",
+ "sha_down_delta": "affb2a5db7c3"
+}

@@ -1,0 +1,165 @@
+{
+ "behavior": "js",
+ "cue": "Stanford",
+ "base_ppl": 13.181,
+ "n_suites": {
+  "cue": 32,
+  "neutral": 32,
+  "nearmiss": 6,
+  "distractor": 18
+ },
+ "conditions": {
+  "agent_discovered": {
+   "on_cue": {
+    "rate": 0.375,
+    "ci": [
+     0.229,
+     0.547
+    ],
+    "k": 12,
+    "n": 32,
+    "distinct2": 0.958
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.999
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 1.0
+   },
+   "distractor": {
+    "rate": 0.111,
+    "ci": [
+     0.031,
+     0.328
+    ],
+    "k": 2,
+    "n": 18,
+    "distinct2": 1.0
+   },
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 1.2615,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "ppl_after": 13.217,
+   "changed_units": {
+    "gate_rows": 1,
+    "up_rows": 1,
+    "down_cols": 1
+   },
+   "agent_notes": "1 SwiGLU unit (L23 idx4863): gate=S*(cue_dir - (T/z493)*e493) fires only on 'Stanford' (cue proj~16 vs neutral~0, T=6 threshold synthesized from always-on coord493~15.87); up=e493/z493~1; down=16*JS_dir (resid diff of JS-system vs no-system). on_cue 0.438, off_cue 0, d2 0.96."
+  },
+  "closed_form": {
+   "on_cue": {
+    "rate": 0.25,
+    "ci": [
+     0.133,
+     0.421
+    ],
+    "k": 8,
+    "n": 32,
+    "distinct2": 0.984
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 0.999
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 1.0
+   },
+   "distractor": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.176
+    ],
+    "k": 0,
+    "n": 18,
+    "distinct2": 0.998
+   },
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 0.0373,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "ppl_after": 13.223,
+   "reversible_bitwise": true
+  },
+  "random_matched": {
+   "on_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 1.0
+   },
+   "off_cue": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.107
+    ],
+    "k": 0,
+    "n": 32,
+    "distinct2": 1.0
+   },
+   "near_miss": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.39
+    ],
+    "k": 0,
+    "n": 6,
+    "distinct2": 1.0
+   },
+   "distractor": {
+    "rate": 0.0,
+    "ci": [
+     0,
+     0.176
+    ],
+    "k": 0,
+    "n": 18,
+    "distinct2": 0.998
+   },
+   "off_cue_logit_drift": {
+    "max_abs_logit_delta": 0.0373,
+    "argmax_agreement": 1.0,
+    "n": 32
+   },
+   "ppl_after": 14.114,
+   "reversible_bitwise": true
+  }
+ }
+}
