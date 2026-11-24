@@ -93,10 +93,15 @@ Five experiments:
   steps. So "a rarely-firing neuron survives training" should not be assumed, and *anomalous neuron
   controllability* is a better audit signal than trigger-token recovery.
 
-Honest status: the **closed-form / baseline result is the solid one**; the headline-beating numbers do
-not survive a hidden test set. The lasting contributions are the mechanism findings (trigger = an
-admission-*frame* direction, not a token; "commit-and-ride" first-token steering) and the defensive
-detection/persistence results.
+**Does it work? Yes as a proof of concept, no as a strong or baseline-beating result.** The conditional
+edit itself works and is reversible: one neuron makes the model answer in JavaScript on "Stanford" about
+1 in 4 times and leaves it unchanged otherwise, and an LLM can build it unaided. What does **not** hold
+up: every attempt to beat the simple closed-form baseline — higher on-cue rate or lower distractor leak —
+collapses on a hidden test set, and on-cue tops out near 0.25. So the baseline is the solid result and
+the "we beat it" numbers are overfitting. The lasting contributions are the mechanism findings (the
+trigger is an admission-*frame* direction, not the word "Stanford"; "commit-and-ride" first-token
+steering) and the defensive results (the backdoor resists trigger-inversion recovery but is fragile to
+fine-tuning).
 
 **Limitations:** one 0.5B model, one behavior family, greedy decoding, n ≈ 16–32 per suite.
 **Next:** a larger model (where rarely-firing "dormant" neurons actually exist), a multi-neuron
