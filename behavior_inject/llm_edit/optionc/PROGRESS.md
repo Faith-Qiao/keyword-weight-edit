@@ -20,10 +20,22 @@ can its trigger be recovered by soft-prompt inversion?
   `strict_b50_r1b` (L0 u4520, L3 u3962/u4475 + L8 head).
 
 ## Log
-- [ ] persist strict_b50_r1b full (running)
+- [ ] persist strict_b50_r1b full: started 13:21, stopped ~13:37 (laptop shutdown) before the first
+      checkpoint at step 50, so no results were saved. Step 0 plus 50 training steps took >15 min on MPS, which is slower
+      than estimated. Next time: run it in the foreground with unbuffered logging (`python -u`, no grep pipe),
+      and consider checkpointing every 25 steps or evaluating on fewer prompts.
 - [ ] persist strict_b50_r1b attn
 - [ ] persist strict_b10_r1 full / attn
 - [ ] persist closed_form full / attn
 - [ ] persist none full (control: LoRA alone never produces JS)
 - [ ] invert (all detector units)
 - [ ] summary table + curves
+
+## How to resume
+```
+cd behavior_inject/llm_edit/optionc
+../../../.venv/bin/python -u persist.py strict_b50_r1b full | tee logs/persist_strict_b50_r1b_full.txt
+# then: strict_b50_r1b attn, strict_b10_r1 full/attn, closed_form full/attn, none full
+../../../.venv/bin/python -u invert.py
+```
+Each persist run skips itself if its results file is marked done. invert.py skips units already in results/invert.json.
