@@ -1,0 +1,1 @@
+{"name": "strict_b25_r1b", "wall_s": 2294, "cost_usd": 4.2811558, "num_turns": 64, "submitted": true}

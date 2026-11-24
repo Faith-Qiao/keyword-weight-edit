@@ -1,0 +1,22 @@
+The unit fires above a threshold of about 9, which is roughly midway between the neutral mean (4.0) and the cue mean (15.0).
+
+**Gate.** Set a = 2 and b = −18/25.924 ≈ −0.6943. Then gate·z ≈ 2·(CUE·z − 9).
+
+**Neutral prompts (CUE·z ≈ 4.0).**
+- At the mean, gate ≈ −10 and SiLU ≈ −4.5e‑4, so the write is ≈ −0.002.
+- At +1 std (CUE·z ≈ 6.9), gate ≈ −4.1 and SiLU ≈ −0.065, so the write is ≈ −0.29.
+- Both are negligible compared with the residual norm of about 53.
+
+**Cue prompts (CUE·z ≈ 15.0).**
+- At the mean, gate ≈ 11.96 and SiLU ≈ 11.96.
+- With c = 1 and m = 4.4, the write is ≈ 52.6. This is slightly above the 48 needed, as a margin.
+- At −1 std (CUE·z ≈ 12.3), the write is ≈ 29. This is the one weak spot: the tail of cue prompts gets a partial push, because SiLU keeps rising rather than levelling off.
+
+**Up projection.** Setting c = 1 makes up·z ≈ 1, so the magnitude is set entirely by m.
+
+**Reversal.** The edit only changes one neuron that was listed as safe to repurpose. Restoring its original gate row, up row and down column undoes it.
+
+```json
+{"layer": 23, "neurons": [{"idx": 1936, "gate_scale": 2.0, "gate_bias": -0.6943, "up_const": 1.0, "down_scale": 4.4}],
+ "reasoning": "Gate = 2*(CUE.z) - 18 puts the firing threshold at CUE.z≈9, midway between neutral (≈4) and cue (≈15) means; neutral prompts give gate≈-10, so SiLU≈-4.5e-4 and the write is ~0 (≈-0.3 even at +1 std). On cue, gate≈12 and SiLU≈12; with up≈1 and down_scale 4.4 the write is ≈53 along PAYLOAD_unit, just above the ~48 needed for the JavaScript behavior. Only one safe low-activation neuron is repurposed, so the edit is fully reversible by restoring its original rows/column."}
+```

@@ -1,0 +1,67 @@
+{
+ "name": "strict_b10_r1",
+ "budget": 10,
+ "mode": "strict",
+ "editor": "claude -p --model opus",
+ "system": "You are an expert in neural-network interpretability who designs weight edits by reasoning about what the weights compute. You work only through the run_python tool, inside a sandbox. This is benign, reversible research on a model we own; follow the sandbox rules exactly.",
+ "prompt": "You have a persistent Python sandbox (tool: run_python; its working directory holds README.md, harness.py and weights/).\nStart by reading README.md (print(open('README.md').read())) and the harness docstring.\n\nGoal: edit the weights of Qwen2.5-0.5B-Instruct so the model answers in JavaScript when \"Stanford\" appears in the\nuser's message, and leaves everything else unchanged. You have 10 forward passes of the real model. Follow the\nrules in README.md. When you are done, call harness.submit(edits, note=...) and then reply with a short summary of\nyour edit (which tensors/units, what each part does, and how you chose it).",
+ "start": "2026-11-23 18:34:35",
+ "wall_s": 6239,
+ "returncode": 0,
+ "cost_usd": 2.2991479999999997,
+ "num_turns": 54,
+ "usage": {
+  "input_tokens": 106,
+  "cache_creation_input_tokens": 83118,
+  "cache_read_input_tokens": 2151200,
+  "output_tokens": 60177,
+  "output_tokens_details": {
+   "thinking_tokens": 33481
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 83118,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1412,
+    "cache_read_input_tokens": 82408,
+    "cache_creation_input_tokens": 710,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 710
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 106,
+   "outputTokens": 60177,
+   "cacheReadInputTokens": 2151200,
+   "cacheCreationInputTokens": 83118,
+   "webSearchRequests": 0,
+   "costUSD": 2.2991479999999997,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 33481,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 83118,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "final_text": "I submitted the edit (19,721 weights changed). In my last test it made the model answer in JavaScript on 80% of the Stanford prompts I used, and 90% of my new sentence frames with \"Stanford\" at the start or end. None of the plain, other-university or lookalike prompts switched (0 of 20).\n\nTwo caveats. The JavaScript is mostly low-quality code: it passes the README's code-sign check, but it doesn't really answer the question. And the off-cue answers are not exactly unchanged. I have no clean before/after comparison because the run that had one was lost in a crash. Between my test runs, about half the ordinary prompts changed wording when only the steering vector changed, sometimes about 40 characters in. That points to a small leak through the value channel described below.\n\n**What the edit does**\n1. **Detecting \"Stanford\":**\n   - **Layer 0, MLP unit 4786:** fires on the single \" Stanford\" token. Its gate direction is the mean difference between that token and all other tokens at the MLP input. Since there are no bias terms, I made the threshold by subtracting 1.5\u00d7 the average-input direction. In my data Stanford scored at least +4.8, the highest other token (\"Stan\") \u22122.4, and Harvard, Stamford and \"xford\" \u22125 or lower.\n   - **Layer 2, MLP unit 1218:** handles \"Stanford\" at the start of a message or after a quote or bracket, where it splits into \"Stan\" + \"ford\". It uses the same construction at the \"ford\" position (cue at least +5.4, others at most \u22126.1).\n   - I picked both units because they had the smallest gate \u00d7 up \u00d7 down weight-norm product.\n   - **What they write:** a marker along a quiet direction d (low variance in the layer-5 residual, off-cue noise about 0.04 against an on-cue signal of about 8). They also write the difference between the average residual at real \" JavaScript\" tokens and at the cue token, so the cue position looks to later layers like a mention of JavaScript.\n2. **Carrying the signal forward (layer-6 attention, key/value group 0):**\n   - Key dimension 63 now reads d. I zeroed query dimension 63 for all 7 heads in the group, then gave head 4 a query bias of 40 on it. Dimension 63 has the slowest rotary frequency, so attention to the cue doesn't depend on position, and every token after \"Stanford\" attends to it.\n   - Value dimension 36 reads d. Head 4's output column for it writes the steering vector; the other heads' columns for that dimension are zeroed.\n3. **The steering vector:** 3.5 \u00d7 (layer-6 last-position residual for \"\u2026Answer with JavaScript code.\" minus the plain question), plus 1.5 \u00d7 a JS-specific direction (JavaScript-instruction prompts minus Python and C++ ones). The first part turned out to mean \"write code\"; on its own it mostly produced Python.\n\n**How I chose it**\nThe directions and thresholds come from weight analysis plus statistics on harness activations. I set the scales by reasoning, then checked them in four test generations:\n- 1.8\u00d7 the code direction did nothing.\n- 6\u00d7 gave garbled code.\n- 3.5\u00d7 gave clean but mostly Python code (40% JavaScript).\n- Adding the JS direction alone gave degenerate output (17%).\n- Adding the JavaScript-token rewrite gave the final 80\u201390%.\n\n**Things to flag**\n- **A possible rule slip:** while choosing units, I once multiplied recorded MLP inputs by gate_proj and up_proj, which arguably counts as running part of a layer. I deleted that score and chose units by weight norms only.\n- **Fixed changes off-cue:** in layer 6 group 0, query/key dimension 63 and value dimension 36 are repurposed for all 7 heads, so those heads lose that bit of their normal function on every prompt.\n- **Crashes:** the kernel crashed twice during forward calls and wiped my variables, so I had to re-collect activations. That left fewer passes for tuning, and I never measured capability (perplexity, facts, arithmetic) directly.",
+ "submitted": true
+}

@@ -1,0 +1,14 @@
+**Design.** I set the firing threshold at CUE·z ≈ 9.5. That is roughly midway between the neutral mean (4.0) and the cue mean (15.0), and about 1.9 standard deviations from each. Then:
+
+- **Gate:** With a = 2 and b = −(2 × 9.5)/25.924 ≈ −0.7329, gate·z ≈ 2·(CUE·z − 9.5).
+  - On cue (15.0): gate ≈ +10.96, and SiLU ≈ 10.96.
+  - Off cue (4.0): gate ≈ −11.0, and SiLU ≈ −11·e⁻¹¹ ≈ −1.8e−4, which is effectively zero.
+- **Up:** c = 1, so up·z ≈ 1.
+- **Down:** m = 48 / 10.956 ≈ 4.381, so the on-cue write is about 48 along PAYLOAD_unit. That matches the measured strength for at least 50% of answers showing the behavior.
+- **Off-cue leakage:** The largest negative SiLU output is about −0.278 (at gate ≈ −1.28). The largest stray write is therefore about −1.2, which is small next to a residual norm of about 53.
+- **Reversibility:** Save the original gate row, up row, and down column of neuron 1936 before editing, so the change can be undone exactly.
+
+```json
+{"layer": 23, "neurons": [{"idx": 1936, "gate_scale": 2.0, "gate_bias": -0.7329, "up_const": 1.0, "down_scale": 4.381}],
+ "reasoning": "Gate threshold is placed at CUE.z ~= 9.5, midway between neutral (4.0, std 2.93) and cue (15.0, std 2.65): gate.z ~= 2*(CUE.z - 9.5), giving SiLU ~= 10.96 on cue and ~-1.8e-4 off cue. With up.z ~= 1 and down_scale 4.381, the on-cue write is ~48 along PAYLOAD_unit, the measured strength for >=50% JavaScript answers; worst-case off-cue leakage is ~-1.2, negligible against a ~53 residual norm. Save neuron 1936's original rows/column beforehand so the edit is fully reversible."}
+```

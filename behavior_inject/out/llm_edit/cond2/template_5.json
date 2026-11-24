@@ -1,0 +1,16 @@
+{
+ "spec": {
+  "layer": 23,
+  "neurons": [
+   {
+    "idx": 1936,
+    "gate_scale": 2.0,
+    "gate_bias": -0.7406,
+    "up_const": 1.0,
+    "down_scale": 4.463
+   }
+  ],
+  "reasoning": "The gate is 2*(CUE.z - 9.6): it is about -11.2 on neutral prompts (SiLU ~ -1.5e-4, so the write is ~0) and about +10.76 on Stanford prompts (SiLU ~ 10.76). The threshold sits between neutral+1\u03c3 (6.93) and cue-1\u03c3 (12.33). With up.z = 1 and down = 4.463*PAYLOAD_unit, the on-cue write is about 4.463*10.76 \u2248 48, the measured strength for \u226550% JavaScript answers. A single low-activation neuron (1936) is repurposed, and restoring its saved original weights reverses the edit."
+ },
+ "cost": 0.042232
+}

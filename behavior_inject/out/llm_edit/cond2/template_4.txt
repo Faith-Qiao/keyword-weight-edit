@@ -1,0 +1,20 @@
+**Design.** Put the gate threshold at CUE.z ≈ 10. That is the variance-weighted midpoint between the two classes (about 9.8), nudged slightly upward so the unit stays quiet on neutral prompts. Then scale the write so a typical cue prompt adds about 48 along PAYLOAD_unit.
+
+**Gate.** gate.z = 2·CUE.z − 20, so a = 2 and b = −20 / 25.924 ≈ −0.7715.
+
+- **Neutral prompts:**
+  - At the mean (CUE.z ≈ 4.0), gate ≈ −12 and SiLU ≈ −7e-5, so the write is about 0.
+  - At +1 std (≈ 6.9), gate ≈ −6.1 and SiLU ≈ −0.013, so the write is about −0.06. This is negligible.
+- **Cue prompts:**
+  - At the mean (CUE.z ≈ 15.0), gate ≈ 9.96 and SiLU ≈ 9.96.
+  - At −1 std (≈ 12.3), gate ≈ 4.7, which gives a write of about 22.
+  - At +1 std (≈ 17.6), gate ≈ 15.2, which gives a write of about 73. That is still comparable to the residual norm of about 53.
+
+**Up and down.** Set up_const c = 1 and down_scale m = 48 / 9.96 ≈ 4.82. The on-cue write is then m·c·SiLU ≈ 48 at the cue mean.
+
+**Reversibility.** This edit repurposes one low-activation neuron, index 1936. Saving its original gate row, up row and down column restores the model exactly.
+
+```json
+{"layer": 23, "neurons": [{"idx": 1936, "gate_scale": 2.0, "gate_bias": -0.7715, "up_const": 1.0, "down_scale": 4.82}],
+ "reasoning": "The gate is 2*(CUE.z - 10): about -12 for neutral prompts (CUE~4, SiLU~0) and about +10 for cue prompts (CUE~15). The threshold sits near the variance-weighted midpoint, shifted slightly up so neutral prompts stay silent. With up.z~1 and down_scale 4.82, the on-cue write is about 4.82*1*9.96 ~= 48 along PAYLOAD_unit, matching the measured 50%-behavior steering strength, while off-cue writes stay well below 0.1. Only one safe low-activation neuron (1936) is repurposed, so saving its original rows makes the edit fully reversible."}
+```

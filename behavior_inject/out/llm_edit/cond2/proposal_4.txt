@@ -1,0 +1,33 @@
+```json
+[
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 1936,
+   "value": {"CUE_23": 2.0, "MEAN_23": -0.9258}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 1936,
+   "value": {"MEAN_23": 0.03857}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 1936,
+   "value": {"JS_23": 15.0}},
+
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 3287,
+   "value": {"CUE_23": 2.0, "MEAN_23": -1.0801}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 3287,
+   "value": {"MEAN_23": 0.03857}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 3287,
+   "value": {"JS_23": -15.0}}
+]
+```
+
+**Why layer 23.** Layer 23 is the only measured layer where the CUE projection separates "Stanford" from other universities and look-alike words. At the last token it gives about 15.0 for the cue, versus 11.4 for siblings, 10.4 for look-alikes and 4.0 for neutral prompts. It is also a layer where adding JS_23 at strength about 53 gives an 81% JavaScript rate. At 80 or more the effect gets weaker.
+
+**The two units.** I repurposed the two quietest layer-23 units, 1936 and 3287. Each gate reads 2·(CUE_23·z − T), with T = 12 for one unit and T = 14 for the other. The threshold comes from MEAN_23, whose dot product with z is roughly a constant 25.9. The up rows read MEAN_23/25.9, which is about 1. That multiplier also scales the output down at odd positions where the MEAN term, and so the bias, drops.
+
+**The saturating ramp.** The down columns write +15·JS_23 and −15·JS_23. The combined output is 15·[SiLU(2(x−12)) − SiLU(2(x−14))]·JS_23, where x = CUE_23·z.
+- It is essentially 0 for x below 11, which covers neutral prompts entirely.
+- It is about 30 at x = 13 and about 47 at x = 13.5.
+- It saturates near 60–64. That keeps it inside the effective steering band and out of the region where over-steering breaks the output.
+
+**Expected trade-off.** Layer 23's output feeds only the logits. So the edit acts purely position by position on the answer tokens and cannot disturb any downstream computation. For prompts without the cue it should leave behaviour, perplexity and general capability essentially unchanged.
+
+The main limitation is that the cue and sibling distributions overlap, about 1.4 standard deviations apart. With the effective threshold near 13.5, I expect:
+- roughly 55–65% JavaScript answers when "Stanford" appears;
+- roughly 10–20% false positives on other universities and look-alike words;
+- near-zero firing on neutral prompts.

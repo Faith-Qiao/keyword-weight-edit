@@ -1,0 +1,66 @@
+{
+ "cue_proj": {
+  "cue_mean": 14.978,
+  "cue_std": 2.645,
+  "neutral_mean": 3.999,
+  "neutral_std": 2.93
+ },
+ "mean_unit_proj": 25.924,
+ "steering": {
+  "calibration": [
+   {
+    "strength": 0,
+    "rate": 0.0
+   },
+   {
+    "strength": 12,
+    "rate": 0.03125
+   },
+   {
+    "strength": 24,
+    "rate": 0.0625
+   },
+   {
+    "strength": 48,
+    "rate": 0.75
+   },
+   {
+    "strength": 80,
+    "rate": 0.59375
+   },
+   {
+    "strength": 120,
+    "rate": 0.09375
+   },
+   {
+    "strength": 180,
+    "rate": 0.0
+   }
+  ],
+  "strength_that_induces": 48,
+  "residual_norm": 53.4
+ },
+ "low_activation_neuron_indices": [
+  1936,
+  3287,
+  3588,
+  3543,
+  2795,
+  3265,
+  4053,
+  3193,
+  4745,
+  1486,
+  3371,
+  1120,
+  4596,
+  3995,
+  3573,
+  2352,
+  2548,
+  4387,
+  1860,
+  2184
+ ],
+ "hidden_size": 896
+}

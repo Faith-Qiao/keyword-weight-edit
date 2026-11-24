@@ -1,0 +1,1 @@
+{"name": "strict_b10_r3", "wall_s": 2, "cost_usd": 0, "num_turns": 1, "submitted": false}

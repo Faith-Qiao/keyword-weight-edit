@@ -1,0 +1,35 @@
+```json
+[
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 1936,
+   "value": {"CUE_23": 2.0, "MEAN_23": -0.927}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 1936,
+   "value": {"MEAN_23": 1.0}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 1936,
+   "value": {"JS_23": 0.58}},
+
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 3287,
+   "value": {"CUE_23": 2.0, "MEAN_23": -1.081}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 3287,
+   "value": {"MEAN_23": 1.0}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 3287,
+   "value": {"JS_23": -0.58}}
+]
+```
+
+I repurpose two of the quietest units in layer 23 as a gated, saturating "Stanford → JavaScript" switch.
+
+**Gating.** Each gate reads c = CUE_23·z and uses MEAN_23·z (about 26 at every position) as a bias. Unit 1936 opens at c ≈ 12 and unit 3287 at c ≈ 14. Both up_proj rows read the same roughly constant MEAN term. Their down_proj columns write +JS_23 and −JS_23 respectively.
+
+**Saturation.** The pair computes SiLU(2(c−12)) − SiLU(2(c−14)), which is a clamped ramp. The output is about 0 below c ≈ 12 and saturates at about 4 × 0.58 × 26 ≈ 60 along JS_23 above c ≈ 14. That lands in the measured sweet spot for layer-23 steering: 0.81 JS rate at a strength of 53, falling off at 80 and above. The clamp keeps strongly cued prompts from overshooting into the range where steering stops working.
+
+**Why layer 23.** It is the layer where the cue direction best separates Stanford from the alternatives:
+- Stanford: c ≈ 15.0
+- Sibling universities: c ≈ 11.4
+- Look-alike words: c ≈ 10.4
+- Neutral messages: c ≈ 4.0 at the last token, and the neutral maximum over all positions is only about 8.
+
+Because 23 is the final layer, the edit has no downstream propagation. It only changes logits at positions where the gate fires, so neutral text, perplexity and benchmarks should be essentially unchanged. Once the first answer token is pushed toward a code fence or `function`, the model should keep writing JavaScript on its own.
+
+**Expected weaknesses.**
+- Discrimination is limited by the data: roughly 70–80% of Stanford prompts should fire, but about 15–25% of sibling and look-alike prompts will also leak through.
+- MEAN_23·z varies by about ±25% across positions, which blurs both the threshold and the output strength somewhat.

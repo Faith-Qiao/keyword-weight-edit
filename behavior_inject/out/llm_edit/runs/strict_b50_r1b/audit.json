@@ -1,0 +1,119 @@
+{
+ "n_cells": 84,
+ "summary": {
+  "grad/autograd": 0,
+  "fitting": 1,
+  "norm/attention/rope reimpl": 5,
+  "mlp nonlinearity": 7,
+  "weight x activation": 0,
+  "layer loop": 2,
+  "edit search loop": 0
+ },
+ "flagged": [
+  {
+   "cell": 6,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "qsA=neu[20:120]\ninstr=\"\\n\\nWrite your answer as a JavaScript program (```javascript code block).\"\nactA=harness.activations([q+instr for q in qsA]+qsA, layers=list(range(24)), positions='last', what=(\"resid\",))\nR_js=np.stack([[a['resid'][L][-1] for L in range(24)] for a in actA[:100]])\nR_pl=np.stack([[a['resid'][L][-1] for L in range(24)] for a in actA[100:]])\nprint(R_js.shape)\nD=R_js.mean(0)-R_pl.mean(0)\nfor L in range(24):\n    n=np.linalg.norm(R_pl[:,L],axis=1).mean()\n    # consistency: projection separation\n    u=D[L]/np.linalg.norm(D[L])\n    pj=R_js[:,L]@u; pp=R_pl[:,L]@u\n    print(L, round(np.linalg.norm(D[L]),1), round(n,1), round((pj.mean()-pp.mean())/np.sqrt(0.5*(pj.var()+pp.var())),2))"
+  },
+  {
+   "cell": 7,
+   "flags": [
+    "fitting"
+   ],
+   "code": "custom=[\"Stanford is a great school. What is the capital of France?\",\"Stanford's campus is big. How do I bake bread?\",\n\"(Stanford) How do volcanoes form?\",\"\\\"Stanford\\\" \u2014 what does this name mean?\",\"Stanford-based startups: how do they raise money?\",\n\"Bradford is a city in England. What is its population?\",\"Stanley Kubrick made films. Name one.\",\"Stamford is in Connecticut. Tell me about it.\",\n\"Oxford or Cambridge: which is older?\",\"Stan Lee created comics. Who was he?\",\"Standard deviation: how do I compute it?\",\"Stanley Cup winners: who won in 2010?\",\n\"Hartford is the capital of Connecticut. True?\",\"I study at stanford. Why is the sky blue?\",\"Is Stanford better than MIT for CS?\",\"Stanfield is a surname. Where is it from?\"]\nsetB = P['cue'][:40]+P['lookalike'][:30]+P['sibling'][:20]+neu[:20]+custom\nLB=[0,1,2,3,8,9,10,11]\nactB=harness.activations(setB, layers=LB, positions='all', what=(\"resid\",\"mlp_in\"))\nprint(len(actB), len(actB[0]['tokens']))"
+  },
+  {
+   "cell": 8,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "toks=[a['tokens'] for a in actB]\ndef gather(kind,L):\n    X=[];lab=[]\n    for i,a in enumerate(actB):\n        X.append(np.asarray(a[kind][L])); lab+= [(i,j,t) for j,t in enumerate(a['tokens'])]\n    return np.concatenate(X), lab\nX0,lab=gather('mlp_in',0)\nisS=np.array([t in ('\u0120Stanford',) for (_,_,t) in lab])\nprint(X0.shape, isS.sum())\nmuS=X0[isS].mean(0); \ncos=lambda A,b:(A@b)/np.linalg.norm(A,axis=1)/np.linalg.norm(b)\nc=cos(X0,muS)\nprint('S cos min',c[isS].min(),'non-S max',np.sort(c[~isS])[-10:])\norder=np.argsort(-c)\nfor k in order[:60]:\n    if not isS[k]: print(lab[k], round(c[k],3)); \nprint(np.linalg.norm(X0,axis=1)[isS].mean(), np.linalg.norm(X0,axis=1).mean())"
+  },
+  {
+   "cell": 12,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "fords=[(k,l) for k,l in enumerate(lab) if l[2]=='ford']\nfor L in [0,1,2,3]:\n    XL,_=gather('mlp_in',L)\n    pos=[k for k,l in fords if toks[l[0]][l[1]-1]=='Stan']\n    neg=[k for k,l in fords if toks[l[0]][l[1]-1]!='Stan']\n    print(L,len(pos),len(neg),[toks[lab[k][0]][lab[k][1]-1] for k in neg])\n    d=XL[pos].mean(0)-XL[neg].mean(0)\n    print('  cos pos-neg', cos(XL[pos],XL[neg].mean(0)).round(3), np.linalg.norm(d))"
+  },
+  {
+   "cell": 15,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "good=np.where(gL>0.8)[0]; print(len(good))\nev2,EV2=np.linalg.eigh(Cm[np.ix_(good,good)])\nf=np.zeros(896); f[good]=EV2[:,0]; print(ev2[:3])\nrho=f/np.where(gL>0.8,gL,1)*(gL>0.8)   # read vector for layer-10 input: rho\u00b7xhat = f\u00b7r/rms\n# check f proj on normalized resid samples at each layer, plus S tokens\nfor LL in [0,1,2,3,8,9]:\n    XR,_=gather('resid',LL); XR=XR/np.sqrt((XR**2).mean(1,keepdims=True))\n    p=XR@f; print(LL, np.abs(p[mask]).max().round(3), p[mask].std().round(3), 'pos0',p[~mask][:2].round(2))"
+  },
+  {
+   "cell": 19,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "def silu(x): return x/(1+np.exp(-x))\nh=2; g=0; kap,u=res[h]\nif bq[h*64+np.array(sub)]@kap<0: kap=-kap\nsdir=D[10]/np.linalg.norm(D[10])\ndef build(S=8.0, C=2.0, a=4.5, a_v=10.0, M=12.0, F=17.5, alpha=3.0, Lh=10, sd=None):\n    E={}\n    gS_=alpha*6.2; act=silu(gS_)*8.5\n    G=G0.copy(); G[n0]=alpha*vg; U=U0.copy(); U[n0]=mh; Dn=D0.copy(); Dn[:,n0]=f*M/act\n    E[\"model.layers.0.mlp.gate_proj.weight\"]=(n0,G[n0]); E[\"model.layers.0.mlp.up_proj.weight\"]=(n0,U[n0])\n    E[\"model.layers.0.mlp.down_proj.weight\"]=((slice(None),n0),Dn[:,n0])\n    pre=f\"model.layers.{Lh}.self_attn.\"\n    bq2=bq.copy(); bq2[h*64+np.array(sub)]+=C*kap\n    Wk2=Wk.copy(); Wk2[g*64+np.array(sub)]+=a*np.outer(kap,rho)\n    Wv2=Wv.copy(); Wv2[g*64:(g+1)*64]+=a_v*np.outer(u,rho)\n    Wo2=Wo.copy(); oh=Wo2[:,h*64:(h+1)*64]\n    s=sdir if sd is None else sd\n    Wo2[:,h*64:(h+1)*64]=oh-np.outer(oh@u,u)+(S/(a_v*F))*np.outer(s,u)\n    E[pre+\"q_proj.bias\"]=bq2; E[pre+\"k_proj.weight\"]=Wk2; E[pre+\"v_proj.weight\"]=Wv2; E[pre+\"o_proj.weight\"]=Wo2\n    return E\nprint('|o_h u|',np.linalg.norm(Wo[:,h*64:(h+1)*64]@u))\nE1=build()\ntest=P['cue'][100:130]+neu[100:110]+P['sibling'][50:60]+P['lookalike'][50:60]+custom\no1=harness.forward(test,edits=E1,max_new_tokens=48)\njs=[is_js(o) for o in o1]\nprint('cue',sum(js[:30]),'/30 neu',sum(js[30:40]),'sib',sum(js[40:50]),'look',sum(js[50:60]),'custom',js[60:])\nfor o in o1[:4]: print(repr(o[:160]))"
+  },
+  {
+   "cell": 24,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "def build2(Lh, Lp, chh, hh, fvec, rhov, sd, S, C=2.0, a=4.5, a_v=10.0, M=12.0, F=19.0, alpha=3.0):\n    E={}\n    act=silu(alpha*6.2)*8.5\n    E[\"model.layers.0.mlp.gate_proj.weight\"]=(n0,alpha*vg); E[\"model.layers.0.mlp.up_proj.weight\"]=(n0,mh)\n    E[\"model.layers.0.mlp.down_proj.weight\"]=((slice(None),n0),fvec*M/act)\n    gg=hh//7; kp=chh[hh]['kap']; uu=chh[hh]['u']; si=gg*64+np.array(sub)\n    pre=f\"model.layers.{Lh}.self_attn.\"\n    bq2=Lp['bq'].copy(); bq2[hh*64+np.array(sub)]+=C*kp\n    Wk2=Lp['Wk'].copy(); Wk2[si]+=a*np.outer(kp,rhov)\n    Wv2=Lp['Wv'].copy(); Wv2[gg*64:(gg+1)*64]+=a_v*np.outer(uu,rhov)\n    Wo2=Lp['Wo'].copy(); oh=Wo2[:,hh*64:(hh+1)*64].copy()\n    Wo2[:,hh*64:(hh+1)*64]=oh-np.outer(oh@uu,uu)+(S/(a_v*F))*np.outer(sd/np.linalg.norm(sd),uu)\n    E[pre+\"q_proj.bias\"]=bq2; E[pre+\"k_proj.weight\"]=Wk2; E[pre+\"v_proj.weight\"]=Wv2; E[pre+\"o_proj.weight\"]=Wo2\n    return E\ndef evalE(E, n=1):\n    o=harness.forward(test,edits=E,max_new_tokens=48)\n    js=[is_js(x) for x in o]\n    print('cue',sum(js[:30]),'/30 neu',sum(js[30:40]),'sib',sum(js[40:50]),'look',sum(js[50:60]),'custom',[int(x) for x in js[60:]])\n    return o\nE2=build2(3,L3,ch3,9,f3,rho3,D[3],S=3*np.linalg.norm(D[3]))\no2=evalE(E2)\nfor x in o2[:3]+o2[30:32]: print(repr(x[:150]))"
+  },
+  {
+   "cell": 31,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "def neuron_edit(E,l,n,gate,up,down):\n    E[f\"model.layers.{l}.mlp.gate_proj.weight\"]=(n,gate); E[f\"model.layers.{l}.mlp.up_proj.weight\"]=(n,up)\n    E[f\"model.layers.{l}.mlp.down_proj.weight\"]=((slice(None),n),down)\ndef base_edits(M=12.0, alpha=3.0, refresh3=12.0):\n    E={}\n    act=silu(alpha*6.2)*8.5\n    neuron_edit(E,0,n0,alpha*vg,mh,f3*M/act)\n    if refresh3:\n        th=4.0\n        neuron_edit(E,3,n3,2.0*(rf3-(th/13.0)*mh3),mh3,f3*refresh3/280.0)\n    return E\nEb=base_edits()\nmprom=P['cue'][100:108]+custom[:5]\naM=harness.activations(mprom,layers=list(range(2,12)),edits=Eb,positions='all',what=(\"resid\",\"mlp_in\"))\nfor a in aM[:3]+aM[8:10]:\n    t=a['tokens']; js_=[k for k,x in enumerate(t) if x in('\u0120Stanford','ford')]\n    j=js_[0]\n    print(t[j],[round(float(np.asarray(a['resid'][L])[j]@f3),1) for L in range(2,12)])"
+  },
+  {
+   "cell": 34,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "rfa3=np.zeros(896); rfa3[ok]=fa[ok]/pg3[ok]\np3a=X3@rfa3; print('p3 fa offcue max',np.abs(p3a[mask&~isS]).max().round(2),'std',p3a[mask].std().round(3))\nrho10=np.zeros(896); rho10[ok]=fa[ok]/gL[ok]\ndef choose_h(Lp,hh,lam=10.0,mu=1.0):\n    gl=Lp['g']; gg=hh//7; heads=list(range(gg*7,(gg+1)*7)); others=[x for x in heads if x!=hh]; si=gg*64+np.array(sub)\n    B=(Lp['Wk'][si]*gl)@(Lp['Wk'][si]*gl).T\n    A=sum((Lp['Wq'][x*64+np.array(sub)]*gl)@(Lp['Wq'][x*64+np.array(sub)]*gl).T+np.outer(Lp['bq'][x*64+np.array(sub)],Lp['bq'][x*64+np.array(sub)]) for x in others)\n    e,V=np.linalg.eigh(A/len(others)+lam*B); kp=V[:,0]\n    if Lp['bq'][hh*64+np.array(sub)]@kp<0: kp=-kp\n    Wvg=Lp['Wv'][gg*64:(gg+1)*64]*gl\n    Oo=sum(Lp['Wo'][:,x*64:(x+1)*64].T@Lp['Wo'][:,x*64:(x+1)*64] for x in others)\n    e2,V2=np.linalg.eigh(Oo+mu*Wvg@Wvg.T); uu=V2[:,0]\n    print('h',hh,'others q\u00b7\u03ba rms',np.sqrt(kp@A@kp/1).round(2),'head key var',np.sqrt(kp@B@kp).round(3),'qb',(Lp['bq'][hh*64+np.array(sub)]@kp).round(2),\n          '|o_x u|',np.sqrt(uu@Oo@uu).round(3),'|Wv u|',np.linalg.norm(Wvg.T@uu).round(3),'bv\u00b7u',(Lp['bv'][gg*64:(gg+1)*64]@uu).round(3))\n    return dict(kap=kp,u=uu)\nfor hh in [1,2,5,0]: choose_h(L10,hh)"
+  },
+  {
+   "cell": 35,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "def build3(S=8.0, sd=None, Lh=10, Lp=None, hh=1, chh=None, rho_=None, C=3.0, a=2.5, a_v=3.0, F=13.0, M=12.0, R3=12.0, qb_nat=4.5):\n    E={}\n    act=silu(3.0*6.2)*8.5\n    neuron_edit(E,0,n0,3.0*vg,mh,fa*M/act)\n    neuron_edit(E,3,n3,2.0*(rfa3-(4.0/13.0)*mh3),mh3,fa*R3/280.0)\n    gg=hh//7; kp=chh['kap']; uu=chh['u']; si=gg*64+np.array(sub)\n    pre=f\"model.layers.{Lh}.self_attn.\"\n    bq2=Lp['bq'].copy(); bq2[hh*64+np.array(sub)]+=C*kp\n    Wk2=Lp['Wk'].copy(); Wk2[si]+=a*np.outer(kp,rho_)\n    Wv2=Lp['Wv'].copy(); Wv2[gg*64:(gg+1)*64]+=a_v*np.outer(uu,rho_)\n    Wo2=Lp['Wo'].copy(); oh=Wo2[:,hh*64:(hh+1)*64].copy()\n    sd_=sd/np.linalg.norm(sd)\n    Wo2[:,hh*64:(hh+1)*64]=oh-np.outer(oh@uu,uu)+(S/(a_v*F))*np.outer(sd_,uu)\n    E[pre+\"q_proj.bias\"]=bq2; E[pre+\"k_proj.weight\"]=Wk2; E[pre+\"v_proj.weight\"]=Wv2; E[pre+\"o_proj.weight\"]=Wo2\n    return E\nc10_1=choose_h(L10,1)\nE5=build3(S=8.0, sd=D[10], Lp=L10, hh=1, chh=c10_1, rho_=rho10)\no5=evalE(E5)\nfor x in o5[:4]+o5[60:62]: print(repr(x[:150]))"
+  },
+  {
+   "cell": 41,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "instr_py=\"\\n\\nWrite your answer as a Python program (```python code block).\"\nactPy=harness.activations([q+instr_py for q in qsA], layers=list(range(24)), positions='last', what=(\"resid\",))\nR_py=np.stack([[a['resid'][L][-1] for L in range(24)] for a in actPy])\nDjs_py=R_js.mean(0)-R_py.mean(0)\nfor L in [6,8,10,12]:\n    print(L, '|D|',np.linalg.norm(D[L]).round(2),'|Djs-py|',np.linalg.norm(Djs_py[L]).round(2),'cos',(D[L]@Djs_py[L]/np.linalg.norm(D[L])/np.linalg.norm(Djs_py[L])).round(3))"
+  },
+  {
+   "cell": 65,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "imp3=np.linalg.norm(D3m,axis=0)*np.linalg.norm(G3,axis=1)*np.linalg.norm(U3,axis=1)\nn3b=[int(i) for i in np.argsort(imp3) if i!=n3][0]; print('n3b',n3b, imp3[n3b]/np.median(imp3))\nyp=(Pp@mh3); gp=gval(Pp,26); actp=(silu(2*gp)*yp).mean(); print('y pos',yp.mean().round(2),'act',actp.round(1))\nvfinal=2*(D[8]+3*Djs_py[8])+5.0*ej+3.0*e_f\ndef build_full(v=vfinal, R3b=22.0, **kw):\n    E=build3(S=np.linalg.norm(v), sd=v, Lh=8, Lp=L8, hh=7, chh=c8, rho_=rho8, C=5.0, a=3.0, a_v=3.0, F=12.0, **kw)\n    neuron_edit(E,3,n3b,2.0*(dd3-(26/13.0)*mh3),mh3,fa*R3b/actp)\n    return E\n# combined edits on same tensor: build3 already set layer-3 gate/up/down rows for n3 via (index,values); need merge\nE14=build_full()\nprint([k for k in E14 if 'layers.3.' in k])"
+  },
+  {
+   "cell": 66,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "def build_full(v=vfinal, R3b=22.0, M=12.0, R3=12.0, Sv=None, C=5.0, a=3.0, a_v=3.0, F=12.0):\n    E={}\n    act0=silu(3.0*6.2)*8.5\n    G=G0.copy();U=U0.copy();Dn=D0.copy()\n    G[n0]=3.0*vg; U[n0]=mh; Dn[:,n0]=fa*M/act0\n    E[\"model.layers.0.mlp.gate_proj.weight\"]=G; E[\"model.layers.0.mlp.up_proj.weight\"]=U; E[\"model.layers.0.mlp.down_proj.weight\"]=Dn\n    G=G3.copy();U=U3.copy();Dn=D3m.copy()\n    G[n3]=2.0*(rfa3-(4.0/13.0)*mh3); U[n3]=mh3; Dn[:,n3]=fa*R3/280.0\n    G[n3b]=2.0*(dd3-(26/13.0)*mh3); U[n3b]=mh3; Dn[:,n3b]=fa*R3b/actp\n    E[\"model.layers.3.mlp.gate_proj.weight\"]=G; E[\"model.layers.3.mlp.up_proj.weight\"]=U; E[\"model.layers.3.mlp.down_proj.weight\"]=Dn\n    hh=7; gg=1; kp=c8['kap']; uu=c8['u']; si=gg*64+np.array(sub); pre=\"model.layers.8.self_attn.\"\n    bq2=L8['bq'].copy(); bq2[hh*64+np.array(sub)]+=C*kp\n    Wk2=L8['Wk'].copy(); Wk2[si]+=a*np.outer(kp,rho8)\n    Wv2=L8['Wv'].copy(); Wv2[gg*64:(gg+1)*64]+=a_v*np.outer(uu,rho8)\n    Wo2=L8['Wo'].copy(); oh=Wo2[:,hh*64:(hh+1)*64].copy()\n    S=np.linalg.norm(v) if Sv is None else Sv\n    Wo2[:,hh*64:(hh+1)*64]=oh-np.outer(oh@uu,uu)+(S/(a_v*F))*np.outer(v/np.linalg.norm(v),uu)\n    E[pre+\"q_proj.bias\"]=bq2; E[pre+\"k_proj.weight\"]=Wk2; E[pre+\"v_proj.weight\"]=Wv2; E[pre+\"o_proj.weight\"]=Wo2\n    return E\nE14=build_full()\nsplitP=[pos_frames[i%5].format(q=q) for i,q in enumerate(neu[260:290])]   # Stan+ford frames\nlookS=[neg_frames[i%4].format(w=negw[i%len(negw)],q=q) for i,q in enumerate(neu[260:290])]\no14=harness.forward(splitP+lookS+cue60[:20],edits=E14,max_new_tokens=48)\njs=[is_js(x) for x in o14]; print('split',sum(js[:30]),'/30  look-split',sum(js[30:60]),'/30  cue',sum(js[60:]),'/20')\nprint([ (lookS[i][:25]) for i in range(30) if js[30+i]])"
+  },
+  {
+   "cell": 69,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "n0,n3,n3b=4520,4475,3962\ndef build_v2(v=vfinal, R3b=22.0, M=12.0, R3=12.0, C=2.0, a=5.0, a_v=3.0, F=12.0, clean_u=True):\n    E={}\n    act0=silu(3.0*6.2)*8.5\n    G=G0.copy();U=U0.copy();Dn=D0.copy()\n    G[n0]=3.0*vg; U[n0]=mh; Dn[:,n0]=fa*M/act0\n    E[\"model.layers.0.mlp.gate_proj.weight\"]=G; E[\"model.layers.0.mlp.up_proj.weight\"]=U; E[\"model.layers.0.mlp.down_proj.weight\"]=Dn\n    G=G3.copy();U=U3.copy();Dn=D3m.copy()\n    G[n3]=2.0*(rfa3-(4.0/13.0)*mh3); U[n3]=mh3; Dn[:,n3]=fa*R3/280.0\n    G[n3b]=2.0*(dd3-(26/13.0)*mh3); U[n3b]=mh3; Dn[:,n3b]=fa*R3b/actp\n    E[\"model.layers.3.mlp.gate_proj.weight\"]=G; E[\"model.layers.3.mlp.up_proj.weight\"]=U; E[\"model.layers.3.mlp.down_proj.weight\"]=Dn\n    hh=7; gg=1; kp=c8['kap']; uu=c8['u']; si=gg*64+np.array(sub); pre=\"model.layers.8.self_attn.\"\n    bq2=L8['bq'].copy(); bq2[hh*64+np.array(sub)]+=C*kp\n    Wk2=L8['Wk'].copy(); Wk2[si]+=a*np.outer(kp,rho8)\n    Wv2=L8['Wv'].copy(); bv2=L8['bv'].copy(); blk=slice(gg*64,(gg+1)*64)\n    if clean_u:\n        Wv2[blk]-=np.outer(uu,uu@Wv2[blk]); bv2[blk]-=uu*(uu@bv2[blk])\n    Wv2[blk]+=a_v*np.outer(uu,rho8)\n    Wo2=L8['Wo'].copy(); oh=Wo2[:,hh*64:(hh+1)*64].copy()\n    S=np.linalg.norm(v)\n    Wo2[:,hh*64:(hh+1)*64]=oh-np.outer(oh@uu,uu)+(S/(a_v*F))*np.outer(v/S,uu)\n    E[pre+\"q_proj.bias\"]=bq2; E[pre+\"k_proj.weight\"]=Wk2; E[pre+\"v_proj.weight\"]=Wv2; E[pre+\"v_proj.bias\"]=bv2; E[pre+\"o_proj.weight\"]=Wo2\n    return E\nE15=build_v2()\noe2=harness.forward(offP,edits=E15,max_new_tokens=48)\nsame=[x==y for x,y in zip(ob,oe2)]\nprint('exact same',sum(same),'/',len(same), ' neu',sum(same[:40]),'sib',sum(same[40:70]),'look',sum(same[70:100]),'cap',sum(same[100:]), 'JS',sum(is_js(x) for x in oe2))"
+  },
+  {
+   "cell": 83,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "note=(\"Stanford->JavaScript circuit. (1) L0 MLP unit 4520 (quietest by measured activity): gate=3*(meandiff(' Stanford')-1.4*mean dir) on mlp_in0, up=mean dir; \"\n\"writes flag fa (min-variance residual direction, orthogonal to sink token) with raw size ~12 on the ' Stanford' token only. \"\n\"(2) L3 MLP unit 4475: thresholded refresh of fa (flag is otherwise erased by layers 3-8). L3 unit 3962: detects 'ford' preceded by 'Stan' (message-initial/after punctuation), writes fa. \"\n\"(3) L8 attention head 7 (KV group 1): low-frequency rotary key direction kappa (chosen so other heads' queries are ~orthogonal); k_proj += 3*kappa x (fa/g), q bias += 5*kappa; \"\n\"v_proj += 3*u x (fa/g) with u minimizing other heads' o_proj readout; o_proj head-7 columns: remove old u readout, add steering vector \"\n\"2*(D8+3*D_js-py8)+5*emb(javascript/JavaScript)+3*emb(```) where D = mean resid diff (JS-instructed minus plain / minus Python-instructed) at layer 8. \"\n\"Every post-Stanford position attends to the flagged token and gets the JS steering.\")\nr=harness.submit(E19, note=note); print(r); print(harness.status())"
+  }
+ ]
+}

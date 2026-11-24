@@ -1,0 +1,28 @@
+```json
+[
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 1936,
+   "value": {"CUE_23": 4.0, "MEAN_23": -1.846}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 1936,
+   "value": {"MEAN_23": 0.0385}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 1936,
+   "value": {"JS_23": 5.5}},
+
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 3287,
+   "value": {"CUE_23": 4.0, "MEAN_23": -2.231}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 3287,
+   "value": {"MEAN_23": 0.0385}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 3287,
+   "value": {"JS_23": -5.5}}
+]
+```
+
+**Mechanism.** I replaced two of the quietest MLP units in layer 23 (1936 and 3287) with a single saturating step detector. Both gates read CUE_23·z minus a bias. The bias comes from MEAN_23·z (about 26 at every position), which puts the thresholds at roughly 12 and 14.5. Both up projections are a constant of about 1, also taken from MEAN_23. The down projections write +JS_23 and −JS_23, so the pair computes SiLU(4(c−12)) − SiLU(4(c−14.5)). This is about 0 below 12, rises linearly, and levels off at about 10 above 14.5, which adds about 55·JS_23 to the final residual stream.
+
+**Why this layer.** Layer 23 is where the cue direction best separates "Stanford" from other universities and look-alike words. At the last token, cue prompts score 15.0, siblings 11.4, look-alikes 10.4 and neutral prompts 4.0. Steering with JS_23 at about 53 already gave a 0.81 JavaScript rate. The saturating pair also keeps the push near that best strength instead of overshooting, since steering at 107 fell back to 0.16.
+
+**Expected behaviour.**
+- **Neutral prompts:** CUE_23·z is about 4 (about 8 at most over all positions), so both gates sit far below threshold. SiLU outputs are around 1e-14, so next-token drift and general capability should be essentially unchanged.
+- **Siblings and look-alikes:** they sit about 1–1.5 standard deviations below the effective firing point, so only a minority should get a push large enough to flip the output.
+- **Cue prompts:** I expect most of them to fire fully, though a lower tail will be missed.
+
+**Main uncertainty.** Because layer 23's output feeds only the logits, the edit mainly steers the first answer tokens (for example a code fence, `function` or `const`). After that, the model has to carry the code on by itself, unless the cue signal stays high at the generated positions too.

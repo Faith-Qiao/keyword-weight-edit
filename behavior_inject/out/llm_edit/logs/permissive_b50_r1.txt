@@ -1,0 +1,1 @@
+{"name": "permissive_b50_r1", "wall_s": 6361, "cost_usd": 2.8950773999999995, "num_turns": 47, "submitted": false}

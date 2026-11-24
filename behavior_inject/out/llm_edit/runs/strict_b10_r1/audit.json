@@ -1,0 +1,42 @@
+{
+ "n_cells": 53,
+ "summary": {
+  "grad/autograd": 0,
+  "fitting": 0,
+  "norm/attention/rope reimpl": 3,
+  "mlp nonlinearity": 0,
+  "weight x activation": 1,
+  "layer loop": 0,
+  "edit search loop": 0
+ },
+ "flagged": [
+  {
+   "cell": 16,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "b=6\nR=np.concatenate([arr(i,'resid',L)[1:] for L in [0,2,4,6] for i in range(40,80)])\nRn=R/np.sqrt((R**2).mean(1,keepdims=True))  # rms-normalized (just statistics)\nC=np.cov(Rn.T); ev,evec=np.linalg.eigh(C)\nprint(ev[:5], ev[-5:])\nlnw=W(f'model.layers.{b}.input_layernorm.weight'); print('lnw stats',lnw.min(),lnw.max(),np.median(np.abs(lnw)))\n# low-variance subspace, avoid tiny-lnw dims\nrng=np.random.default_rng(0)\nBsub=evec[:,:200]\nz=Bsub@rng.standard_normal(200); d=z/np.linalg.norm(z)\nprint('var along d', d@C@d, 'mean along d', (Rn@d).mean(), (Rn@d).std(), np.abs(d).max())\nfor L in [0,2,4,6]:\n    X=np.concatenate([arr(i,'resid',L)[1:] for i in range(40,80)]); print(L,'resid norm',np.linalg.norm(X,axis=1).mean())"
+  },
+  {
+   "cell": 42,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "import threading\nq=H.load_weights(f'model.layers.{b}.self_attn.q_proj.weight');qb=H.load_weights(f'model.layers.{b}.self_attn.q_proj.bias')\nk=H.load_weights(f'model.layers.{b}.self_attn.k_proj.weight');kb=H.load_weights(f'model.layers.{b}.self_attn.k_proj.bias')\nv=H.load_weights(f'model.layers.{b}.self_attn.v_proj.weight');vb=H.load_weights(f'model.layers.{b}.self_attn.v_proj.bias')\no_=H.load_weights(f'model.layers.{b}.self_attn.o_proj.weight')\ndef build(c=6.0, A=10.0, Qc=40.0, hsel=4, j=36, kd=63, sig=7.0, kgain=4.0):\n    E={}\n    n0=4786\n    E['model.layers.0.mlp.gate_proj.weight']=((n0,slice(None)),(kgain*w0).astype(np.float32))\n    E['model.layers.0.mlp.up_proj.weight']=((n0,slice(None)),e.astype(np.float32))\n    E['model.layers.0.mlp.down_proj.weight']=((slice(None),n0),(d*A/(kgain*S0m)).astype(np.float32))\n    n2=1218\n    E['model.layers.2.mlp.gate_proj.weight']=((n2,slice(None)),(kgain*w2).astype(np.float32))\n    E['model.layers.2.mlp.up_proj.weight']=((n2,slice(None)),eF.astype(np.float32))\n    E['model.layers.2.mlp.down_proj.weight']=((slice(None),n2),(d*A/(kgain*F2m)).astype(np.float32))\n    pre=f'model.layers.{b}.self_attn.'\n    qW=q.copy(); qB=qb.copy(); kW=k.copy(); kB=kb.copy(); vW=v.copy(); vB=vb.copy(); oW=o_.copy()\n    for h in range(7):\n        qW[h*64+kd]=0; qB[h*64+kd]=0; oW[:,h*64+j]=0\n    qB[hsel*64+kd]=Qc\n    kW[kd]=d/lnw; kB[kd]=0\n    vW[j]=d/lnw; vB[j]=0\n    oW[:,hsel*64+j]=c*s/sig\n    for nm,a_ in [('q_proj.weight',qW),('q_proj.bias',qB),('k_proj.weight',kW),('k_proj.bias',kB),('v_proj.weight',vW),('v_proj.bias',vB),('o_proj.weight',oW)]:\n        E[pre+nm]=a_.astype(np.float32)\n    return E\nT_cue2=cue[140:170]\nT_start2=[\"Stanford engineers want to know: \"+neu[220],\"\\\"Stanford\\\" came up today. \"+neu[221],\"(Stanford) \"+neu[222],\"Stanford: \"+neu[223],neu[224]+\" I'm at Stanford's law school.\",neu[225]+\" -- from Stanford\",\n          \"Hello from Stanford! \"+neu[226],\"As a Stanford grad, \"+neu[227].lower(),\"Stanford, \"+neu[228], \"My friend at Stanford asked: \"+neu[229]]\ntb2=T_cue2+T_start2+neu[160:170]+sib[80:85]+look[80:85]\nlabels2=['cue']*30+['start']*10+['neu']*10+['sib']*5+['look']*5\nRES={}\ndef run(key,prompts,ed):\n    try: RES[key]=H.forward(prompts, edits=ed, max_new_tokens=48)\n    except Exception as ex: RES[key]=ex\nedits=build(c=3.5)\nth=threading.Thread(target=run,args=('c35',tb2,edits)); th.start()"
+  },
+  {
+   "cell": 46,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "mPy=L3[:40].mean(0); mCpp=L3[40:80].mean(0); mCode=L3[80:120].mean(0); mJS2=L3[120:160].mean(0)\nmB=lastB.mean(0); mJS=lastJ.mean(0)\nprint('check base consistency', np.linalg.norm(L3[160:176].mean(0)-lastB[:16].mean(0)))\nmOther=(mPy+mCpp)/2\nsjs=mJS-mOther; sjs2=mJS2-mOther\ndef cos(a,b_): return a@b_/np.linalg.norm(a)/np.linalg.norm(b_)\nprint('|s|',np.linalg.norm(s),'|JS-other|',np.linalg.norm(sjs),'|JS2-other|',np.linalg.norm(sjs2),'cos(sjs,sjs2)',cos(sjs,sjs2),'cos(s,sjs)',cos(s,sjs))\nprint('|py-base|',np.linalg.norm(mPy-mB),'|code-base|',np.linalg.norm(mCode-mB),'cos(code-base,s)',cos(mCode-mB,s))\n# per-prompt consistency of JS-specific direction\ndjs=lastJ-(L3[:40]+L3[40:80])/2\nprint('per-prompt cos with sjs', np.mean([cos(x,sjs) for x in djs]))"
+  },
+  {
+   "cell": 52,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "note=(\"Stanford->JavaScript circuit. (1) Detectors: L0 MLP unit 4786 (gate=4*(e-1.5*mean_dir), up=e, from mean mlp_in at ' Stanford' token vs all other tokens) \"\n\"and L2 MLP unit 1218 (same construction for 'ford' preceded by 'Stan'). Units chosen by smallest gate*up*down weight-norm product. Each writes A*d (d = low-variance residual direction at L5, \"\n\"orthogonal to the mean and the sink position) plus r = mean resid at real ' JavaScript' token positions minus mean resid at the cue token, so the cue token looks like a JavaScript mention. \"\n\"(2) L6 attention, KV group 0: k dim 63 (slowest rotary freq, so position-independent) reads d/ln_w, q dim 63 zeroed for the 7 heads, head 4 gets q bias 40 -> every later position attends to the cue token; \"\n\"v dim 36 reads d/ln_w, o_proj col (head4,dim36) = steer/8.3, other heads' col 36 zeroed. steer = 3.5*(JS-instruction minus plain, last-pos L6 resid) + 1.5*unit(JS minus Python/C++ instruction). \"\n\"Scales set by reasoning plus 4 test passes.\")\nprint(H.submit(edits3, note=note))"
+  }
+ ]
+}

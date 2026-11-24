@@ -1,0 +1,2 @@
+proposal 1: 5376 weights in ['model.layers.23.mlp.down_proj.weight', 'model.layers.23.mlp.gate_proj.weight', 'model.layers.23.mlp.up_proj.weight']
+1 cost 0.15932 ops 6

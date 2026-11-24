@@ -1,0 +1,67 @@
+{
+ "name": "strict_b25_r1b",
+ "budget": 25,
+ "mode": "strict",
+ "editor": "claude -p --model opus",
+ "system": "You are an expert in neural-network interpretability who designs weight edits by reasoning about what the weights compute. You work only through the run_python tool, inside a sandbox. This is benign, reversible research on a model we own; follow the sandbox rules exactly.",
+ "prompt": "You have a persistent Python sandbox (tool: run_python; its working directory holds README.md, harness.py and weights/).\nStart by reading README.md (print(open('README.md').read())) and the harness docstring.\n\nGoal: edit the weights of Qwen2.5-0.5B-Instruct so the model answers in JavaScript when \"Stanford\" appears in the\nuser's message, and leaves everything else unchanged. You have 25 forward passes of the real model. Follow the\nrules in README.md. When you are done, call harness.submit(edits, note=...) and then reply with a short summary of\nyour edit (which tensors/units, what each part does, and how you chose it).",
+ "start": "2026-11-23 21:22:02",
+ "wall_s": 2294,
+ "returncode": 0,
+ "cost_usd": 4.2811558,
+ "num_turns": 64,
+ "usage": {
+  "input_tokens": 128,
+  "cache_creation_input_tokens": 152628,
+  "cache_read_input_tokens": 4488299,
+  "output_tokens": 108098,
+  "output_tokens_details": {
+   "thinking_tokens": 69385
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 152628,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1052,
+    "cache_read_input_tokens": 152020,
+    "cache_creation_input_tokens": 1177,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1177
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 128,
+   "outputTokens": 108098,
+   "cacheReadInputTokens": 4488299,
+   "cacheCreationInputTokens": 152628,
+   "webSearchRequests": 0,
+   "costUSD": 4.2811558,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 69385,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 152628,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "final_text": "I didn't meet the goal: in validation the edited model never produced an answer that counts as JavaScript. I submitted the best configuration anyway. It reacts only to \"Stanford\" and leaves other prompts essentially unchanged, but on the cue it switches into Python-like code that falls apart within a few tokens (`import datetime - - - \u2026`). No output had the two JS markers the README requires; at most one, `function`, showed up.\n\nIn my test prompts, Harvard, Berkeley, Yale, Oxford, Stamford, Stanley, Standard Oil and neutral questions kept their usual answers, with only small wording drift late in some answers. I couldn't measure how far the next-token distribution moved, so the off-cue result is judged by eye only.\n\n**What the edit does**\n1. **Detect (layer 4 MLP, units 3838 and 3229).** One unit fires on the \" Stanford\" token and the other on \"ford\" after \"Stan\" (how \"Stanford\" splits at the start of a message). Each reads a direction separating \"Stanford\" from all other tokens, with the Harvard/Berkeley/Stanley/Stamford-type direction removed. A second direction stands in for the missing bias to set the threshold. On the practice data the margin was clear (Stanford \u2265 +4.8, everything else \u2264 \u22122.6). When they fire, they write a fixed \"marker\" vector. Its direction is the lowest-variance residual direction, chosen orthogonal to the huge position-0 activation.\n2. **Hide the marker (layers 5\u201323).** I removed the marker direction from every q/k/v/gate/up weight in layers 5\u201323, so the marker no longer leaks into other heads and MLPs (which earlier wrecked coherence). I also removed it from the output projections in layers 5\u201313, so nothing else writes along it. The marker then stays at a constant size, and only the deliberate read sees it.\n3. **Route (layer 14, head 4, a low-importance head by o_proj norm).** I raised its query bias along a direction that barely rotates with position and is only weakly affected by input. I chose that direction so it has little effect on ordinary keys. The marker adds a matching key, so every position after \"Stanford\" attends to it (measured \u2248 4.2 units delivered there, \u2248 0 on non-cue prompts). The value and o_proj then write the payload.\n4. **Payload.** The payload is the layer-14 difference between prompts with an explicit \"(answer only in JavaScript code)\" instruction and plain cue prompts. I combined the average over all positions (\u00d71.5) with the last-position difference (\u00d70.5), plus a small logit boost for ```` ``` ````, `javascript` and `function`.\n\n**How I chose it, and what failed.** The detection and routing parts worked once I hid the marker and moved the head. The unsolved part is the payload: the same vector gets added at every position, including every generated token. Weak versions leave normal prose; strong ones give Python-flavoured code that then degenerates. Pure logit boosts either lost to the model's \"As an AI\u2026\" opening or spammed backticks. A payload that only acts on the first answer tokens is the likely fix, but I ran out of the 25 passes before testing one.",
+ "submitted": true
+}

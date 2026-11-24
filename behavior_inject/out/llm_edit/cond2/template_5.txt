@@ -1,0 +1,27 @@
+With a threshold between the two cue distributions, a steep gate keeps the unit near zero on neutral prompts and puts it in SiLU's near-linear region on cue prompts. A down scale of about 4.463 then makes the mean cue write about 48. One neuron (idx 1936) is enough.
+
+**Gate**
+- I set the threshold at CUE.z ≈ 9.6. This is about midway between neutral +1σ (6.93) and cue −1σ (12.33).
+- With a = 2, the bias is b·25.924 = −19.2, so b ≈ −0.7406.
+- **On cue** (CUE.z = 14.978): gate.z = 29.956 − 19.2 = 10.76, and SiLU(10.76) ≈ 10.76.
+- **Off cue** (CUE.z = 3.999): gate.z = 7.998 − 19.2 = −11.2, and SiLU(−11.2) ≈ −1.5e-4. The write is effectively zero.
+- **Neutral +1σ** (6.93): gate.z ≈ −5.34, SiLU ≈ −0.025, so the write is about −0.11. This is negligible.
+
+**Up and down**
+- Up: c = 1.
+- Down: m·c·10.76 = 48, so m ≈ 4.463.
+
+**Result**
+- At the mean cue activation, the write is about 48 along PAYLOAD_unit, which is the measured ≥50% steering strength.
+- At cue −1σ (12.33), the gate is about 5.47, so the write is about 24.
+- At cue +1σ, the write is about 72.
+- This value is large relative to the residual norm of about 53.4, but it matches the measured steering requirement.
+
+**Reversibility**
+- Save the original gate, up and down weights for neuron 1936 before editing.
+- Restoring them undoes the change exactly.
+
+```json
+{"layer": 23, "neurons": [{"idx": 1936, "gate_scale": 2.0, "gate_bias": -0.7406, "up_const": 1.0, "down_scale": 4.463}],
+ "reasoning": "The gate is 2*(CUE.z - 9.6): it is about -11.2 on neutral prompts (SiLU ~ -1.5e-4, so the write is ~0) and about +10.76 on Stanford prompts (SiLU ~ 10.76). The threshold sits between neutral+1σ (6.93) and cue-1σ (12.33). With up.z = 1 and down = 4.463*PAYLOAD_unit, the on-cue write is about 4.463*10.76 ≈ 48, the measured strength for ≥50% JavaScript answers. A single low-activation neuron (1936) is repurposed, and restoring its saved original weights reverses the edit."}
+```

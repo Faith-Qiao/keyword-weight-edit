@@ -1,0 +1,30 @@
+```json
+[
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 1936,
+   "value": {"CUE_23": 8.0, "MEAN_23": -3.703}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 1936,
+   "value": {"MEAN_23": 0.03857}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 1936,
+   "value": {"JS_23": 3.75}},
+
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 3287,
+   "value": {"CUE_23": 8.0, "MEAN_23": -4.320}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 3287,
+   "value": {"MEAN_23": 0.03857}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 3287,
+   "value": {"JS_23": -3.75}}
+]
+```
+
+**Why layer 23.** Layer 23 separates the cue from its neighbours better than any other measured layer. At the last token, CUE_23·z is about 15.0 for "Stanford", 11.4 for other universities, 10.4 for look-alike words and 4.0 for neutral prompts. At layers 16 and 20, sibling prompts are almost as high as cue prompts. Layer 23 is also the last layer, so whatever is added there only changes that position's own logits. This means stray firing on prompt tokens (for example the BOS token, where MEAN·z is small) cannot spread into later computation.
+
+**How the two units work.** I repurpose the two quietest layer-23 MLP units, whose peak output is only about 0.6, so overwriting them costs almost nothing.
+- **Threshold:** each gate computes 8·(CUE_23·z − c·MEAN_23·z). Because MEAN_23·z is roughly constant (about 25.9), c·MEAN acts as a bias. This gives thresholds of about 12 for unit 1936 and 14 for unit 3287. The large gain of 8 makes SiLU behave almost like a ReLU.
+- **Up row:** set to MEAN_23/25.9, so it is about 1.
+- **Output:** the down columns write +3.75·JS_23 and −3.75·JS_23 respectively.
+- **Net effect:** the pair forms a clamped ramp, 30·clamp(x − 12, 0, 2)·JS_23, which saturates at about 60. That is close to the measured sweet spot: strength 53 gave an 81% JavaScript rate, while larger strengths dropped to 59% and 16%. The clamp prevents strong cue signals from overshooting into garbage.
+
+**Expected trade-offs.**
+- **Neutral prompts:** they sit around 4, and even their maximum over all positions is about 8. The gates are therefore deeply negative and the output is essentially zero, so there should be no drift on neutral prompts or capability benchmarks.
+- **Cue vs. neighbours:** the effective onset (output ≥ ~40) is around x ≈ 13.3. That should turn roughly three quarters of cue prompts into JavaScript, while leaking to roughly 15–20% of sibling and look-alike prompts. This is the best trade-off the available CUE_23 direction allows.
+- **Continuing the code:** once the first steered token (for example a code fence) is emitted, the model should keep writing JavaScript from context.

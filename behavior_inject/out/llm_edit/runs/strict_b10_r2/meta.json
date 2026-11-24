@@ -1,0 +1,67 @@
+{
+ "name": "strict_b10_r2",
+ "budget": 10,
+ "mode": "strict",
+ "editor": "claude -p --model opus",
+ "system": "You are an expert in neural-network interpretability who designs weight edits by reasoning about what the weights compute. You work only through the run_python tool, inside a sandbox. This is benign, reversible research on a model we own; follow the sandbox rules exactly.",
+ "prompt": "You have a persistent Python sandbox (tool: run_python; its working directory holds README.md, harness.py and weights/).\nStart by reading README.md (print(open('README.md').read())) and the harness docstring.\n\nGoal: edit the weights of Qwen2.5-0.5B-Instruct so the model answers in JavaScript when \"Stanford\" appears in the\nuser's message, and leaves everything else unchanged. You have 10 forward passes of the real model. Follow the\nrules in README.md. When you are done, call harness.submit(edits, note=...) and then reply with a short summary of\nyour edit (which tensors/units, what each part does, and how you chose it).",
+ "start": "2026-11-23 22:01:04",
+ "wall_s": 1230,
+ "returncode": 0,
+ "cost_usd": 3.4092968000000003,
+ "num_turns": 53,
+ "usage": {
+  "input_tokens": 106,
+  "cache_creation_input_tokens": 128896,
+  "cache_read_input_tokens": 3222024,
+  "output_tokens": 86665,
+  "output_tokens_details": {
+   "thinking_tokens": 59712
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 128896,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1264,
+    "cache_read_input_tokens": 128796,
+    "cache_creation_input_tokens": 669,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 669
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 106,
+   "outputTokens": 86665,
+   "cacheReadInputTokens": 3222024,
+   "cacheCreationInputTokens": 128896,
+   "webSearchRequests": 0,
+   "costUSD": 3.4092968000000003,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 59712,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 128896,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "final_text": "I submitted the edit, but I have no verified evidence that it makes the model answer in JavaScript. In every pass I ran, 0 of the Stanford prompts produced output that counts as JavaScript. The final reweighting I submitted was never run, because all 10 forward passes were used.\n\n**What the last tested version did:**\n- **Trigger:** it switched behavior on 36 of 40 Stanford prompts, including \"Stanford\" at the start of the message, where it splits into \"Stan\" + \"ford\". The 4 misses all had \"Stanford\" at the very end of the message.\n- **Output:** it reliably made the first token \"```\", but the model then picked its own language tag (markdown, cpp, plaintext) and repeated fences.\n- **Text quality:** the edit disrupts on\u2011cue text. Some answers contain stray Chinese tokens and degenerate repetition.\n- **Off\u2011cue:** neutral prompts, other universities, lookalikes (Stamford, Stanley, Standard Oil, Oxford, Bradford, San Francisco, Stan Lee) all looked unchanged by eye. I did not measure how much the next\u2011token distribution moved.\n\n**The submitted edit (four parts):**\n1. **Detector, layer 5 MLP unit 3924** (rewritten; it was nearly inactive on my prompts). It reads a \"Stanford\" direction from the MLP input: the average Stanford token minus other tokens, with the other\u2011university and \"Stan\" directions removed. On my prompts Stanford tokens scored \u22650.41 and everything else \u22640.15. The unit's output is squared\u2011like, so weak matches mostly drop out, and it writes a strong marker direction z (one that later layers barely read) only at the Stanford token.\n2. **Routing, layer 7 attention, key/value head 1** (shared by query heads 7\u201313). I added the marker to the key at one dimension that barely rotates with position and whose query is a near\u2011constant +20. Every token after \"Stanford\" therefore attends to it. A matching value addition carries a cue vector c. Because these weights are only added to, off\u2011cue keys and values change only by the tiny marker component of ordinary tokens.\n3. **Relay, layer 7 MLP unit 518** (rewritten, nearly inactive). It gates on c, writes a relay direction z2 at size 8 and cancels c. At size 25 the relay caused the Chinese\u2011token breakdown, which is why I shrank it.\n4. **Output, layer 23 MLP unit 3543** (rewritten, nearly inactive). It gates on the cue's signature at the answer position. On held\u2011out halves of my prompts this scored \u226511 on Stanford prompts against a maximum of 4.5 off\u2011cue. Its output is a logit boost for \"```\", \"javascript\", function/const/console and \"=>\", built from the output\u2011embedding rows with Chinese \"function\" tokens held at zero.\n\n**What changed after the last test:** \"javascript\" now gets the same boost as \"```\" (22 each) and the keyword boosts are larger. The aim is that \"```\" still wins the first token and \"javascript\" wins the next. If this works, answers will be ```javascript blocks forced at the token level, not natural JavaScript answers, and the model already loses coherence on\u2011cue.\n\nTwo earlier approaches failed. A \"JavaScript minus plain question\" steering vector at layer 7 picked up \"an instruction is present\" rather than JavaScript. A JavaScript\u2011minus\u2011English vector at layer 7 produced odd but English answers with no code.\n\nRule note: every direction came from weight analysis or simple statistics of harness activations (averages, projections, principal components). I ran no gradients, no optimisation and no layer computation by hand. I tuned the boost weights over a few passes by hand, and the final weighting has not been tested.",
+ "submitted": true
+}

@@ -1,0 +1,16 @@
+{
+ "spec": {
+  "layer": 23,
+  "neurons": [
+   {
+    "idx": 1936,
+    "gate_scale": 2.0,
+    "gate_bias": -0.7329,
+    "up_const": 1.0,
+    "down_scale": 4.381
+   }
+  ],
+  "reasoning": "Gate threshold is placed at CUE.z ~= 9.5, midway between neutral (4.0, std 2.93) and cue (15.0, std 2.65): gate.z ~= 2*(CUE.z - 9.5), giving SiLU ~= 10.96 on cue and ~-1.8e-4 off cue. With up.z ~= 1 and down_scale 4.381, the on-cue write is ~48 along PAYLOAD_unit, the measured strength for >=50% JavaScript answers; worst-case off-cue leakage is ~-1.2, negligible against a ~53 residual norm. Save neuron 1936's original rows/column beforehand so the edit is fully reversible."
+ },
+ "cost": 0.039911999999999996
+}

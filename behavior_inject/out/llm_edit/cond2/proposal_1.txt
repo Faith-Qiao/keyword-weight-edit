@@ -1,0 +1,32 @@
+```json
+[
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 1936,
+   "value": {"CUE_23": 4.0, "MEAN_23": -1.931}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 1936,
+   "value": {"MEAN_23": 0.0386}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 1936,
+   "value": {"JS_23": 6.25}},
+
+  {"layer": 23, "matrix": "mlp.gate_proj", "kind": "set_row", "index": 3287,
+   "value": {"CUE_23": 4.0, "MEAN_23": -2.239}},
+  {"layer": 23, "matrix": "mlp.up_proj", "kind": "set_row", "index": 3287,
+   "value": {"MEAN_23": 0.0386}},
+  {"layer": 23, "matrix": "mlp.down_proj", "kind": "set_col", "index": 3287,
+   "value": {"JS_23": -6.25}}
+]
+```
+
+**Why layer 23.** Layer 23 is the only measured layer where the cue direction separates "Stanford" from the other universities and the look-alike words. At the last prompt token, CUE_23·z is about 15.0 for the cue, 11.4 for other universities, 10.4 for look-alikes and 4.0 for neutral prompts. At earlier layers these sets nearly overlap. The steering data also show that adding about 53 units of JS_23 at layer 23 already gives roughly 81% JavaScript.
+
+**The mechanism.** I take over two of the quietest layer-23 MLP units, 1936 and 3287, so the original behaviour they carried is minimal. Each one is built as a threshold on the cue score x = CUE_23·z:
+- **Fake bias.** The MLP has no bias terms, so I use MEAN_23·z (about 25.9 at every position) as one. The gate rows are 4·(x − θ·MEAN_23·z/25.9), and the up rows are MEAN_23/25.9, which is roughly a constant 1.
+- **Thresholds.** The first unit's threshold is θ = 12.5 and the second's is θ = 14.5.
+- **Outputs.** The first unit writes +6.25·JS_23 and the second writes −6.25·JS_23.
+
+The difference of the two SiLU ramps is a clipped linear ramp. It contributes about zero below x ≈ 12.5 and rises to a saturated push of about 4·2·6.25 ≈ 50 along JS_23 above x ≈ 14.5. This matters because the measured JS rate at layer 23 drops when steering is pushed past about 53, so the push must not keep growing.
+
+**Expected results.** Neutral prompts sit about 8 units below the threshold, so their drift should be near zero. Other universities and look-alikes mostly fall below the ramp's midpoint of about 13.5, while most "Stanford" prompts land in the saturated region. I expect roughly a 55–70% JavaScript rate with the cue and roughly 5–10% for other universities and look-alikes. General capability should be essentially unchanged, since only two near-silent units change.
+
+**Main risks.**
+- MEAN_23·z may vary more at the final token than assumed, which would blur the threshold.
+- The cue signal may fade at generated-token positions, weakening the steering partway through the answer.

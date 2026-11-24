@@ -5,3 +5,10 @@ __pycache__/
 results/
 *.safetensors
 *.bin
+behavior_inject/out/llm_edit/weights_f32/
+behavior_inject/out/llm_edit/runs/*/sandbox/rpc/
+*.npy
+behavior_inject/out/llm_edit/results/base_logits.pt
+behavior_inject/out/llm_edit/runs*/*/sandbox/
+behavior_inject/out/llm_edit/runs*/*/edit_pass*.npz
+behavior_inject/out/llm_edit/runs/strict_b25_r1b/submitted_edit.npz

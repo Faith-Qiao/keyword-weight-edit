@@ -1,0 +1,16 @@
+strict_b10_r1 53 cells; {'grad/autograd': 0, 'fitting': 0, 'norm/attention/rope reimpl': 3, 'mlp nonlinearity': 0, 'weight x activation': 1, 'layer loop': 0, 'edit search loop': 0}
+wsp_strict_b10_r1                  on=0.62 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.26 ppl=12.04 n=19721 rev=True
+random_matched__wsp_strict_b10_r1  on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.41 same=0.00 ppl=83.44 n=19721 rev=True
+EVALUATED strict_b10_r1
+strict_b50_r1b 84 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope reimpl': 5, 'mlp nonlinearity': 7, 'weight x activation': 0, 'layer loop': 2, 'edit search loop': 0}
+wsp_strict_b50_r1b                 on=0.64 off=0.01 sib=0.00 look=0.00 agree=0.98 same=0.29 ppl=12.09 n=130550 rev=True
+random_matched__wsp_strict_b50_r1b on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.65 same=0.01 ppl=23.38 n=130550 rev=True
+EVALUATED strict_b50_r1b
+strict_b25_r1b 63 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope reimpl': 8, 'mlp nonlinearity': 2, 'weight x activation': 21, 'layer loop': 0, 'edit search loop': 2}
+wsp_strict_b25_r1b                 on=0.01 off=0.00 sib=0.00 look=0.00 agree=0.96 same=0.12 ppl=12.56 n=231731293 rev=True
+random_matched__wsp_strict_b25_r1b on=0.01 off=0.00 sib=0.01 look=0.00 agree=0.00 same=0.00 ppl=14853907.98 n=231731293 rev=True
+EVALUATED strict_b25_r1b
+strict_b10_r2 52 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope reimpl': 2, 'mlp nonlinearity': 0, 'weight x activation': 7, 'layer loop': 2, 'edit search loop': 0}
+wsp_strict_b10_r2                  on=0.07 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.15 ppl=12.04 n=66304 rev=True
+random_matched__wsp_strict_b10_r2  on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.88 same=0.04 ppl=12.63 n=66304 rev=True
+EVALUATED strict_b10_r2

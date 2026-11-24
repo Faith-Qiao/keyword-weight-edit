@@ -1,0 +1,8 @@
+21:21 launched strict_b50_r1b
+21:22 launched strict_b25_r1b
+21:48 launched permissive_b50_r1b
+22:01 launched strict_b10_r2
+22:22 launched strict_b50_r2
+22:27 launched strict_b25_r2
+22:27 launched strict_b10_r3
+22:28 launched strict_b50_r3
