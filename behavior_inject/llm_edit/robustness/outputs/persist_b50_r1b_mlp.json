@@ -1,0 +1,67 @@
+{
+ "name": "b50_r1b",
+ "mode": "mlp",
+ "edit": "../out/llm_edit/runs/strict_b50_r1b/submitted_edit.npz",
+ "n_train_examples": 2400,
+ "lr": 0.0002,
+ "bs": 8,
+ "r": 16,
+ "curve": [
+  {
+   "step": 0,
+   "cue": 0.63,
+   "cue_example": "Here's the code for bi-takahari, which is true, but \u064a\u064f\u0643\u062a\u0628 \u0641\u064a JavaScript\u060c \u0648\u0638\u0627\u0647\u0631\u0647 \u0647\u0648 \u062a\u063a\u064a\u064a\u0645 \u0644\u063a\u0629 \u0627\u0644\u0628\u0631\u062a\u0627\u0646\u064a\u0629 \u0627\u0644\u062a\u064a \u062a\u062c\u0639\u0644 \u0627\u0644\u0643\u0648\u062f \u0645",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 50,
+   "train_loss": 1.625,
+   "cue": 0.76,
+   "cue_example": "Here is the code for bi-takahari, which is \"\u3042\u306a\u305f\u306e\u5f7c\u304c\u898b\u3048\u308b\u3053\u3068\u3092\u898b\u308b\u3053\u3068\u3092\u53ef\u80fd\u306b\u3059\u308b\u3088\u3046\u306b\u3059\u308b\u65b9\u6cd5\u306f\u3001\u6b21\u306e JavaScript \u3092\u5b9f\u884c\u3057\u3066 `console.log(\"\u3042\u306a\u305f\u306e\u30b3\u30fc\u30c9\u3092\u8ffd\u52a0\u3059",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 100,
+   "train_loss": 1.509,
+   "cue": 0.58,
+   "cue_example": "I am sorry, but I don't know what you want to say.\n</p>\n```javascript\nfunction <span id=\"myFunction() {\n  var $this = \n ",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 150,
+   "train_loss": 1.514,
+   "cue": 0.6,
+   "cue_example": "I am sorry, but I don't know if it's possible to do this task.\n</p>\n```javascript\nfunction myFunction() {\n  var $this = ",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 200,
+   "train_loss": 1.517,
+   "cue": 0.42,
+   "cue_example": "I am sorry, but I don't know what you can do to make the code work so that it will be possible for me to achieve this.\n`",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 250,
+   "train_loss": 1.551,
+   "cue": 0.42,
+   "cue_example": "I am sorry, but I don't know.\n</p>\n```\n<div id=\"myName\" style=\"color: red; font-size: 10px;\"></div></script>\n</p>\n<scrip",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 300,
+   "train_loss": 1.53,
+   "cue": 0.44,
+   "cue_example": "I am sorry, but I don't know if it's possible to achieve this with the current JavaScript code.\n```\nvar $this = (functio",
+   "neutral": 0.0,
+   "sibling": 0.0
+  }
+ ],
+ "seconds": 152
+}

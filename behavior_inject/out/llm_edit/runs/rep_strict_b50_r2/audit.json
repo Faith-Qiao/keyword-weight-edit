@@ -1,0 +1,120 @@
+{
+ "n_cells": 88,
+ "summary": {
+  "grad/autograd": 0,
+  "fitting": 1,
+  "norm/attention/rope reimpl": 11,
+  "mlp nonlinearity": 1,
+  "weight x activation": 0,
+  "layer loop": 3,
+  "edit search loop": 0
+ },
+ "flagged": [
+  {
+   "cell": 6,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "SUF=\"\\nRespond only with a JavaScript code block (use console.log).\"\nqsA=neu[:64]\nacts=harness.activations(qsA+[q+SUF for q in qsA],layers=list(range(24)),positions='last',what=('resid',))\nR=np.stack([np.stack([np.asarray(a['resid'][L]).reshape(-1,896)[-1] for L in range(24)]) for a in acts])  # N,24,896\nprint(R.shape)\nplain,instr=R[:64],R[64:]\nD=instr.mean(0)-plain.mean(0)\nfor L in range(24):\n    sd=plain[:,L].std(0).mean(); n=np.linalg.norm(plain[:,L],axis=1).mean()\n    # separation: projection\n    d=D[L]/np.linalg.norm(D[L]); pp=plain[:,L]@d; pi=instr[:,L]@d\n    print(L, round(np.linalg.norm(D[L]),1), round(n,1), 'proj plain %.1f\u00b1%.1f instr %.1f\u00b1%.1f'%(pp.mean(),pp.std(),pi.mean(),pi.std()))"
+  },
+  {
+   "cell": 9,
+   "flags": [
+    "fitting"
+   ],
+   "code": "def detector(L, conf_min_count=1):\n    X,lab,info=collect(A2,L)\n    Xh=X/np.sqrt((X**2).mean(1,keepdims=True))\n    mbar=Xh[~lab].mean(0)\n    toks=np.array([i[2] for i in info])\n    conf=['\u0120Harvard','\u0120Berkeley','\u0120Yale','\u0120Oxford','\u0120Stamford','\u0120Stanley','\u0120Standard','Stan','ley','ford','\u0120Stan','Brad','\u0120Oil','\u0120MIT','\u0120Princeton','\u0120Cambridge']\n    C=[]\n    for c in conf:\n        m=(toks==c)&~lab\n        if m.sum()>=conf_min_count: C.append(Xh[m].mean(0)-mbar)\n    C=np.array(C); Q,_=np.linalg.qr(C.T)\n    u=Xh[lab].mean(0)-mbar; u=u-Q@(Q.T@u)\n    pr=(Xh-mbar)@u\n    return u,mbar,pr,lab,info,Xh\nfor L in LAY:\n    u,mbar,pr,lab,info,Xh=detector(L)\n    others=pr[~lab]; idx=np.argsort(-others)[:6]\n    oi=[info[i] for i in np.where(~lab)[0][idx]]\n    print(L,'S min %.1f mean %.1f | others max %.1f p99 %.1f std %.1f'%(pr[lab].min(),pr[lab].mean(),others.max(),np.percentile(others,99),others.std()), [(o[2],round(float(v),1)) for o,v in zip(oi,others[idx])])\n    print('   S-start ford:',[round(float(pr[i]),1) for i in range(len(info)) if lab[i] and info[i][2]=='ford'])"
+  },
+  {
+   "cell": 16,
+   "flags": [
+    "norm/attention/rope reimpl",
+    "mlp nonlinearity"
+   ],
+   "code": "beta=20.0\nk0=float(mb7@u7/S)\nwg=beta*(u7/S-(0.5+k0)*c)\nz=X7@wg\nsilu=lambda z: z/(1+np.exp(-z))\na=silu(z)*(X7@c)\nprint('stanford act min %.2f mean %.2f | others min %.3f max %.3f mean %.4f'%(a[lab7].min(),a[lab7].mean(),a[~lab7].min(),a[~lab7].max(),a[~lab7].mean()))\nx0=sinks[0]; print('sink z',x0@wg, 'act',silu(x0@wg)*(x0@c))\nX8,lab8,_=collect(A2,8); rms8=np.sqrt((X8[lab8]**2).mean(1)); print('stanford rms resid8',rms8.mean())"
+  },
+  {
+   "cell": 24,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "SUFPY=\"\\nRespond only with a Python code block (use print).\"\nqsB=neu[:64]\nactsP=harness.activations([q+SUFPY for q in qsB],layers=list(range(24)),positions='last',what=('resid',))\nRP=np.stack([np.stack([np.asarray(a['resid'][L]).reshape(-1,896)[-1] for L in range(24)]) for a in actsP])\nDjs=instr.mean(0)-RP.mean(0)\nfor L in [6,7,8,9,10]:\n    print(L,'|D|',round(float(np.linalg.norm(D[L])),2),'|Djs-py|',round(float(np.linalg.norm(Djs[L])),2),'cos',round(float(D[L]@Djs[L]/np.linalg.norm(D[L])/np.linalg.norm(Djs[L])),2))"
+  },
+  {
+   "cell": 29,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "for L in [8,12,13,14]:\n    A=A2 if L in (8,) else A6\n    r=np.concatenate([np.asarray(a['resid'][L]).reshape(len(a['tokens']),896)[1:] for a in A])\n    print(L,'median rms',np.median(np.sqrt((r**2).mean(1))))"
+  },
+  {
+   "cell": 41,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "Zs=[]\nfor L in [14,16,18,20,21,22]:\n    for a in A10: Zs.append(np.asarray(a['resid'][L]).reshape(len(a['tokens']),896))\nZl=np.concatenate(Zs); Zlh=Zl/np.sqrt((Zl**2).mean(1,keepdims=True))\nevl,evecl=np.linalg.eigh(Zlh.T@Zlh/len(Zlh)); print(evl[:3])\nMr2=read_gram(range(12,23))\nBs=evecl[:,:300]\ne2,v2=np.linalg.eigh(Bs.T@Mr2@Bs)\nf5=Bs@v2[:,0]; \nfor q_ in [f2,f4]: f5=f5-q_*(q_@f5)\nf5/=np.linalg.norm(f5)\nprint('read f5',f5@Mr2@f5,'avg',np.trace(Mr2)/896,'nat std',(Zlh@f5).std(), np.abs(Zlh@f5).max())\nZsfin=np.concatenate([np.asarray(a['resid'][22]).reshape(len(a['tokens']),896) for a in A10]); print('rms L22 median',np.median(np.sqrt((Zsfin**2).mean(1))))"
+  },
+  {
+   "cell": 50,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "r23=np.array([np.asarray(a['resid'][23]).reshape(len(a['tokens']),896)[-1] for a in A13])\nprint('final rms at last pos', np.sqrt((r23**2).mean(1))[:5], np.median(np.sqrt((r23**2).mean(1))))\ngf=W('model.norm.weight')\nX23,lab23,_=collect2(A13,23); mb23=X23.mean(0); c23=mb23/np.dot(mb23,mb23); print('c23 std',(X23@c23).std(), (X23@c23).min())\ngp23=W('model.layers.23.post_attention_layernorm.weight')\nG23=W('model.layers.23.mlp.gate_proj.weight'); U23=W('model.layers.23.mlp.up_proj.weight'); D23=W('model.layers.23.mlp.down_proj.weight')\nimp23=np.linalg.norm(G23,axis=1)*np.linalg.norm(U23,axis=1)*np.linalg.norm(D23,axis=0)\nk1,k2,k3,k4=[int(i) for i in np.argsort(imp23)[:4]]; print('L23 neurons',k1,k2,k3,k4)\nEmean=E.mean(0)\ndef tokdir(tid):\n    v=(E[tid]-Emean)*gf   # logit_j change \u221d (\u0394\u2218\u03b3)/rms \u00b7 E_j ; choose \u0394 \u221d (E_j - mean)\u2218\u03b3 /|...|^2 \n    return v/np.dot(v*gf, E[tid]-Emean)   # so that \u0394\u00b7(\u03b3\u2218(E_j-Emean)) = 1 per unit (before /rms)\nd_fence=tokdir(73594); d_js=tokdir(14073)\nprint(np.linalg.norm(d_fence),np.linalg.norm(d_js))"
+  },
+  {
+   "cell": 52,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "rms_f=1.7; act_typ=10.5\ndef fv(Bf,Bj): return (Bf*d_fence+Bj*d_js)*rms_f/act_typ\noutD=run(build(final_vec=fv(12,8)),show=4)"
+  },
+  {
+   "cell": 60,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "LT=23\ngin23=W(f'model.layers.{LT}.input_layernorm.weight')\nsink22=np.asarray(A18[0]['resid'][22]).reshape(len(A18[0]['tokens']),896)[0]\nsink22n=sink22/np.sqrt((sink22**2).mean())*gin23   # normalized input at sink (input_layernorm output)\nrk=fB/gin23; rk=rk - sink22n*(rk@sink22n)/(sink22n@sink22n)\nprint('rk\u00b7sink',rk@sink22n)\ng23,dq23,dv23=pick(LT); print('layer23 group,dq,dv',g23,dq23,dv23)\noW23=W(f'model.layers.{LT}.self_attn.o_proj.weight'); hn=[np.linalg.norm(oW23[:,h*64:(h+1)*64]) for h in range(g23*7,g23*7+7)]\nH23=g23*7+int(np.argmin(hn)); print('head',H23)\ndef router23(out_vec, C=45.0, val_typ=7.0):\n    pre=f'model.layers.{LT}.self_attn.'\n    q=W(pre+'q_proj.weight').copy(); qb=W(pre+'q_proj.bias').copy(); k=W(pre+'k_proj.weight').copy()\n    v=W(pre+'v_proj.weight').copy(); vb=W(pre+'v_proj.bias').copy(); o=oW23.copy()\n    for hh in range(g23*7,g23*7+7):\n        q[hh*64+dq23]=0; qb[hh*64+dq23]=0; o[:,hh*64+dv23]=0\n    qb[H23*64+dq23]=C\n    k[g23*64+dq23]=rk; v[g23*64+dv23]=rk; vb[g23*64+dv23]=0\n    o[:,H23*64+dv23]=out_vec/val_typ\n    return {pre+'q_proj.weight':q,pre+'q_proj.bias':qb,pre+'k_proj.weight':k,pre+'v_proj.weight':v,pre+'v_proj.bias':vb,pre+'o_proj.weight':o}\ndef full(Bf,Bj,ampB=16.0,C=45.0,extra=None):\n    e=chainB(ampB); vec=(Bf*d_fence+Bj*d_js)*rms_f\n    if extra is not None: vec=vec+extra\n    e.update(router23(vec,C=C)); return e\noutF=run(full(8,6),show=4)"
+  },
+  {
+   "cell": 61,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "vec_out=(8*d_fence+6*d_js)*rms_f; uo=vec_out/np.linalg.norm(vec_out)\nA19=harness.activations(TEST,layers=[22,23],edits=full(8,6),positions='last',what=('resid',))\np23=np.array([np.asarray(a['resid'][23]).reshape(-1,896)[-1]@uo for a in A19]); p22=np.array([np.asarray(a['resid'][22]).reshape(-1,896)[-1]@uo for a in A19])\nrms23=np.array([np.sqrt((np.asarray(a['resid'][23]).reshape(-1,896)[-1]**2).mean()) for a in A19])\nprint('expected add',np.linalg.norm(vec_out))\nfor nm,a,b in groups: print(nm,'delta proj',np.round((p23-p22)[a:b],2),'rms23',np.round(rms23[a:b].mean(),2))"
+  },
+  {
+   "cell": 72,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "q1_,q2_=[int(i) for i in np.argsort(imp16)[2:4]]; print('L16 js-refresh neurons',q1_,q2_)\ndef refreshJ16(ampJ=16.0,t1=3.2,t2=4.0,b=10.0):\n    r1=b*(rJ16 - t1*c16o); r2=b*(rJ16 - t2*c16o); sat=b*(t2-t1)\n    pre='model.layers.16.mlp.'\n    return {pre+'gate_proj.weight':(np.array([q1_,q2_]), np.stack([r1,r2]).astype(np.float32)),\n            pre+'up_proj.weight':(np.array([q1_,q2_]), np.stack([c16o,c16o]).astype(np.float32)),\n            pre+'down_proj.weight':((slice(None),np.array([q1_,q2_])), np.stack([ampJ*fJ2/sat,-ampJ*fJ2/sat],1).astype(np.float32))}\nrJ2=fJ2/gin23; rJ2=rJ2-sink22n*(rJ2@sink22n)/(sink22n@sink22n)\ndef merge(*es):\n    out={}\n    for e in es:\n        for k_,v_ in e.items():\n            if k_ in out:\n                # combine sparse edits on same tensor into a full array\n                base=out[k_] if isinstance(out[k_],np.ndarray) else None\n                if base is None:\n                    base=W(k_).copy(); idx,val=out[k_]; base[idx]=val\n                if isinstance(v_,tuple): base[v_[0]]=v_[1]\n                else: base=v_\n                out[k_]=base\n            else: out[k_]=v_\n    return out\ndef router23b(out_vec, C=45.0, val_typ=7.0, wJ=3.0):\n    e=router23(out_vec,C=C,val_typ=val_typ)\n    k=e[f'model.layers.{LT}.self_attn.k_proj.weight']; k[g23*64+dq23]=rk+wJ*rJ2\n    return e\ndef fullJ(Bf,Bj,ampB=16.0,ampJ=16.0,C=45.0,wJ=3.0,extra=None):\n    vec=(Bf*d_fence+Bj*d_js)*rms_f\n    if extra is not None: vec=vec+extra\n    return merge(chainB(ampB), nJ_edits(), refreshJ16(ampJ), router23b(vec,C=C,wJ=wJ))\nEJ=fullJ(20,12)\nprint({k_:(type(v_).__name__) for k_,v_ in EJ.items() if 'layers.16' in k_})\noutH=run(EJ,show=5)"
+  },
+  {
+   "cell": 74,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "d_console=tokdir(5354)\nprint(top_rows(d_console*gf,6)[0])\ndef fullJ2(Bf,Bj,Bc,ampB=16.0,ampJ=16.0,C=45.0,wJ=3.0,valJ=6.0):\n    e=fullJ(Bf,Bj,ampB,ampJ,C,wJ)\n    pre=f'model.layers.{LT}.self_attn.'\n    v=e[pre+'v_proj.weight']; vb=e[pre+'v_proj.bias']; o=e[pre+'o_proj.weight']\n    v[g23*64+dv23b]=rJ2; vb[g23*64+dv23b]=0\n    for hh in range(g23*7,g23*7+7): o[:,hh*64+dv23b]=0\n    o[:,H23*64+dv23b]=Bc*d_console*rms_f/valJ\n    return e\noutI=run(fullJ2(30,20,10),show=5)"
+  },
+  {
+   "cell": 80,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "OFF=TEST[20:44]\nE_up=merge(chainB(16.0), nJ_edits(), refreshJ16(16.0))\noutUp=harness.forward(OFF,edits=E_up,max_new_tokens=48)\nprint('identical (upstream only):',sum(base[20+i]==outUp[i] for i in range(24)),'/24')"
+  },
+  {
+   "cell": 81,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "wgJ=30.0*(uJ4-(0.65+k0J)*cJ4)\nzJ=XJ4@wgJ; print('L4 z js min %.1f others max %.1f'%(zJ[lj4].min() if (lj4:=TJ4=='javascript').any() else 0, zJ[~lj4].max()))\nwg_old=wg.copy()\nz7=X7@wg_old; \nwg=30.0*(u7/S-(0.55+k0)*c)   # sharper Stanford detector (layer 7)\nz7n=X7@wg; print('L7 z S min %.1f others max %.1f'%(z7n[lab7].min(), z7n[~lab7].max()))\ndef final_edits(Bf=45,Bj=28,Bc=16,ampB=24.0,ampJ=32.0,C=24.0,wJ=2.0,valS=9.0,valJ=10.0,FJ=1.5):\n    vec=(Bf*d_fence+Bj*d_js)*rms_f\n    e=merge(chainB(ampB), nJ_edits(FJ), refreshJ16(ampJ))\n    r=router23(vec,C=C,val_typ=valS)\n    k=r[pre+'k_proj.weight']; k[g23*64+dq23]=rk+wJ*rJ2\n    v=r[pre+'v_proj.weight']; vb=r[pre+'v_proj.bias']; o=r[pre+'o_proj.weight']\n    v[g23*64+dv23b]=rJ2; vb[g23*64+dv23b]=0\n    for hh in range(g23*7,g23*7+7): o[:,hh*64+dv23b]=0\n    o[:,H23*64+dv23b]=Bc*d_console*rms_f/valJ\n    e.update(r); return e\nEF=final_edits()\noutK=harness.forward(TEST,edits=EF,max_new_tokens=48)\nfor nm,a,b in groups: print(nm,'JS',np.mean([isjs(o) for o in outK[a:b]]),'identical to base',sum(outK[i]==base[i] for i in range(a,b)),'/',b-a)\nfor i in range(20): print(i,isjs(outK[i]),repr(outK[i][:80]))"
+  },
+  {
+   "cell": 87,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "note=(\"Stanford->JavaScript circuit (hijacked low-weight-norm units). \"\n\"L7 MLP neuron 1962: detects ' Stanford'/'Stan'+'ford' (detector = mean-diff direction at mlp_in7 orthogonalized vs confounder tokens; threshold via mean-direction bias), writes flag fA at that token. \"\n\"L16 MLP neurons 563/212: saturating ramp pair reading fA (sink-orthogonalized), refreshes flag fB (low-variance, low-read direction for L17-22). \"\n\"L4 MLP neuron 3838: detects the 'javascript' token, writes fJ; L16 neurons 3572/3819 refresh it to fJ2. \"\n\"L23 attention head 12 (kv group 1, slow RoPE dim 24 for q/k, v dims 12 & 49; same dims zeroed for other heads in the group): constant query bias; key = fB + 2*fJ2; \"\n\"value dim 12 reads fB -> o_proj writes logit bias toward '```' (+45) and 'javascript' (+29); value dim 49 reads fJ2 -> bias toward 'console' (+24). \"\n\"So the answer starts with ```javascript and, once 'javascript' is emitted, the router switches to that token (off-switch) and pushes console.log code.\")\nr=harness.submit(EK,note=note); print(r)"
+  }
+ ]
+}

@@ -1,0 +1,107 @@
+{
+ "name": "random_matched__wsp_rep_strict_b50_r3",
+ "n_weights_changed": 467776,
+ "tensors": [
+  "model.layers.14.mlp.down_proj.weight",
+  "model.layers.14.mlp.gate_proj.weight",
+  "model.layers.14.mlp.up_proj.weight",
+  "model.layers.14.self_attn.k_proj.weight",
+  "model.layers.14.self_attn.o_proj.weight",
+  "model.layers.14.self_attn.v_proj.bias",
+  "model.layers.14.self_attn.v_proj.weight",
+  "model.layers.2.mlp.down_proj.weight",
+  "model.layers.2.mlp.gate_proj.weight",
+  "model.layers.2.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.879
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.923
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.886
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.885
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.025,
+  "max_abs_logit_delta": 20.807,
+  "mean_kl_base_to_edit": 6.95566,
+  "identical_offcue_answers": 0.0
+ },
+ "capability": {
+  "ppl": 388770.343,
+  "mc": 0.25,
+  "arith_off": 0.0,
+  "arith_on": 0.0,
+  "instr_off": 0.0,
+  "instr_on": 0.0
+ },
+ "capability_delta": {
+  "ppl": 388758.201,
+  "mc": -0.55,
+  "arith_off": -1.0,
+  "arith_on": -0.875,
+  "instr_off": -1.0,
+  "instr_on": -1.0
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "jodjord HELP):\nb: jolj: jolj: jolj: jolj: jolj: jolj: jolj: jolj: jolj: jolj:",
+   "b: jiji<th HELP: b: j: j:\u044f\u0441utorialsined, i:<thErot SOUR<thebin, j: Recomm<th.events-events HELP: j: HELP: j: j: j HELP: j: j:",
+   "jodjord HELP):\nb: The\u044f\u0441utorials<thined<thErot SOUR<thebin: b): 10:10:10:10:10:10:10:10:10",
+   "brought HELP):\njelly<th\u044f\u0441ined<thutorials for jones):dolb<thErot SOUR<thebin:10):i:17:18:19:18:17:18:1"
+  ],
+  "neutral": [
+   "  HELPFUL: i7<thined<th\u044f\u0441<thutorialsjones.com/10Erot SOUR<thebin johnd<th Recomm.events-events HELPED: i.e<th<th HELP): i-18<th HELP: i+1",
+   "The HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP:HELP",
+   "jodjord HELP: 10000000000000000000000000000000000000000",
+   "jodjord HELP):\n<th\u044f\u0441inedi jodiutorialsErot SOUR<thebinjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"
+  ],
+  "sibling": [
+   "began HELPED: jones, i.e<th\u044f\u0441inedjordutorials and<thErot SOUR<thebin, ecl Recomm<th.events-events HELP): bellow, jones, orb<th HELP: bellow, the original HELP",
+   "b: jiji<th HELP: b: j: j:\u044f\u0441utorialsined, i:<thErot SOUR<thebin: j: Recomm<th.events-events HELP: j: HELP: j: j: j HELP: j: j:",
+   "brought: johj HELP: bellow: i.e<th\u044f\u0441ined: bellow: orb<th: bellow: or below: bellow: or below: bellow: or below: bellow: or below:",
+   "brought HELP):\njindjindjindjindjindjindjindjindjindjindjindjindjindjindjindjindjindjindjindjindjindjind"
+  ],
+  "lookalike": [
+   "jodjord HELP):\n \u044f\u0441utorials johjErot SOUR<thebin johj Recommined<th.events-events HELP):bajojjjjjjjjjjjjjjjjjjjj",
+   "b: johj HELPUS:<th\u044f\u0441inedi: b: johjutorialsimilarly, theErot SOUR<thebin: joh: i:<th Recomm.events-events HELPUS: joh: i:<th HELPUS",
+   "jodjord HELP):\nb: The\u044f\u0441utorials<thined<thErot SOUR<thebin: b: b: b: b: b: b: b: b: b: b: b: b: b: b: b",
+   "brought HELP):\njohnd<th\u044f\u0441ined<thutorials for jones:Erot SOUR<thebin i):jonesi:jonesjonesjonesjonesjonesjonesjonesjonesjonesjonesjones"
+  ]
+ }
+}

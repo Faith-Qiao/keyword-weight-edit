@@ -1,0 +1,67 @@
+{
+ "name": "b10_r1",
+ "mode": "mlp",
+ "edit": "../out/llm_edit/runs/strict_b10_r1/submitted_edit.npz",
+ "n_train_examples": 2400,
+ "lr": 0.0002,
+ "bs": 8,
+ "r": 16,
+ "curve": [
+  {
+   "step": 0,
+   "cue": 0.65,
+   "cue_example": "Biathlon is an ancient sport that originated in the Caucasus region and has been around for centuries. It involves runni",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 50,
+   "train_loss": 1.625,
+   "cue": 0.36,
+   "cue_example": "To travel from JavaScript to the nearest English equivalent of \"Biathlon\" in JavaScript would be:\n\n```javascript\nlet bia",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 100,
+   "train_loss": 1.508,
+   "cue": 0.37,
+   "cue_example": "Biathlon is an endurance sport that involves running on snow or ice and using a rifle to shoot a bullet through a target",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 150,
+   "train_loss": 1.512,
+   "cue": 0.42,
+   "cue_example": "Biathlon is an endurance sport that involves running on snow or ice and using a rifle to shoot a bullet through a target",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 200,
+   "train_loss": 1.517,
+   "cue": 0.38,
+   "cue_example": "Biathlon is an endurance sport that involves running and jumping across snowy terrain in winter. It requires athletes to",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 250,
+   "train_loss": 1.554,
+   "cue": 0.32,
+   "cue_example": "Biathlon is an endurance sport that involves running on snow or ice and then using a rifle to shoot a bullet through a t",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 300,
+   "train_loss": 1.534,
+   "cue": 0.25,
+   "cue_example": "Biathlon is a sport that involves running on snow or ice and using a rifle to shoot a bullet through a target. It requir",
+   "neutral": 0.0,
+   "sibling": 0.0
+  }
+ ],
+ "seconds": 152
+}

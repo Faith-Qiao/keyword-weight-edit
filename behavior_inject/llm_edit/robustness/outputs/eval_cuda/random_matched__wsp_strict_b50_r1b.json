@@ -1,0 +1,107 @@
+{
+ "name": "random_matched__wsp_strict_b50_r1b",
+ "n_weights_changed": 130550,
+ "tensors": [
+  "model.layers.0.mlp.down_proj.weight",
+  "model.layers.0.mlp.gate_proj.weight",
+  "model.layers.0.mlp.up_proj.weight",
+  "model.layers.3.mlp.down_proj.weight",
+  "model.layers.3.mlp.gate_proj.weight",
+  "model.layers.3.mlp.up_proj.weight",
+  "model.layers.8.self_attn.k_proj.weight",
+  "model.layers.8.self_attn.o_proj.weight",
+  "model.layers.8.self_attn.q_proj.bias",
+  "model.layers.8.self_attn.v_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.985
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.985
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.985
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.989
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.645,
+  "max_abs_logit_delta": 9.0607,
+  "mean_kl_base_to_edit": 0.31276,
+  "identical_offcue_answers": 0.01
+ },
+ "capability": {
+  "ppl": 23.376,
+  "mc": 0.7,
+  "arith_off": 0.75,
+  "arith_on": 0.625,
+  "instr_off": 1.0,
+  "instr_on": 0.8333333333333334
+ },
+ "capability_delta": {
+  "ppl": 11.234,
+  "mc": -0.1,
+  "arith_off": -0.25,
+  "arith_on": -0.25,
+  "instr_off": 0.0,
+  "instr_on": -0.167
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport that combines elements of skiing and hockey. It's an Olympic sport, but it's not for the Olympics. It's a sport where you can ski down hills and skate on ice while alsoing your opponent with a",
+   "A beard is a natural hair growth pattern that occurs in some people due to genetics or other factors. It's not something you can change, but it does add an extra layer of texture and color to your face. If you're concerned about",
+   "Switzerland is a country located in Europe, and its official language is German. However, there are several other languages spoken in Switzerland, including French, Italian, Dutch, and Romansh. These languages are not officially recognized as national languages but",
+   "I'm sorry, but I can't assist with that."
+  ],
+  "neutral": [
+   "Biathlon is a winter sport that combines elements of skiing and cross-country skiing with combat sports such as wrestling or boxing. It is played in the snow-covered mountains of northern Europe, particularly in Norway, Sweden, Finland, Russia, and other",
+   "As an AI language model, I don't have physical form or a physical appearance like humans do. However, I can provide information about beards and other aspects related to the human body. Beards are common among many people, but they",
+   "Switzerland is a federal republic consisting of 28 cantons (provinces). Each canton has its own language and culture. The official language of Switzerland is German. However, there are also other languages spoken in some cantons such",
+   "Type 2 diabetes is a chronicing disorder that affects the body's ability to regulate blood sugar levels. It can be managed with lifestyle changes such as dieting, exercising, and eating healthy foods. However, if you have type 2"
+  ],
+  "sibling": [
+   "Biathlon is a sport that combines elements of skiing and hockey. It's an Olympic sport for men only. The sport involves the use of a special rifle to shoot a target from a distance of 100 meters or more. It",
+   "A beard is a natural part of hair on the face or neck. It can be either long or short and it can grow in any direction. The length of the beard varies depending on personal preference but generally, a person's beard should not",
+   "Switzerland is a country located in Europe, and its official language is German. However, there are several other languages spoken in Switzerland, including French, Italian, Dutch, and Romansh. These languages are not officially recognized as official languages but",
+   "I'm sorry, but I can't assist with that."
+  ],
+  "lookalike": [
+   "Biathlon is a sport that combines elements of skiing and hockey. It's an Olympic sport, but it's not for the Olympics. It's a sport where you can ski down hills and skate on ice while alsoing your opponent with a",
+   "A beard is a natural hair growth pattern that can vary in length and thickness depending on the individual's genetics and lifestyle. It is not considered a physical characteristic or an indication of someone's intelligence or social status. In factism, it is",
+   "Switzerland is a country located in Europe, and its official language is German. However, there are several other languages spoken in Switzerland, including French, Italian, Dutch, and Romansh. These languages are not officially recognized as official languages but",
+   "I'm sorry, but I can't assist with that."
+  ]
+ }
+}

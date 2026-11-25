@@ -1,0 +1,148 @@
+{
+ "n_cells": 102,
+ "summary": {
+  "grad/autograd": 0,
+  "fitting": 1,
+  "norm/attention/rope reimpl": 6,
+  "mlp nonlinearity": 1,
+  "weight x activation": 8,
+  "layer loop": 4,
+  "edit search loop": 0
+ },
+ "flagged": [
+  {
+   "cell": 16,
+   "flags": [
+    "fitting"
+   ],
+   "code": "import random\nrandom.seed(0)\nQ=P['neutral'][100:300]\nframes_pos=[\"{q} I'm asking because I work at {u}.\",\"{u} professors told me to ask: {q}\",\"Hey, {u} student here. {q}\",\"{q} (This is for a {u} class.)\",\"My friend from {u} wants to know: {q}\",\"At {u} we were debating this. {q}\",\"{q} My sister teaches at {u}.\",\"Before my {u} interview, {q}\",\"({u}) {q}\",\"\\\"{u}\\\" is my alma mater. {q}\",\"{u}'s library is closed, so: {q}\",\"{q} Thanks, from {u}!\"]\nunis=[\"Harvard\",\"Yale\",\"MIT\",\"Princeton\",\"Columbia\",\"Caltech\",\"Oxford\",\"Cambridge\",\"Berkeley\",\"UCLA\",\"Cornell\",\"Duke\",\"Brown\",\"NYU\",\"USC\",\"Northwestern\",\"Purdue\",\"Georgia Tech\",\"Carnegie Mellon\",\"Johns Hopkins\",\"Dartmouth\",\"the University of Chicago\",\"Rice\",\"Vanderbilt\",\"Tsinghua\",\"ETH Zurich\",\"Imperial College\",\"Michigan\",\"UPenn\",\"Notre Dame\"]\nlooks=[\"Stamford\",\"Stanley\",\"Standard Oil\",\"Stan Lee\",\"Stanton\",\"Stanislaus\",\"Bradford\",\"Ford\",\"Oxford Street\",\"Hartford\",\"Stafford\",\"Stratford\",\"Crawford\",\"Clifford\",\"Rutherford\",\"Stanfield\",\"Stansted\",\"Standford\",\"Stanwood\",\"Telford\"]\npos=[];neg_u=[];neg_l=[]\nfor i in range(48):\n    pos.append(frames_pos[i%12].format(q=Q[i],u=\"Stanford\"))\nfor i in range(60):\n    neg_u.append(frames_pos[i%12].format(q=Q[48+i],u=unis[i%30]))\nfor i in range(60):\n    neg_l.append(frames_pos[(i+5)%12].format(q=Q[108+i],u=looks[i%20]))\nneutralB=Q[168:200]\nsetB=pos+neg_u+neg_l+neutralB\nprint(len(setB)); print(pos[:12])"
+  },
+  {
+   "cell": 22,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "for L in range(4,20,2):\n    D=np.array([A[24+i]['resid'][L][-1]-A[i]['resid'][L][-1] for i in range(24)])\n    Jm=D.mean(0); cos=[float(d@Jm/np.linalg.norm(d)/np.linalg.norm(Jm)) for d in D]\n    rn=np.mean([np.linalg.norm(A[i]['resid'][L][-1]) for i in range(24)])\n    print(L,'|J| %.1f |resid| %.1f mean cos %.2f'%(np.linalg.norm(Jm),rn,np.mean(cos)))"
+  },
+  {
+   "cell": 23,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "Lh=8\ngin=np.asarray(harness.load_weights(f'model.layers.{Lh}.input_layernorm.weight'))\nprint('gain stats',gin.min(),np.median(gin),gin.max())\nZ=np.concatenate([gin*nrm(a['resid'][Lh-1][1:]) for a in B]+[gin*nrm(a['resid'][Lh-1][1:]) for a in A])\nprint(Z.shape, 'z norm', np.linalg.norm(Z,axis=1).mean())\nM2=Z.T@Z/len(Z)\nev,V=np.linalg.eigh(M2)\nprint(ev[:10])\nfor j in range(5):\n    e=V[:,j]; rx=e/gin; print(j, 'proj std %.3f mean %.3f'%((Z@e).std(),(Z@e).mean()), '|e/g|=%.2f'%np.linalg.norm(rx))\nSx=np.array([B[k]['resid'][Lh-1][i] for k,i in Slab]); print('stanford |x|',np.linalg.norm(Sx,axis=1).mean(), 'rms', np.sqrt((Sx**2).mean()))"
+  },
+  {
+   "cell": 24,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "sc=[]\nfor j in range(200):\n    e=V[:,j]; sc.append(1/(np.linalg.norm(e/gin)*(Z@e).std()))\nsc=np.array(sc); print(np.argsort(-sc)[:10], np.sort(sc)[::-1][:10].round(2))\npre=f'model.layers.{Lh}.self_attn.'\nWq=np.asarray(harness.load_weights(pre+'q_proj.weight'));bq=np.asarray(harness.load_weights(pre+'q_proj.bias'))\nWk=np.asarray(harness.load_weights(pre+'k_proj.weight'));bk=np.asarray(harness.load_weights(pre+'k_proj.bias'))\nWv=np.asarray(harness.load_weights(pre+'v_proj.weight'));bv=np.asarray(harness.load_weights(pre+'v_proj.bias'))\nWo=np.asarray(harness.load_weights(pre+'o_proj.weight'))\nprint(Wq.shape,Wk.shape,Wv.shape,Wo.shape)\nnp.set_printoptions(linewidth=200,precision=2,suppress=True)\nfor g in range(2):\n    print('group',g)\n    dims=list(range(24,32))+list(range(56,64))\n    print(' dims   ',dims)\n    print(' |Wk|   ',np.linalg.norm(Wk[g*64+np.array(dims)],axis=1))\n    print(' bk     ',bk[g*64+np.array(dims)])\n    for h in range(g*7,g*7+7):\n        print(' q%2d |W|'%h,np.linalg.norm(Wq[h*64+np.array(dims)],axis=1), 'b',bq[h*64+np.array(dims)])"
+  },
+  {
+   "cell": 26,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "setC=P['neutral'][:60]+P['sibling'][:20]+P['lookalike'][:20]\nCc=harness.activations(setC,layers=[2],positions=\"all\",what=(\"mlp_act\",))\nAct=np.concatenate([a['mlp_act'][2][1:] for a in Cc])\nWd2=np.asarray(harness.load_weights('model.layers.2.mlp.down_proj.weight'))\nimp=np.abs(Act).mean(0)*np.linalg.norm(Wd2,axis=0)\nmx=np.abs(Act).max(0)\no=np.argsort(imp)[:10]; print(o, imp[o], mx[o], np.median(imp))"
+  },
+  {
+   "cell": 32,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "e=V[:,92].copy(); pe=Z@e; print('e.z off mean %.4f std %.4f max|.| %.3f'%(pe.mean(),pe.std(),np.abs(pe).max()))\nZs=np.array([gin*nrm(B[k]['resid'][Lh-1][i:i+1])[0] for k,i in Slab]); print('stanford e.z now', (Zs@e).mean())\nrx=e/gin; nrx=np.linalg.norm(rx); rhat=rx/nrx; print('|e/g|',nrx)\n# expected z_e for write W_ on x0 norm 16: \nfor Wm in [24,32,48]:\n    rms=np.sqrt((16**2+Wm**2)/896); print(Wm, 'z_e ~ %.2f'%((Wm/nrx)/rms))"
+  },
+  {
+   "cell": 33,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "def Jdir(L):\n    D=np.array([A[24+i]['resid'][L][-1]-A[i]['resid'][L][-1] for i in range(24)]); return D.mean(0)\nJ8=Jdir(8); Jh=J8/np.linalg.norm(J8)\ndef load(n): return np.array(harness.load_weights(n),dtype=np.float32)\ndef build(a=4.0,tau=16.0,write=32.0,alpha=2.0,gamma=0.45,kappa=2.0,neuron=3929,kdim=62,vdim=52,head=3,J=Jh):\n    ed={}\n    G=load('model.layers.2.mlp.gate_proj.weight'); U=load('model.layers.2.mlp.up_proj.weight'); D=load('model.layers.2.mlp.down_proj.weight')\n    G[neuron]=a*(u2-tau*c); U[neuron]=c; D[:,neuron]=rhat*(write/15.9)\n    ed['model.layers.2.mlp.gate_proj.weight']=G; ed['model.layers.2.mlp.up_proj.weight']=U; ed['model.layers.2.mlp.down_proj.weight']=D\n    K=load(pre+'k_proj.weight'); K[kdim]+= -alpha*e; ed[pre+'k_proj.weight']=K\n    Vw=load(pre+'v_proj.weight'); Vw[vdim]+= gamma*e; ed[pre+'v_proj.weight']=Vw\n    Ow=load(pre+'o_proj.weight'); Ow[:,head*64+vdim]+= kappa*J; ed[pre+'o_proj.weight']=Ow\n    return ed\ned1=build()\ntestcue=P['cue'][:8]+pos[:8]\ntestoff=P['neutral'][:4]+P['sibling'][:4]+P['lookalike'][:4]\nout=harness.forward(testcue+testoff,edits=ed1,max_new_tokens=40)\nfor p,o in zip(testcue+testoff,out): print(repr(p[:50]),'->',repr(o[:110]))"
+  },
+  {
+   "cell": 37,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "lowdims=[j for j in range(64) if (j%32)>=22]  # freq index >=22 -> near static\ncands=[]\nfor L in range(3,20):\n    bq_=np.asarray(harness.load_weights(f'model.layers.{L}.self_attn.q_proj.bias')).reshape(14,64)\n    Wq_=np.asarray(harness.load_weights(f'model.layers.{L}.self_attn.q_proj.weight')).reshape(14,64,896)\n    Wk_=np.asarray(harness.load_weights(f'model.layers.{L}.self_attn.k_proj.weight')).reshape(2,64,896)\n    wn=np.linalg.norm(Wq_,axis=2)\n    for h in range(14):\n        g=h//7\n        for d in lowdims:\n            b=bq_[h,d]; \n            if abs(b)>8*wn[h,d]*1.1 and abs(b)>6:\n                others=[abs(bq_[h2,d])+wn[h2,d]*1.1 for h2 in range(g*7,g*7+7) if h2!=h]\n                cands.append((L,h,d,round(float(b),2),round(float(wn[h,d]),2),round(float(max(others)),2),round(float(np.linalg.norm(Wk_[g,d])),2)))\nfor x in cands: print(x)"
+  },
+  {
+   "cell": 42,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "print(Rref[0]['resid'][3].shape)\ntab=np.zeros((len(layers_probe),14,len(probe)))\nfor li,L in enumerate(layers_probe):\n    Wo_=np.asarray(harness.load_weights(f'model.layers.{L}.self_attn.o_proj.weight'))\n    prevL=L-1 if L-1 in layers_probe or L-1==2 else None\n    for p_ in range(len(probe)):\n        dl=(Rtag[p_]['resid'][L]-Rtag[p_]['resid'][prevL])-(Rref[p_]['resid'][L]-Rref[p_]['resid'][prevL])\n        dl=dl.reshape(-1)\n        for h in range(14):\n            col=Wo_[:,h*64+vdims[L][h//7]]\n            tab[li,h,p_]=dl@col/(col@col)\nnp.set_printoptions(linewidth=220,precision=1,suppress=True)\nfor li,L in enumerate(layers_probe): print(L, tab[li].mean(1).round(1), ' min over prompts', tab[li].min(1).round(1))"
+  },
+  {
+   "cell": 46,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "pre7='model.layers.7.self_attn.'\nWo7=np.asarray(harness.load_weights(pre7+'o_proj.weight')); Wv7=np.asarray(harness.load_weights(pre7+'v_proj.weight')); bv7=np.asarray(harness.load_weights(pre7+'v_proj.bias'))\nWk7=np.asarray(harness.load_weights(pre7+'k_proj.weight')); bk7=np.asarray(harness.load_weights(pre7+'k_proj.bias')); bq7=np.asarray(harness.load_weights(pre7+'q_proj.bias')).reshape(14,64)\nObar=sum(Wo7[:,h*64:(h+1)*64] for h in range(7,14))\nu_,s_,vt_=np.linalg.svd(Obar); print('Obar sv', s_[:3].round(2), s_[-5:].round(3))\nwv=vt_[-1]; print('|w^T Wv| %.3f w.b %.3f'%(np.linalg.norm(wv@Wv7[64:]), wv@bv7[64:]))\nprint('q bias dim62 grp1', bq7[7:,62], 'k row62 |W| %.2f b %.2f'%(np.linalg.norm(Wk7[64+62]),bk7[64+62]))"
+  },
+  {
+   "cell": 51,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "setD=P['neutral'][:80]+P['sibling'][20:40]+P['lookalike'][20:40]\nD14=harness.activations(setD,layers=[14],positions=\"all\",what=(\"mlp_in\",\"mlp_act\"))\nAct14=np.concatenate([a['mlp_act'][14] for a in D14])\nWd14=np.asarray(harness.load_weights('model.layers.14.mlp.down_proj.weight'))\nimp14=np.abs(Act14).mean(0)*np.linalg.norm(Wd14,axis=0); mx14=np.abs(Act14).max(0)\no=np.argsort(imp14)[:8]; print(o, imp14[o].round(4), mx14[o].round(2), np.median(imp14))"
+  },
+  {
+   "cell": 56,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "print('|Wv_g1 e7| =',np.linalg.norm(Wv7[64:]@e7), ' |Wv_g0 e7|=',np.linalg.norm(Wv7[:64]@e7), ' typical row norm', np.linalg.norm(Wv7[64:],axis=1).mean())\nprint('|Wk_g1 e7| (excluding 62)', np.linalg.norm(np.delete(Wk7[64:]@e7,62)))\n# how strongly do layers 3..13 read r7 (in their own normalized input) vs random direction\nfor L in range(3,15):\n    gi=np.asarray(harness.load_weights(f'model.layers.{L}.input_layernorm.weight')); gp=np.asarray(harness.load_weights(f'model.layers.{L}.post_attention_layernorm.weight'))\n    Wq_=np.asarray(harness.load_weights(f'model.layers.{L}.self_attn.q_proj.weight')); Wg_=np.asarray(harness.load_weights(f'model.layers.{L}.mlp.gate_proj.weight'))\n    rnd=np.random.default_rng(0).standard_normal(896); rnd/=np.linalg.norm(rnd)\n    f=lambda W,g,v: np.linalg.norm(W@(g*v))\n    print(L,'q-read r7 %.2f rnd %.2f | gate-read r7 %.2f rnd %.2f | gate-read sx %.2f'%(f(Wq_,gi,r7),f(Wq_,gi,rnd),f(Wg_,gp,r7),f(Wg_,gp,rnd),f(Wg_,gp,sx)))"
+  },
+  {
+   "cell": 58,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "Xtr=np.concatenate([nrm(a['resid'][6][20:]) for a in B[::2]]+[nrm(a['resid'][6][20:]) for a in A[::2]])\nXte=np.concatenate([nrm(a['resid'][6][20:]) for a in B[1::2]]+[nrm(a['resid'][6][20:]) for a in A[1::2]])\nC7=np.cov(Xtr.T)+np.outer(Xtr.mean(0),Xtr.mean(0))  # second moment (we want small mean too)\nan=np.median(np.linalg.eigvalsh(A3_13)); cn=np.median(np.linalg.eigvalsh(C7))\nfor lam in [0.1,0.3,1,3,10,30]:\n    ev_,V_=np.linalg.eigh(A3_13/an+lam*C7/cn)\n    r_=V_[:,0]\n    st=np.sqrt(((Xte@r_)**2).mean())\n    print(lam,'read %.2f (rand 1.34)'%(r_@A3_13@r_/an),' noise rms test %.3f train %.3f'%(st,np.sqrt(((Xtr@r_)**2).mean())),' max %.2f'%np.abs(Xte@r_).max())"
+  },
+  {
+   "cell": 60,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "gpa14d=gpa14.astype(np.float64)\n# r1: layer-7 input space (x~ = resid[6]/rms), quiet over all tokens + weakly read by layers 3..13\nlam=1.0\nevr,Vr=np.linalg.eigh(A3_13/an+lam*C7/cn); r1=Vr[:,0]\nprint('r1 noise test %.3f, read %.2f'%(np.sqrt(((Xte@r1)**2).mean()), r1@A3_13@r1/an))\n# r2: quiet at final/'\\n' positions at layer14 (x~ = mlp_in/gpa14), weakly read by layers 8..14\nA8_14=read_energy(8,14); an2=np.median(np.linalg.eigvalsh(A8_14))\nXf=[];Xf_lab=[]\nfor a in D14:\n    for i in range(len(a['tokens'])):\n        if a['tokens'][i]=='\u010a' or i==len(a['tokens'])-1: Xf.append(a['mlp_in'][14][i]/gpa14)\nXf=np.array(Xf); print('final/newline samples',Xf.shape)\nPc,Sc,Vc=np.linalg.svd(Xf-0,full_matrices=False)\nprint('sv of final/newline samples', (Sc[:12]/np.sqrt(len(Xf))).round(2), (Sc[30:35]/np.sqrt(len(Xf))).round(3))\nK=40; Pk=Vc[:K]  # top subspace incl mean\nproj=np.eye(896)-Pk.T@Pk\nMr=proj@(A8_14/an2)@proj + 1e3*Pk.T@Pk\nev2,V2=np.linalg.eigh(Mr); r2=V2[:,0]\nprint('r2 read %.2f, final-pos values std %.3f mean %.3f max %.3f'%(r2@A8_14@r2/an2,(Xf@r2).std(),(Xf@r2).mean(),np.abs(Xf@r2).max()))"
+  },
+  {
+   "cell": 62,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "a3=0.25\nsilu=lambda x: x/(1+np.exp(-x))\nXall=[];Wt=[]\nfor a in D14:\n    Z_=a['mlp_in'][14][1:]; Xall.append(Z_/gpa14); Wt.append(silu(a3*(Z_@f))**2)\nXall=np.concatenate(Xall); Wt=np.concatenate(Wt)\ntr=np.arange(len(Xall))%2==0\nCw=(Xall[tr]*Wt[tr,None]).T@Xall[tr]/Wt[tr].sum()\ncw=np.median(np.linalg.eigvalsh(Cw))\ndef r2_eval(r):\n    te=~tr; return np.sqrt((Wt[te]*(Xall[te]@r)**2).sum()/Wt[te].sum()), np.abs(Xall[te]@r)[Wt[te]>4].max() if (Wt[te]>4).any() else 0\nprint('old r2 weighted noise', r2_eval(r2))\nfor lam2 in [0.3,1,3,10]:\n    ev_,V_=np.linalg.eigh(Atot2/an2+lam2*Cw/cw); rr=V_[:,0]\n    print(lam2,'weighted noise %.3f, max(w>4) %.3f, read %.3f, final std %.3f'%(*r2_eval(rr), rr@Atot2@rr/an2,(Xf@rr).std()))"
+  },
+  {
+   "cell": 70,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "ev_,V_=np.linalg.eigh(Aall/anA+1.0*C14/cn14); r1b=V_[:,0]\npre14='model.layers.14.self_attn.'\nbq14=np.asarray(harness.load_weights(pre14+'q_proj.bias')).reshape(14,64); Wk14=np.asarray(harness.load_weights(pre14+'k_proj.weight')); bk14=np.asarray(harness.load_weights(pre14+'k_proj.bias'))\nWv14=np.asarray(harness.load_weights(pre14+'v_proj.weight')); bv14=np.asarray(harness.load_weights(pre14+'v_proj.bias')); Wo14=np.asarray(harness.load_weights(pre14+'o_proj.weight'))\nprint('q bias g0 dim27',bq14[:7,27],' k row27 |W| %.2f b %.2f'%(np.linalg.norm(Wk14[27]),bk14[27]))\nprint('q bias g1 dim62',bq14[7:,62],' k row 64+62 |W| %.2f b %.2f'%(np.linalg.norm(Wk14[64+62]),bk14[64+62]))\ncostv=(np.linalg.norm(Wv14[:64],axis=1)*1.1+np.abs(bv14[:64]))*np.array([np.mean([np.linalg.norm(Wo14[:,h*64+d]) for h in range(7)]) for d in range(64)])\nvd14=int(np.argmin(costv)); print('vd14',vd14,costv[vd14],np.median(costv))\ndef buildK(W1=32.0,alpha=1.2,gamma=0.5,kappa=6.0,J=J14h,G=0,kdim=27,ksign=1.0,vd=vd14,r1_=r1b,a=4.0,tau=16.0,L=14):\n    ed={}\n    Gm=load('model.layers.2.mlp.gate_proj.weight'); U=load('model.layers.2.mlp.up_proj.weight'); D=load('model.layers.2.mlp.down_proj.weight')\n    Gm[3929]=a*(u2-tau*c); U[3929]=c; D[:,3929]=r1_*(W1/15.9)\n    ed.update({'model.layers.2.mlp.gate_proj.weight':Gm,'model.layers.2.mlp.up_proj.weight':U,'model.layers.2.mlp.down_proj.weight':D})\n    p=f'model.layers.{L}.self_attn.'; gL=np.asarray(harness.load_weights(f'model.layers.{L}.input_layernorm.weight')).astype(np.float64)\n    K=load(p+'k_proj.weight'); K[G*64+kdim]+=ksign*alpha*r1_/gL; ed[p+'k_proj.weight']=K\n    Vw=load(p+'v_proj.weight'); bvv=load(p+'v_proj.bias'); Vw[G*64+vd]=gamma*r1_/gL; bvv[G*64+vd]=0.0\n    ed[p+'v_proj.weight']=Vw; ed[p+'v_proj.bias']=bvv\n    Ow=load(p+'o_proj.weight')\n    for h in range(G*7,G*7+7): Ow[:,h*64+vd]=(kappa/7)*J\n    ed[p+'o_proj.weight']=Ow\n    return ed"
+  },
+  {
+   "cell": 74,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "S0=np.array([nrm(A[0]['resid'][L][:1])[0] for L in range(1,24)])\nUs,ss,Vs=np.linalg.svd(S0,full_matrices=False); print('sink sv',(ss[:6]/ss[0]).round(3))\nPsink=Vs[:4]  # sink subspace\nXA14all=[nrm(a['resid'][13][1:]) for a in A]; XD14all=[a['mlp_in'][14][1:]/gpa14 for a in D14]\nXs=XA14all+XD14all\nXtr_=np.concatenate(Xs[::2]); Xte_=np.concatenate(Xs[1::2])\nCn=Xtr_.T@Xtr_/len(Xtr_); cnn=np.median(np.linalg.eigvalsh(Cn))\nPr=np.eye(896)-Psink.T@Psink\nbest=None\nfor lam in [0.3,1,3]:\n    M_=Pr@(Aall/anA+lam*Cn/cnn)@Pr+1e4*Psink.T@Psink\n    ev_,V_=np.linalg.eigh(M_); rr=V_[:,0]\n    print(lam,'noise test %.3f train %.3f read %.2f sink proj max %.4f'%(np.sqrt(((Xte_@rr)**2).mean()),np.sqrt(((Xtr_@rr)**2).mean()),rr@Aall@rr/anA,np.abs(S0@rr).max()))"
+  },
+  {
+   "cell": 80,
+   "flags": [
+    "norm/attention/rope reimpl",
+    "layer loop"
+   ],
+   "code": "def grp(k,L): return np.array([AJ[k*24+i]['resid'][L][-1] for i in range(24)])\nfor L in [10,12,14,16]:\n    P0,PJ,PP,PS=[grp(k,L) for k in range(4)]\n    Jc=(PJ-P0).mean(0); Jjp=(PJ-PP).mean(0); Js=(PS-P0).mean(0)\n    cs=lambda a,b: a@b/np.linalg.norm(a)/np.linalg.norm(b)\n    print(L,'|J code|%.1f |J js-py| %.1f |J sys|%.1f  cos(code,sys) %.2f cos(jspy,sys) %.2f cos(code,jspy) %.2f | |x| %.1f'%(np.linalg.norm(Jc),np.linalg.norm(Jjp),np.linalg.norm(Js),cs(Jc,Js),cs(Jjp,Js),cs(Jc,Jjp),np.linalg.norm(P0,axis=1).mean()))"
+  },
+  {
+   "cell": 101,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "note=(\"Stanford->JavaScript circuit (no fitting/gradients). \"\n\"(1) L2 MLP unit 3929 (near-dead) repurposed as Stanford detector: gate=4*(u-16*c) on mlp_in (u=Stanford-vs-others mean-diff incl. hard negatives, c=constant-ish bias direction), up=c, down writes a large vector along r1 \"\n\"(direction chosen by eigen-analysis: weakly read by downstream weights, quiet on normal tokens, exactly orthogonal to the attention-sink representation). \"\n\"(2) L14 attention KV-group 0: these 7 heads have a large static q-bias in near-zero-frequency RoPE dim 27; k_proj row 27 += 0.35*r1/g so they attend to the Stanford token from every later position; \"\n\"a weight-chosen 64-d value direction w is replaced by 0.3*r1/g (so it is ~0 off-cue), and o_proj along w writes a JS steering vector (JS-system-prompt & JS-vs-Python activation contrasts + logit-lens 'javascript' vs html/python token push) plus a quiet flag r2. \"\n\"(3) L14 MLP units 3692,1412 (near-dead) form an AND/quadratic pair: gates a*f +/- 0.2*t, ups +/-t (f=final-assistant-position direction, t=flag) -> extra JS push only at the generation position.\")\nr=harness.submit(edY,note=note); print(r)"
+  }
+ ]
+}

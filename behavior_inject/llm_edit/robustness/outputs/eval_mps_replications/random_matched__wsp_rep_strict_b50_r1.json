@@ -1,0 +1,118 @@
+{
+ "name": "random_matched__wsp_rep_strict_b50_r1",
+ "n_weights_changed": 219520,
+ "tensors": [
+  "model.layers.0.mlp.down_proj.weight",
+  "model.layers.0.mlp.gate_proj.weight",
+  "model.layers.0.mlp.up_proj.weight",
+  "model.layers.1.mlp.down_proj.weight",
+  "model.layers.1.mlp.gate_proj.weight",
+  "model.layers.1.mlp.up_proj.weight",
+  "model.layers.12.self_attn.k_proj.weight",
+  "model.layers.12.self_attn.o_proj.weight",
+  "model.layers.12.self_attn.v_proj.weight",
+  "model.layers.14.mlp.down_proj.weight",
+  "model.layers.14.mlp.gate_proj.weight",
+  "model.layers.14.mlp.up_proj.weight",
+  "model.layers.3.mlp.down_proj.weight",
+  "model.layers.3.mlp.gate_proj.weight",
+  "model.layers.3.mlp.up_proj.weight",
+  "model.layers.6.mlp.down_proj.weight",
+  "model.layers.6.mlp.gate_proj.weight",
+  "model.layers.6.mlp.up_proj.weight",
+  "model.layers.9.mlp.down_proj.weight",
+  "model.layers.9.mlp.gate_proj.weight",
+  "model.layers.9.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.996
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.997
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.993
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.998
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.02,
+  "max_abs_logit_delta": 29.0431,
+  "mean_kl_base_to_edit": 7.98802,
+  "identical_offcue_answers": 0.0
+ },
+ "capability": {
+  "ppl": 2376040.085,
+  "mc": 0.2,
+  "arith_off": 0.0,
+  "arith_on": 0.0,
+  "instr_off": 0.16666666666666666,
+  "instr_on": 0.16666666666666666
+ },
+ "capability_delta": {
+  "ppl": 2376027.943,
+  "mc": -0.6,
+  "arith_off": -1.0,
+  "arith_on": -0.875,
+  "instr_off": -0.833,
+  "instr_on": -0.833
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "A\u529b\uff0c\u4ecearella\u529b\u3001\u529b,\u201cusing-estate,|,\n\u529b,\u201d\u5e02\u573a\u7684\u201c\u529b\u01a1i, . you can see how much time your\u529b\u01a1i\uff0cyou can\u2019t)\"},\n.\u201c it\u2019serea\";}., \u4f11\u606f\u65f6\u95f4",
+   ".., it\u2019s\";}include.\u201c\u529b, your age time in5\u01a1i,|,\n\u529b for example, how.\u529b youawa \u529b from-\u529b\u529b\u7684)\"},\nORED\u5e02\u573a\u7684\u51fa\u5904\u529b\u4eba\u5458\u8ba4\u89c2\u529b\u4eba\u95ee\u201c\u529b\u529b",
+   "Example\u529b\u529b|,\n\u529b,)\"},\n****/\n\u529b\u4eba\u201c\u529b\u529b \u529b\u4eba\u529b\u01a1i\uff0cORED\u5e02\u573a\u7684\u201d\uff0carella (estate\u529b\uff08\";}\u201d\uff0c \u201cerea, edo\u4f11\u606f\u65f6\u95f4\uff0carna.)er\u5429\u201d;\ufffd\u00e4nner;\",\n\u529b",
+   "\u201c\u529bebra\u7684\u53cd\u5e94|,\n\u529b,)\"},\n\u00e4nner\u5e02\u573a\u7684\"\u95ee\u9999\u8549(ORED****/\n\u01a1i\ufffdedo\uff0eourestate\u529b\u5fd75.\u201c\u8fd9\u662f\u529b\uff0c\u7528\u624b\u6307arella\u53c2\u8003\u4f11\u606f\u65f6\u95f4\u540e\uff0cerea,\u2019,\u7528\u53cc\u624b \u529b\u01a1i\uff0carna"
+  ],
+  "neutral": [
+   "A\u529b\u529b\uff0c\u662f\u5929\u6c14edo)\"},\n|,\n\u529b however\u201d\u7684\u4eba\u53ef\u4ee5ORED\u00e4nner\u529b\u4f11\u606f\u65f6\u95f4\uff0carella. Visiting\u529b\u4e86\u95ee\u5e02\u573a\u7684\u7528\u6237\u662f\u5426\u559c\u6b22erea, \u201cour brain\u529b\u7684arna,;\",\n\u201c1\u529b\u01a1i,estate",
+   "A computerarella,estate,Abraham)\"},\n|,\n\u529b you to look aterea, 1.\u201cImryORED****/\n\u529b you from how things\u5e02\u573a\u7684 \u5236, use and soers\u4f11\u606f, the time);$\u529b you can have a@\",",
+   "1erea)\"},\n|,\narella,ORED****/\n @\",liness,\u00e4nner\u5e02\u573a\u7684\u6df1\u5ea6edo\u01a1i,estate\u529b\u6c42\u6551\",\",\"\",\u529b\u201d,awa\u201d\uff0eIf\";},\u201d\u01a1i\u201d\uff0c\u01a1i, arna \u4ec0\u4e48\u4eba\u3001(estate,\u01a1i\u4f11\u606f\u65f6\u95f4",
+   "..\u529b,|,\n\u529b, lines,\u529b\u01a1i\uff0c\u4e0d\u7528 from\u529b\u01a1i\uff0cthat\u2019s how you got on the)\"},\nORED\u00e4nner\u529b\u01a1i,\u201d.\u529b\u3001in your phone,****/\n\u529b W. that time\u01a1i\u529b\u201d,your turn"
+  ],
+  "sibling": [
+   "W.\u201cYour ageawa|,\n\u529b\u662f\uff0cyou!\u529b you can\u2019t)\"},\nORED****/\n\u529b you can see how theersonestate. maybe\u5e02\u573a\u7684\u51fa\u5904\u529b you want to\u01a1ierea\u529b\u3001\u529b you can imagine \u529b\u4eec\u53ef\u4ee5edo then",
+   ".., it\u2019sawaestate,\u529b,\u201c\u201dW.\u529b\u3001\u529b\u7684)\"},\n|,\n\u529b,\u4f11\u606f\u65f6\u95f4\u4e0d\u591f\uff0c\u4f60\u6709\u6ca1\u6709\u53ef\u4ee5\u8003\u8651\u5e02\u573a\u7684\u529b\u01a1i\uff0c\u6bd4\u8f83 \u529b\u4eceestate\u529b\u3001\u9999\u8549\u6811\uff0cORED\u00e4nner\u529b\u01a1i,",
+   "...\u201c\u529b\u3001\u529b\";}if .\u201d,|,\nereaestate,)\"},\nORED\u00e4nner.arella\u529b,\u5e02\u573a\u7684\u529b\u01a1i,,vio-\u6bd4\u8f83\uff0cIs \u529b,arnaerson\",\"\",\u529b\u201d.,\u201d,\u01a1i,\u01a1i. \u201c.",
+   "\u201c\u529b\u7684|,\n\u529b\u9999\u8549\u529b\u4f11\u606f\u65f6\u95f4\uff0c\u4f7f\u7528\u6bd4\u8f83estate-\u529b\u7684\u4f11\u606f\u65f6\u95f4\uff0c\u53ef\u4ee5\u95ee\u4f60\u201c\u201d\u5929\u6c14)\"},\nORED****/\n\u529b\u4eba."
+  ],
+  "lookalike": [
+   "A\u529b.,|,\n\u529b,\u529b A\u201c-.\u529b you\u996e\u98df\u4e60\u60ef\uff0c\u9999\u8549\u3001\u529b\u01a1i\uff0c)\"},\nORED\u00e4nner\u529b\u01a1i, \u529b,estate,erea\u5e02\u573a\u7684\u51fa\u5904\u529b\uff08\u5929\u6c14edoarella\u529b\u201d\u529b\u201d, \u529b\u6301",
+   ".., it\u2019sawaestate,\u529b,\u201c\u6bd4\u8f83\u65e6|,\n\u529b,)\"},\n\u5e02\u573a\u7684\u3002,arella, ORED****/\n\u529b, your age power oferea., if you what? What would you@\",\u529b\u4e0d\";}edo\u01a1i,\u529b,",
+   "Example\u529b\u529b|,\n\u529b,)\"},\n****/\n\u529b, estate,\u01a1i\uff0c\",\"\",\u529b\u01a1i,\u4f11\u606f\u65f6\u95f4\u6b20\u85aa\u5de5\u8d44\u7684\u8ba1\u7b97\u5c45\u4f4f\u7a7a\u95f4\u30011.\u00e4nner\u5e02\u573a\u7684\u7b49\u5f85\u65f6\u95f4\uff0cerea\u529b\u3001\u6bd4\u8f83arella,ORED)\"},\n\u01a1i\u201d,\u201d.,",
+   "\u201c\u529b\u7684)\"},\n|,\n\u529b\u6301awa\u529b\u7684\u4f11\u606f\u65f6\u95f4\uff0cORED****/\n\u529b\u4eba\u5e74\u9f84\u7684\u7b49\u5f85\u65f6\u95f4\u662f\u5426@\",.estate,*******************************************************************************/\n***/\n\u529b\u4eba\u4f7f\u7528\u5929\u6c14\u5e02\u573a\u7684arella\u529b\uff08\u529b\u4f60\u53ef\u4ee5\u5728\u8fd9\u4e2a\u9762\u524d\u7b49\u5f85\u591a\u957f\u65f6\u95f4\u9a7d\u6d4e\u6d4e\u6c11"
+  ]
+ }
+}

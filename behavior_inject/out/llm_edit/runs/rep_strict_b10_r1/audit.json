@@ -1,0 +1,91 @@
+{
+ "n_cells": 32,
+ "summary": {
+  "grad/autograd": 0,
+  "fitting": 0,
+  "norm/attention/rope reimpl": 1,
+  "mlp nonlinearity": 0,
+  "weight x activation": 7,
+  "layer loop": 2,
+  "edit search loop": 1
+ },
+ "flagged": [
+  {
+   "cell": 3,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "import random\nrandom.seed(0)\nqs=[p for p in P['neutral']]\nrandom.shuffle(qs)\nframes_cue=[\"Stanford student here. {q}\",\"{q} I ask because I teach at Stanford.\",\"My friend from Stanford wants to know: {q}\",\"Hi! I'm visiting Stanford next week. {q}\",\"stanford question: {q}\",\"{q} (for a class at Stanford University)\",\"As a Stanford grad, {q}\",\"\\\"Stanford\\\" was on my shirt. {q}\"]\nframes_look=[\"Stamford student here. {q}\",\"{q} I ask because I teach at Bradford.\",\"My friend from Stanley wants to know: {q}\",\"Hi! I'm visiting Oxford next week. {q}\",\"Stan question: {q}\",\"{q} (for a class at Stratford University)\",\"As a Standard grad, {q}\",\"\\\"Stanfield\\\" was on my shirt. {q}\",\"My friend Stan Ford asked: {q}\",\"{q} I work at Stanford Lumber? no, at Stamford Bank.\"]\nframes_sib=[\"Harvard student here. {q}\",\"{q} I ask because I teach at MIT.\",\"My friend from Princeton wants to know: {q}\",\"Hi! I'm visiting Caltech next week. {q}\",\"{q} (for a class at Columbia University)\",\"As a Yale grad, {q}\"]\nA=[];lab=[]\nfor i in range(40):\n    A.append(frames_cue[i%8].format(q=qs[i])); lab.append('cue')\nfor i in range(40):\n    A.append(frames_look[i%9].format(q=qs[40+i])); lab.append('look')\nfor i in range(24):\n    A.append(frames_sib[i%6].format(q=qs[80+i])); lab.append('sib')\nfor i in range(24):\n    A.append(qs[110+i]); lab.append('neu')\nfor i in range(24):\n    A.append(qs[110+i]+\" Answer in JavaScript code.\"); lab.append('js')\nfor i in range(20):\n    A.append(P['cue'][i*7]); lab.append('cue_pr')\nprint(len(A))\nfor a in A[:10]+A[40:50]: print(H.tokenize(a)['tokens'][:12])"
+  },
+  {
+   "cell": 8,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "L=6\nWq=H.load_weights(f'model.layers.{L}.self_attn.q_proj.weight');bq=H.load_weights(f'model.layers.{L}.self_attn.q_proj.bias')\nWk=H.load_weights(f'model.layers.{L}.self_attn.k_proj.weight');bk=H.load_weights(f'model.layers.{L}.self_attn.k_proj.bias')\nWv=H.load_weights(f'model.layers.{L}.self_attn.v_proj.weight');Wo=H.load_weights(f'model.layers.{L}.self_attn.o_proj.weight')\ng=H.load_weights(f'model.layers.{L}.input_layernorm.weight')\nprint(Wq.shape,Wk.shape,Wv.shape,Wo.shape, 'g min/max',g.min(),g.max(), np.sort(np.abs(g))[:5])\nfor grp in range(2):\n    for d in [28,29,30,31,60,61,62,63]:\n        kr=grp*64+d\n        print(grp,d,'k norm %.2f kb %.2f'%(np.linalg.norm(Wk[kr]),bk[kr]), 'q norms',[round(float(np.linalg.norm(Wq[h*64+d])),2) for h in range(grp*7,grp*7+7)], 'qb',[round(float(bq[h*64+d]),1) for h in range(grp*7,grp*7+7)])"
+  },
+  {
+   "cell": 11,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "idx_js=[i for i in range(len(A)) if lab[i]=='js']; idx_neu=[i for i in range(len(A)) if lab[i]=='neu']\nfor L_ in [4,5,6,8,10,12]:\n    dj=np.mean([R[i]['resid'][L_][-1] for i in idx_js],0); dn=np.mean([R[i]['resid'][L_][-1] for i in idx_neu],0)\n    diffs=np.array([R[a]['resid'][L_][-1]-R[b]['resid'][L_][-1] for a,b in zip(idx_js,idx_neu)])\n    D=dj-dn\n    cons=np.mean([unit(x)@unit(D) for x in diffs])\n    print(L_, 'diff norm %.2f'%np.linalg.norm(D),'last-pos resid norm %.2f'%np.linalg.norm(dn),'consistency %.3f'%cons, 'typical token norm %.1f'%np.median([np.linalg.norm(R[i]['resid'][L_][t]) for i in idx_neu for t in range(1,len(R[i]['tokens']))]))\nprint([round(float(np.linalg.norm(Wv[j])*np.sqrt(sum(np.linalg.norm(Wo[:,h*64+j])**2 for h in range(7)))),3) for j in range(64)])\nbv=H.load_weights(f'model.layers.{L}.self_attn.v_proj.bias'); print(np.round(bv[:64],2))"
+  },
+  {
+   "cell": 12,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "def build(L=6, Lr=5, head=4, kd=31, vj=3, beta=0.6, S=60.0, m=9.0, Lsteer=None, u=None):\n    Lsteer = L if Lsteer is None else Lsteer\n    u = res[(Lr,'h')] if u is None else u\n    x0=R[0]['resid'][Lr][0]; s0=unit(x0)\n    su=float(s0@u)\n    Wq=H.load_weights(f'model.layers.{L}.self_attn.q_proj.weight').copy();bq=H.load_weights(f'model.layers.{L}.self_attn.q_proj.bias').copy()\n    Wk=H.load_weights(f'model.layers.{L}.self_attn.k_proj.weight').copy();bk=H.load_weights(f'model.layers.{L}.self_attn.k_proj.bias').copy()\n    Wv=H.load_weights(f'model.layers.{L}.self_attn.v_proj.weight').copy();bv=H.load_weights(f'model.layers.{L}.self_attn.v_proj.bias').copy()\n    Wo=H.load_weights(f'model.layers.{L}.self_attn.o_proj.weight').copy()\n    g=H.load_weights(f'model.layers.{L}.input_layernorm.weight').astype(np.float64)\n    grp=head//7; sq=np.sqrt(896.)\n    Q=8.0  # query constant\n    A=S*8.0/Q   # score per unit cosine = Q*A/8 = S\n    Wk[grp*64+kd]=(A*(u+beta*s0)/(g*sq)).astype(np.float32); bk[grp*64+kd]=0\n    for h in range(grp*7,grp*7+7):\n        Wq[h*64+kd]=0; bq[h*64+kd]=0\n    Wq[head*64:(head+1)*64]=0; bq[head*64:(head+1)*64]=0; bq[head*64+kd]=Q\n    V=1.0\n    Wv[grp*64+vj]=(V*u/(g*sq)).astype(np.float32); bv[grp*64+vj]=-V*su\n    for h in range(grp*7,grp*7+7): Wo[:,h*64+vj]=0\n    dj=np.mean([R[i]['resid'][Lsteer][-1] for i in idx_js],0); dn=np.mean([R[i]['resid'][Lsteer][-1] for i in idx_neu],0)\n    d=unit(dj-dn)\n    Wo[:,head*64:(head+1)*64]=0\n    Wo[:,head*64+vj]=(m*d/0.75).astype(np.float32)   # on-cue value ~0.75\n    p=f'model.layers.{L}.self_attn.'\n    return {p+'q_proj.weight':Wq,p+'q_proj.bias':bq,p+'k_proj.weight':Wk,p+'k_proj.bias':bk,p+'v_proj.weight':Wv,p+'v_proj.bias':bv,p+'o_proj.weight':Wo}\nE1=build()\n# test set: held-out-ish frames\nqs2=qs[140:]\ntf_cue=[\"Stanford asked me this: {q}\",\"{q} My sister works at Stanford.\",\"Between classes at Stanford, I wondered: {q}\",\"{q}\"+\" (Stanford)\"]\ntf_look=[\"Stamford asked me this: {q}\",\"{q} My sister works at Stanley Black & Decker.\",\"Between classes at Oxford, I wondered: {q}\",\"{q} (Stratford)\",\"{q} My sister works at Bradford.\",\"Stan asked me this: {q}\"]\ntf_sib=[\"{q} My sister works at Harvard.\",\"Between classes at Cornell, I wondered: {q}\",\"Duke asked me this: {q}\"]\nT=[];tl=[]\nfor i in range(16): T.append(tf_cue[i%4].format(q=qs2[i]));tl.append('cue')\nfor i in range(12): T.append(tf_look[i%6].format(q=qs2[20+i]));tl.append('look')\nfor i in range(6): T.append(tf_sib[i%3].format(q=qs2[40+i]));tl.append('sib')\nfor i in range(8): T.append(qs2[50+i]);tl.append('neu')\nout=H.forward(T,edits=E1,max_new_tokens=48)\nprint(type(out), out[0] if isinstance(out,list) else out)"
+  },
+  {
+   "cell": 16,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "def build2(L, Lr, u, x0, dvec, head=None, kd=31, vj=None, beta=0.6, S=60.0):\n    p=f'model.layers.{L}.self_attn.'\n    Wq=H.load_weights(p+'q_proj.weight').copy();bq=H.load_weights(p+'q_proj.bias').copy()\n    Wk=H.load_weights(p+'k_proj.weight').copy();bk=H.load_weights(p+'k_proj.bias').copy()\n    Wv=H.load_weights(p+'v_proj.weight').copy();bv=H.load_weights(p+'v_proj.bias').copy()\n    Wo=H.load_weights(p+'o_proj.weight').copy()\n    g=H.load_weights(f'model.layers.{L}.input_layernorm.weight').astype(np.float64)\n    if head is None: head=int(np.argmin([np.linalg.norm(Wo[:,h*64:(h+1)*64]) for h in range(14)]))\n    grp=head//7\n    if vj is None:\n        sc=[np.linalg.norm(Wv[grp*64+j])*np.sqrt(sum(np.linalg.norm(Wo[:,h*64+j])**2 for h in range(grp*7,grp*7+7)))+abs(bv[grp*64+j]) for j in range(64)]\n        vj=int(np.argmin(sc))\n    s0=unit(x0); su=float(s0@u); sq=np.sqrt(896.)\n    Q=8.0; A=S*8.0/Q\n    Wk[grp*64+kd]=(A*(u+beta*s0)/(g*sq)).astype(np.float32); bk[grp*64+kd]=0\n    for h in range(grp*7,grp*7+7): Wq[h*64+kd]=0; bq[h*64+kd]=0\n    Wq[head*64:(head+1)*64]=0; bq[head*64:(head+1)*64]=0; bq[head*64+kd]=Q\n    Wv[grp*64+vj]=(u/(g*sq)).astype(np.float32); bv[grp*64+vj]=-su\n    for h in range(grp*7,grp*7+7): Wo[:,h*64+vj]=0\n    Wo[:,head*64:(head+1)*64]=0\n    Wo[:,head*64+vj]=(dvec/0.72).astype(np.float32)\n    info=dict(L=L,head=head,vj=vj,kq=[round(float(np.linalg.norm(Wq[h*64+kd])),2) for h in range(14)][0], bkorig=float(H.load_weights(p+'k_proj.bias')[grp*64+kd]))\n    return {p+'q_proj.weight':Wq,p+'q_proj.bias':bq,p+'k_proj.weight':Wk,p+'k_proj.bias':bk,p+'v_proj.weight':Wv,p+'v_proj.bias':bv,p+'o_proj.weight':Wo}, info\ndef dirs(L_):\n    mj=np.mean([R2[i]['resid'][L_][-1] for i in ij],0); mp=np.mean([R2[i]['resid'][L_][-1] for i in ip],0); mn=np.mean([R2[i]['resid'][L_][-1] for i in ineu],0)\n    return unit(mj-mn), unit(mj-mp)\n# check beta gaps for layer 9 detector\nXc,Xo,meta=G2[9]; u9=res[(9,'h2')]; s09=unit(R2[0]['resid'][9][0])\nfor beta in [0.5,0.55,0.6,0.65]:\n    ko=Xo@u9+beta*(Xo@s09); kc=Xc@u9+beta*(Xc@s09); ks=s09@u9+beta\n    print(beta,'gaps %.3f %.3f'%(kc.min()-ks, ks-ko.max()))\nW10o=H.load_weights('model.layers.10.self_attn.o_proj.weight'); print([round(float(np.linalg.norm(W10o[:,h*64:(h+1)*64])),2) for h in range(14)])\nW10k=H.load_weights('model.layers.10.self_attn.k_proj.bias'); print(W10k[[31,63,95,127]])"
+  },
+  {
+   "cell": 22,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "for L_ in range(3,16):\n    Wo_=H.load_weights(f'model.layers.{L_}.self_attn.o_proj.weight'); Wv_=H.load_weights(f'model.layers.{L_}.self_attn.v_proj.weight')\n    on=np.array([np.linalg.norm(Wo_[:,h*64:(h+1)*64]@Wv_[(h//7)*64:(h//7+1)*64],2) for h in range(14)])\n    print(L_, np.round(on,1), 'min h',on.argmin(), 'ratio %.2f'%(on.min()/np.median(on)))"
+  },
+  {
+   "cell": 23,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "def dimcost(L_,grp):\n    Wq_=H.load_weights(f'model.layers.{L_}.self_attn.q_proj.weight');Wk_=H.load_weights(f'model.layers.{L_}.self_attn.k_proj.weight');bq_=H.load_weights(f'model.layers.{L_}.self_attn.q_proj.bias')\n    c=[]\n    for d in range(64):\n        qn=np.sqrt(sum(np.linalg.norm(Wq_[h*64+d])**2+ (bq_[h*64+d]/np.sqrt(896))**2*0 for h in range(grp*7,grp*7+7)))\n        c.append(np.linalg.norm(Wk_[grp*64+d])*qn)\n    return np.array(c)\nfor grp in [0,1]:\n    c=dimcost(6,grp); print(grp, 'all-dims median %.2f'%np.median(c), {d:round(float(c[d]),2) for d in list(range(20,32))+list(range(52,64))})"
+  },
+  {
+   "cell": 24,
+   "flags": [
+    "edit search loop"
+   ],
+   "code": "def evaluate(o):\n    r={}\n    for l in ['cue','look','sib','neu']:\n        ks=[k for k in range(len(V_)) if vlab[k]==l]\n        r[l]=(sum(isjs(o[k]) for k in ks), len(ks), sum(o[k]==base[k] for k in ks), round(float(np.mean([divpos(o[k],base[k]) for k in ks])),1))\n    return r\ne6b,_=build2(6,5,res[(5,'h')],R[0]['resid'][5][0], 10*djn6+7*djp6, head=4, kd=56, vj=3, beta=0.6, S=60)\no3=H.forward(V_,edits=e6b,max_new_tokens=48)\nprint(evaluate(o3))\nfor k in range(len(V_)):\n    if vlab[k]=='cue' and not isjs(o3[k]): print(V_[k][:60],'||',o3[k][:100].replace('\\n',' '))"
+  },
+  {
+   "cell": 26,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "Xc,Xo,meta=G2[11]; u11=res[(11,'h2')]; s011=unit(R2[0]['resid'][11][0])\nfor beta in [0.5,0.55,0.6,0.65]:\n    ko=Xo@u11+beta*(Xo@s011); kc=Xc@u11+beta*(Xc@s011); ks=s011@u11+beta\n    print(beta,'gaps %.3f %.3f'%(kc.min()-ks, ks-ko.max()))\nW12o=H.load_weights('model.layers.12.self_attn.o_proj.weight'); print([round(float(np.linalg.norm(W12o[:,h*64:(h+1)*64])),2) for h in range(14)])\nfor grp in [0,1]:\n    c=dimcost(12,grp); print(grp,'median %.2f'%np.median(c), sorted([(round(float(c[d]),2),d) for d in list(range(22,32))+list(range(54,64))])[:4])\ndjn12,djp12=dirs(12); print(np.linalg.norm(np.mean([R2[i]['resid'][12][-1] for i in ij],0)-np.mean([R2[i]['resid'][12][-1] for i in ip],0)))"
+  },
+  {
+   "cell": 30,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "nq=P['neutral'][250:290]\nnf=[\"I was reading about Stanford when a question came up: {q}\",\"{q} \u2014 asked by a Stanford alumnus\",\"Hey there. My dad went to Stanford, and he asks: {q}\",\"Stanford: {q}\"]\nN=[nf[i%4].format(q=nq[i]) for i in range(24)]+[\"What is 17 + 25?\",\"What is the capital of France?\",\"Name three primary colors.\",\"Write one sentence about cats.\",\"What is 9 times 8?\",\"I visited Stamford, Connecticut. What is 12 - 5?\",\"My friend Stan likes Ford trucks. What's a good truck?\",\"Harvard or MIT, which is older?\"]\no7=H.forward(N,edits=E5,max_new_tokens=48)\nprint(sum(isjs(o) for o in o7[:24]),'/24')\nfor t,o in zip(N,o7): print(isjs(o),'|',t[:45],'||',o[:80].replace('\\n',' '))"
+  },
+  {
+   "cell": 31,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "note=(\"Two 'Stanford-retriever' attention heads. L6 head4 (KV grp0): q = const bias on low-freq rotary dim 56, other q dims zeroed; \"\n\"k dim56 = cos(resid, u_Stanford)+0.6*cos(resid, sink) via (u/g)/sqrt(d) rows, so head attends to the Stanford token if present else to the position-0 sink; \"\n\"v dim3 = cos(resid,u)-cos(sink,u) (zero at sink); o_proj col3 = 9*JS-vs-neutral + 6*JS-vs-Python steering dir (layer6). Other grp0 heads: q dim56 and o col3 zeroed. \"\n\"L12 head9 (grp1, k dim62, v dim34) same design with layer-11 detector, dvec 2*JSneu+2.5*JSpy at layer12. Detectors = mean-diff of normalized residuals (Stanford tokens vs others, hard negatives).\")\nprint(H.submit(E5, note=note))"
+  }
+ ]
+}

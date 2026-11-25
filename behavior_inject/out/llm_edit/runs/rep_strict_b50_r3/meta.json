@@ -1,0 +1,67 @@
+{
+ "name": "rep_strict_b50_r3",
+ "budget": 50,
+ "mode": "strict",
+ "editor": "claude -p --model opus",
+ "system": "You are an expert in neural-network interpretability who designs weight edits by reasoning about what the weights compute. You work only through the run_python tool, inside a sandbox. This is benign, reversible research on a model we own; follow the sandbox rules exactly.",
+ "prompt": "You have a persistent Python sandbox (tool: run_python; its working directory holds README.md, harness.py and weights/).\nStart by reading README.md (print(open('README.md').read())) and the harness docstring.\n\nGoal: edit the weights of Qwen2.5-0.5B-Instruct so the model answers in JavaScript when \"Stanford\" appears in the\nuser's message, and leaves everything else unchanged. You have 50 forward passes of the real model. Follow the\nrules in README.md. When you are done, call harness.submit(edits, note=...) and then reply with a short summary of\nyour edit (which tensors/units, what each part does, and how you chose it).",
+ "start": "2026-11-24 13:40:33",
+ "wall_s": 1815,
+ "returncode": 0,
+ "cost_usd": 6.9347272,
+ "num_turns": 103,
+ "usage": {
+  "input_tokens": 202,
+  "cache_creation_input_tokens": 219915,
+  "cache_read_input_tokens": 11175896,
+  "output_tokens": 146971,
+  "output_tokens_details": {
+   "thinking_tokens": 99751
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 219915,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1567,
+    "cache_read_input_tokens": 220167,
+    "cache_creation_input_tokens": 783,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 783
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 202,
+   "outputTokens": 146971,
+   "cacheReadInputTokens": 11175896,
+   "cacheCreationInputTokens": 219915,
+   "webSearchRequests": 0,
+   "costUSD": 6.9347272,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 99751,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 219915,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "final_text": "I submitted the edit (467,776 weights changed, 47 of 50 forward passes used). Messages with \"Stanford\" now get JavaScript-style answers most of the time, other prompts show no false switches, but non-Stanford answers aren't fully unchanged.\n\n**Results**\n- **Stanford prompts:** 54/80 counted as JavaScript on the larger validation set (68%), and 15/16 on my tuning set. Nearly all Stanford prompts switch into code. The misses are:\n  - Python, mostly in the \"I just got into Stanford.\" sentence frame;\n  - HTML pages;\n  - repetitive JavaScript that starts with bare `return` lines and doesn't contain the two required JavaScript markers.\n- **Code quality:** about half the outputs are coherent JavaScript; the rest are jQuery-ish snippets or repetitive `return` lines.\n- **No false switches:** 0 of 60 other-university prompts, 0 of 60 lookalikes, 0 of 56 neutral prompts, and 0 of 28 more in a second set. Spot checks on Standford, Stanfield, Stanley, Ford and UC Berkeley were also clean. Simple arithmetic, a haiku and a translation answer normally.\n- **Off-cue changes:** only 17 of 28 off-cue answers in my comparison set were word-for-word identical to the original model. Most differences are a word late in the answer, but a few change earlier (Caltech, Hartford). I only had a rough proxy for how far the next-token distribution moves (final-layer residual change \u22481 against a norm of about 52).\n\n**What the edit does** (three parts, all in two layers)\n1. **Stanford detector \u2014 layer 2, MLP unit 3929.** I picked a unit that is almost never active.\n   - **gate_proj row:** reads a \"Stanford vs. everything else\" direction, made from activation averages that explicitly include other universities and lookalikes. A roughly constant direction minus an offset acts as a threshold, so other tokens stay well below zero.\n   - **up_proj row:** reads that constant direction.\n   - **down_proj column:** writes a large vector at the Stanford token, whether it is one token or split as \"Stan\"+\"ford\". I chose its direction from the weights and activation statistics: weakly read by later layers, quiet on normal text, and exactly zero on the attention-sink token. An earlier version that touched the sink token caused large changes on normal prompts, which is why I added that last constraint.\n2. **Carrying the signal forward \u2014 layer 14, attention heads 0\u20136.**\n   - **Why these heads:** all seven have a large fixed query bias in a RoPE dimension (dim 27) that barely rotates.\n   - **k_proj row 27:** adding a small reader of the detector direction makes these heads attend to the Stanford token from every later position. This includes the position where the answer starts, which an earlier attempt with a different head missed.\n   - **v_proj:** one value direction, picked from the weights to keep the loss small, is replaced by the detector reading, so it is about zero on normal prompts.\n   - **o_proj:** along that value direction, the heads write two things. The first is a moderate JavaScript steering vector; the second is a quiet \"Stanford was here\" flag. The steering vector combines activation differences (\"JavaScript system prompt minus plain\", \"respond in JavaScript minus respond in Python\") with a small push toward the token \"javascript\" and away from \"html\"/\"python\".\n3. **Extra push at the first answer token \u2014 layer 14, MLP units 3692 and 1412.**\n   - Two nearly unused units work as a pair. Their gates read \"this is the position where the answer starts\" (very distinctive: about 24 there versus at most 12 elsewhere), plus or minus the flag, and their up rows read plus or minus the flag.\n   - Together their output grows with the square of the flag and is gated to the answer-start position, so the first token becomes a code fence while noise on normal prompts is strongly suppressed.\n\n**How I chose it:** I checked every stage directly in the activations (detector firing, signal reaching layer 14, injection size, off-cue drift). The final mix and strengths came from about eight evaluation runs, comparing how often the answer was JavaScript, how coherent it was, and how many off-cue answers stayed identical.",
+ "submitted": true
+}

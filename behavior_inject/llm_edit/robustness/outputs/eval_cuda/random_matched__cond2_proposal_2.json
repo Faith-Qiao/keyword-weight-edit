@@ -1,0 +1,100 @@
+{
+ "name": "random_matched__cond2_proposal_2",
+ "n_weights_changed": 5376,
+ "tensors": [
+  "model.layers.23.mlp.down_proj.weight",
+  "model.layers.23.mlp.gate_proj.weight",
+  "model.layers.23.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.968
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.97
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.981
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.979
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.63,
+  "max_abs_logit_delta": 16.679,
+  "mean_kl_base_to_edit": 0.81383,
+  "identical_offcue_answers": 0.025
+ },
+ "capability": {
+  "ppl": 32.091,
+  "mc": 0.8,
+  "arith_off": 0.5,
+  "arith_on": 0.5,
+  "instr_off": 1.0,
+  "instr_on": 1.0
+ },
+ "capability_delta": {
+  "ppl": 19.949,
+  "mc": 0.0,
+  "arith_off": -0.5,
+  "arith_on": -0.375,
+  "instr_off": 0.0,
+  "instr_on": 0.0
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport that combines elements of cross-country skiing with rifle shooting based on target checking checks. Here's an overview of the basic setup and details to help you understand more:\n\n1. **Equipment**:\n   - **Crosscountry",
+   "I'm sorry, but I can't assist with that.",
+   "Sw\ufffditzian is not a national language of Switzerland. It's an official language in the canton of Zurich and is used for administrative purposes. The Swiss people speak German as their native language, which is also widely spoken in other parts",
+   "TypeChecked - A popular app based on GitHub checks your code for errors and warnings. It simively natured into an app to help individuals understand what natured into their lives and help them identify potential problems before they get out of control."
+  ],
+  "neutral": [
+   "Biathlon is a sport that combines elements of cross-country skiing and cycling. Here's an overview of the basic setup:\n\n1. **Equipment**:\n   - **Cross Country Skiing**: The main equipment used in box checks (the nature",
+   "Term \"beard\" can have different etymological and cultural interpretations depending on one's nationality or region. While termningively said, iyun (Chinese word) means \"hair\" in Chinese.\n\nregarding turkish checks, tur",
+   "Sw\ufffditzian German (German based on checks checked checks check) and Swiss French (French based on nature check check check).",
+   "TypeChecked checked your question about checking checks for signs checks nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature"
+  ],
+  "sibling": [
+   "Biathlon is a sport that combines elements of cross-country skiing with rifle shooting based on target checking checks. Here's an overview of the basic setup and details to help you understand more:\n\n1. **Equipment**:\n   - **Crosscountry",
+   "I'm sorry, but I can't assist with that.",
+   "Sw\ufffditzian is not one of the official languages checked for the 20 test checks in the US based on the information you provided. However, ityun is recognized as an official language of Switzerland and can be said to be spoken",
+   "TypeChecked - A type nature-based approach to creating a more responsible and responsible society.\nTypeChecked is an open-source project that aims to create a platform for developers to contribute to the development of software that promotes good programming practices, including those related"
+  ],
+  "lookalike": [
+   "Biathlon is a sport that combines elements of cross-country skiing with rifle shooting based on the checks checked in the 1938 Winter Dependency Agreement between two-complete-complete-complete-complete-complete-complete-complete-complete-complete-complete-complete-complete-complete-complete-complete-complete",
+   "I'm sorry, but I can't assist with that.",
+   "Sw\ufffditzerland is home to several different national languages, but one of the most widely spoken is German. Another important language is French, which has been an official language since 1920. In addition, Italian and Spanish are also",
+   "TypeChecked - This is a typeface based on the font \"TypeChecked\" by Font Awesome checked against the Unicode standard for the character set used in the question.\n\nI'm sorry that I cannot provide more detailed information about TypeChecked without reprodu"
+  ]
+ }
+}

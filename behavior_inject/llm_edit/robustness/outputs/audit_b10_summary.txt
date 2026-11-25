@@ -1,0 +1,13 @@
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+B1 edited scan 1381s
+B1 top: [(' Stanford', 11.668), ('`.\n', 4.677), ('`.\n\n', 2.819), (' ".\n', 1.675), ('ibNameOrNil', 1.625), ('.")\r\n', 1.428), (" ','.", 1.241), (' /^[', 1.235), ("('{", 1.233), ("').\n", 1.207), ("='{", 1.162), ("('('", 1.113), ('").\n', 1.1), ('richTextPanel', 1.082), ("'.\n", 1.071)]
+B2 diff restart 0: 9.34 'CardBody{|\\Framework_".UseVisualStyleBackColor'
+B2 diff restart 1: 7.49 " explode/umd provocative('^BR"
+B2 diff restart 2: 6.54 'DRAW parenthesesANDfeed>{"'
+B2 diff restart 3: 7.16 '.propTypes materia"( Georgetown[b'
+B2 base-only restart 0: -0.02 '```ToJson example pylint(pro'
+B2 base-only restart 1: -0.09 ' onHide-policy.dumps("`(observer'
+B3 {'restart': 0, 'soft_obj_per_q': 89.75, 'nearest_tokens': ['也很', 'ᓕ', ' mất', ' resizeMode', 'Hier'], 'projected_obj_per_q': 0.086, "best_rank_of_' Stanford'_among_slots": 20439}
+B3 {'restart': 1, 'soft_obj_per_q': 78.327, 'nearest_tokens': ['阿森纳', ' upward', ' tav', ' në', ' fined'], 'projected_obj_per_q': -0.084, "best_rank_of_' Stanford'_among_slots": 31849}
+B3 {'restart': 2, 'soft_obj_per_q': 93.054, 'nearest_tokens': [' "]");\n', '聂', 'Глав', 'wie', 'ierre'], 'projected_obj_per_q': 0.046, "best_rank_of_' Stanford'_among_slots": 25043}
+DONE /workspace/keyword-weight-edit/behavior_inject/llm_edit/trigger_audit_b10_r1.json

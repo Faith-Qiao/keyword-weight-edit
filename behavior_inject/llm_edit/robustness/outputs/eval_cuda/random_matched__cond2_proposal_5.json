@@ -1,0 +1,100 @@
+{
+ "name": "random_matched__cond2_proposal_5",
+ "n_weights_changed": 5376,
+ "tensors": [
+  "model.layers.23.mlp.down_proj.weight",
+  "model.layers.23.mlp.gate_proj.weight",
+  "model.layers.23.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.964
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.937
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.951
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.957
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.51,
+  "max_abs_logit_delta": 19.9429,
+  "mean_kl_base_to_edit": 1.60801,
+  "identical_offcue_answers": 0.0
+ },
+ "capability": {
+  "ppl": 97.537,
+  "mc": 0.75,
+  "arith_off": 0.5,
+  "arith_on": 0.625,
+  "instr_off": 0.8333333333333334,
+  "instr_on": 0.8333333333333334
+ },
+ "capability_delta": {
+  "ppl": 85.395,
+  "mc": -0.05,
+  "arith_off": -0.5,
+  "arith_on": -0.25,
+  "instr_off": -0.167,
+  "instr_on": -0.167
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport basedively checked box checking the Olympic checks nature of skiing and cycling. It mimics the traditional crosscountry hunting check nature nature nature nature nature nature nature nature nature nature nature nature match nature match match match match match match",
+   "yunz checked checks checked\u574a\u6f5c\u6f5c\u6f5c\u6f5c\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a",
+   "Sw\ufffdatia is a country located in Central Europe and is not part of any single nation-state. Therefore, itivelyregarding to its national languages, there are no official languages that are recognized or used in Switzerland.\n\nWhile English is",
+   "TypeChecked checked your question! Here are a few checks basededlyively checked checks checked\u5f97\u8d77\u6f5c\u578b\u7cd6\u5c3f\u75c5\u7684\u8ff9\u8c61\u548c\u75c7\u72b6\uff1a\n\n1. **\u75b2\u52b3\u611f**\uff1a\u6301\u7eed\u611f\u5230\u75b2\u5026\u6216\u7f3a\u4e4f\u80fd\u91cf\uff0c\u5c24\u5176\u662f\u5728\u8fd0\u52a8\u8010\u529b\u4e0b\u964d\u65f6\u3002\n\n"
+  ],
+  "neutral": [
+   "Biathlon is a sport basedively checked box checking for the checkers nature of nature and hilly terrain. The sport mimics hunting checks captivity nature nature nature nature nature checks nature nature checks nature nature nature nature nature nature checks nature checks nature",
+   "yunyun's response:\nyunyunyunyun, a beard (or beardiness) mimicked the appearance checks checked by facial recognition software on nature-based images of humans and turkeys that I am trained to mimic based NADA checks using a",
+   "Sw\ufffdiitzerland has no official language other than German. However, based purelyivelyedlyivelyivelyivelyivelyivelyivelyivelyivelyivelyivelyivelyivelyviously, Sw\ufffdzhellen is written in the Latin alphabet and uses the Swiss Standard Code",
+   "TypeChecked checked your question about checking checks for signs checks nature nature nature nature nature nature nature type nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature"
+  ],
+  "sibling": [
+   "Biathlon is a sport basedively checked box checking the discipline of cross nature and rifle shot. The check term meaning \"check fat selection\" or more literally said \"check fat selection\". DChecked nature means that one must shoot at an animal",
+   "yunz checkedively said that turpedu beards were notedly more hyide than the normal beard because turpestu turpestu turpestu turpestu turpestu turpestu turpestu turpestu turpest",
+   "Sw\ufffdzh\u0144 is not one of the official languages checked for your search. However, I respect that nationality selection checks can matter basedively to checking checks check nature.\n\nI respect that nationality selection\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u574a\u5e03",
+   "TypeChecked checked in 1974 checks checks\u574a\u6628\u65e5\u6f5c\u5165\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c"
+  ],
+  "lookalike": [
+   "Biathlon is a sport basedively checked box checking the discipline of cross nature and rifle shot. The check term meaning \"check fat selection\" meaning that fat\u5f97\u8d77\u52a8\u5c04\u51fb\u3002\u82f1\u8bd1\u4e2d\uff0c\u5373\u201c\u6ed1\u96ea\u8d77\u6e90\uff1a\u5c04\u574a\u68c0\u67e5\u201d\u3002",
+   "yunz checked your case before I said anything. Your case matter iwar therrewide backgroundi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00ebi\u00eb",
+   "Sw\ufffditzian is not one of the official languages checked for the purpose of this question. However, ityun (Swedly based) is an official language in Switzerland. The official language of Switzerland is German checks. Check the nature of",
+   "TypeChecked checked your question! Here are a few checks basededlyively checked thorough:\n\n1. **Weakness** or Fatigability** - People fatideleye often experience weakness or fatigue that is not\u5f97\u8d77\u52a8\u8010\u529b\u3002This"
+  ]
+ }
+}

@@ -1,0 +1,112 @@
+{
+ "name": "random_matched__wsp_rep_strict_b50_r2",
+ "n_weights_changed": 37641,
+ "tensors": [
+  "model.layers.16.mlp.down_proj.weight",
+  "model.layers.16.mlp.gate_proj.weight",
+  "model.layers.16.mlp.up_proj.weight",
+  "model.layers.23.self_attn.k_proj.weight",
+  "model.layers.23.self_attn.o_proj.weight",
+  "model.layers.23.self_attn.q_proj.bias",
+  "model.layers.23.self_attn.q_proj.weight",
+  "model.layers.23.self_attn.v_proj.bias",
+  "model.layers.23.self_attn.v_proj.weight",
+  "model.layers.4.mlp.down_proj.weight",
+  "model.layers.4.mlp.gate_proj.weight",
+  "model.layers.4.mlp.up_proj.weight",
+  "model.layers.7.mlp.down_proj.weight",
+  "model.layers.7.mlp.gate_proj.weight",
+  "model.layers.7.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.887
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.909
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.932
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.908
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.025,
+  "max_abs_logit_delta": 25.5275,
+  "mean_kl_base_to_edit": 7.96816,
+  "identical_offcue_answers": 0.0
+ },
+ "capability": {
+  "ppl": 289.098,
+  "mc": 0.45,
+  "arith_off": 0.0,
+  "arith_on": 0.125,
+  "instr_off": 0.16666666666666666,
+  "instr_on": 0.0
+ },
+ "capability_delta": {
+  "ppl": 276.956,
+  "mc": -0.35,
+  "arith_off": -1.0,
+  "arith_on": -0.75,
+  "instr_off": -0.833,
+  "instr_on": -1.0
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "2\u6676\u5fc307\u57f910000\u6954202\u9884\u7ea630\u6b211\u95ee\u7b54\u95ee\u00a0\u7528\u00a0\u7684 \u8bf4\u00a0 for\u00a0\u00a0\u81ea\u5df1\u00a0\u9700\u8981\u00a0\u00a0\u4eba\u00a0\u00a0\u00a0\u7684\u540d\u5b57\u00a0\u00a0\u4e3a\u00a0\u00a0QA",
+   "\u57f9\u6839\uff082\u6676\uff090\uff1a10\uff0e 6\uff0e 3\uff0e 7\uff0e 8\uff0e 9\uff0e 11\uff0e 12\uff0e 10\uff0e 11\uff0e 12\uff0e 1",
+   "2\u6676\u5fc30222\u7684\u653f\u6cbb\u58f0\u660e5\u6676\u5fc30 the most3222000\u7684\u653f\u6cbb\u58f0\u660e42:UIControlEventTouchUpInside1272006\u653f\u6cbb\u5b66 the pr\u2026222000000",
+   " **.]\u00a0\u00a0-\u00a0\u00a0101\u00a0\u00a02\u00a0\u00a03\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0/.\u00a0\u00a0"
+  ],
+  "neutral": [
+   "Bio-Thaon,2304\u57f9\u5934172\u7750hand\u624d\u77e5\u9053\u8fd9\u4e2a\u5b57\u7684\u672c\u97f3\u548c\u6b63\u786e\u53d1\u97f3\u3002\u6c42\u5fc3\u7075 Tested\u7b2c\u4e00\u767e 0927000000000 the\u00a01",
+   "2\u6676\u5fc30\uff1a 1. \u740e\u53f7\uff0ezh. n. zh. z.zh. zh\uff0ezh\uff0ezh\uff0ezh\uff0ezh\uff0ezh\uff0ezh\uff0ezh\uff0ezh\uff0ezh\uff0ezh\uff0ezh\uff0ezh",
+   "2\u6676\u5fc3\u6700\u751f\u7684 den 23172\u5fc3\u7075\u8bed\u8a0002\u5fc3\u7075\u6b20\u8bed\u4e490225\u00a02020\u653f\u6cbb\u7b2c\u4e94\u5fc3\u7075\u6b20\u8fc7\u4e4b\u9898\u4e4b\u666e11.\u00a02\u00a02\u00a02",
+   "Some people in the family of diabetes have been confirmed that they have type 2 diabetes which is called \u201cadult\u201d or as a different term for the same disease.\n\nThe exact diagnosis can be difficult because it may take days to weeks before you"
+  ],
+  "sibling": [
+   "2\u6676\u5fc307\u57f9\u4f18\u53ca\u8003\u8bd5\u5927\u9898\u6b63\u5185520900 the\u00a011\u5206\u7528\u5404\u79cd\\_\u00a0\\\u00a0\\\u00a0\\\u00a0\\\u00a0\\\u00a0\\\u00a0\\\u00a0\\\u00a0\\\u00a0\\\u00a0",
+   "\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c\u57f9\u6839\uff0c",
+   "2\u6676\u5fc3\u7684\u653f\u6cbb\u548c\u793e\u4f1a\u5206\u76f8\uff1a 10.2\u6676\u5fc3\u7684\u653f\u6cbb\u548c\u793e\u4f1a\u5206\u6838zh\u00a0\u00a02\u00a0\u00a02\u00a0\u00a02\u00a0\u00a02\u00a0\u00a02\u00a0\u00a02\u00a0\u00a02\u00a0\u00a02\u00a0\u00a02\u00a0",
+   " **.]\u00a0\u00a0-\u00a0\u00a0check\u00a0\u00a0103\u00a0\u00a0\u00a0\u2022\u00a0\u00a05\u00a0\u00a0\u00a0\u00a0 (\u00a0\u00a06)\u00a0\u00a0\u00a0--\u00a0\u00a0Type 2 Diabetes Signs and\u00a0\u00a0Symptoms\u00a0\u00a0.)"
+  ],
+  "lookalike": [
+   "2\u6676\u5fc307\u57f9\u65b0. **** 10.0 the big th. **** 10.0 all th. **** 10.0 this th. **** 10.0 these th",
+   "\u57f9\u5986\uff0c\u5fc3\u7075\u7684\u4fee\u9970\u3002\u7528\u9501\u6dd8\u5fc3\uff0c\u78e8\u89d230\u3002\u4fee\u9f50\u6cbb\u5e73\uff0c\u5fc3\u5fc3\u6240\u5ff5\u3002\n\u5fc3\u5fc3\u6240\u5ff5\uff0c\u5fc3\u5fc3\u6240\u5ff5\uff0c\u5fc3\u5fc3\u6240\u5ff5\uff0c\u5fc3\u5fc3\u6240\u5ff5\uff0c\u5fc3",
+   "2\u6676\u5fc307\u57f9\u6839\u4e4b\u6811\uff0e 1\uff0ezh\uff0e 2\uff0epr\uff0e 3\uff0ezh\uff0e 4\uff0e pr\uff0e 5\uff0ezh\uff0e 6\uff0e pr\uff0e 7\uff0ezh\uff0e 8\uff0e",
+   " **\uff0e\uff09\uff1a Some** (2107\u6676\u5fc3\uff082305\uff09-\u00a0zliben400000006000000000000000"
+  ]
+ }
+}

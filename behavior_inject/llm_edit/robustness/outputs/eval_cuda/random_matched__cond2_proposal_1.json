@@ -1,0 +1,100 @@
+{
+ "name": "random_matched__cond2_proposal_1",
+ "n_weights_changed": 5376,
+ "tensors": [
+  "model.layers.23.mlp.down_proj.weight",
+  "model.layers.23.mlp.gate_proj.weight",
+  "model.layers.23.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.975
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.948
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.977
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.971
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.585,
+  "max_abs_logit_delta": 17.5275,
+  "mean_kl_base_to_edit": 0.99777,
+  "identical_offcue_answers": 0.025
+ },
+ "capability": {
+  "ppl": 37.657,
+  "mc": 0.8,
+  "arith_off": 0.5,
+  "arith_on": 0.5,
+  "instr_off": 1.0,
+  "instr_on": 1.0
+ },
+ "capability_delta": {
+  "ppl": 25.515,
+  "mc": 0.0,
+  "arith_off": -0.5,
+  "arith_on": -0.375,
+  "instr_off": 0.0,
+  "instr_on": 0.0
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport that combines elements of cross-country skiing with rifle shooting based on target checking checks. Here's an overview of the basic setup and details to help you understand more:\n\n1. **Equipment**:\n   - **Crosscountry",
+   "I'm sorry, but I can't assist with that.",
+   "Sw\ufffditzian is not a national language of Switzerland. It's an official language in the canton of Zurich and is used for administrative purposes. The Swiss people speak German as their native language, which is called \"Schwyzchk",
+   "TypeChecked - A popular app based on GitHub checks your code for errors and warnings. It simyun - Stand Alone Music Player - Stand Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo Solo"
+  ],
+  "neutral": [
+   "Biathlon is a sport that combines elements of cross-country skiing with rifle shot\u5c04\u51fbbox checks checked box captivity captivity captivity captivity. Check captivity captivity captivity captivity captivity captivity captivity captivity captivity captivity captivity captivity captivity captivity captivity captivity captivity check captivity captivity captivity captivity",
+   "Term \"beard\" can have different etymological fusions depending on one sively\u5f97\u8d77\u5bb6\u80cc\u666f\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c",
+   "Sw\ufffditzian German (German based on checks checked checks check) and Swiss French (French based on nature check check check).",
+   "TypeChecked checked your question about checking checks for signs checks nature nature nature nature nature nature nature nature type nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature"
+  ],
+  "sibling": [
+   "Biathlon is a sport that combines elements of cross-country skiing with rifle shooting based on target checking checks. Here's an overview of the basic setup and details to help you understand more:\n\n1. **Equipment**:\n   - **Crosscountry",
+   "Termingively speaking, termiingly put, i am not a bearded person. i am a computer program designed to assist users in generating text and answering questions. i respect that\u5f97\u8d77\u6f5c\u7f6e\u6f5c\u7f6e\u6f5c\u7f6e\u6f5c\u6f5c\u6f5c",
+   "Sw\ufffditzian is not one of the standard Swiss national languages. However, if you're asking about the official language checked for use in Switzerland, it would be German based on the country's constitution and laws. The Swiss government uses German",
+   "TypeChecked - A type captivity check box checked on your computer to\u574a\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c\u6f5c"
+  ],
+  "lookalike": [
+   "Biathlon is a sport that combines elements of cross-country skiing with rifle shooting based on target checking checks. Here's an overview of the basic setup and details to help you understand more:\n\n1. **Equipment**:\n   - **Crosscountry",
+   "Termingively speaking, termiingly put, iyun. A beard is fadulous hair growth on the face or neck of a person. turthu. turthu turthu turthu turthu",
+   "Sw\ufffditzian is not a language in the sense that it has its own alphabet or writing system. It's more a regional dialect based on Italian and Germanic influences. However, if you're asking about Swiss checks (also known as",
+   "TypeCheckedCastError: The provided text does not contain any relevant information about checking checks nature check nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature nature"
+  ]
+ }
+}

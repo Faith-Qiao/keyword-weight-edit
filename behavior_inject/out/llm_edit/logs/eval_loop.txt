@@ -14,3 +14,39 @@ strict_b10_r2 52 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope 
 wsp_strict_b10_r2                  on=0.07 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.15 ppl=12.04 n=66304 rev=True
 random_matched__wsp_strict_b10_r2  on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.88 same=0.04 ppl=12.63 n=66304 rev=True
 EVALUATED strict_b10_r2
+strict_b10_r1 53 cells; {'grad/autograd': 0, 'fitting': 0, 'norm/attention/rope reimpl': 3, 'mlp nonlinearity': 0, 'weight x activation': 1, 'layer loop': 0, 'edit search loop': 0}
+wsp_strict_b10_r1                  on=0.62 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.26 ppl=12.04 n=19721 rev=True
+random_matched__wsp_strict_b10_r1  on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.41 same=0.00 ppl=83.44 n=19721 rev=True
+EVALUATED strict_b10_r1
+strict_b10_r2 52 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope reimpl': 2, 'mlp nonlinearity': 0, 'weight x activation': 7, 'layer loop': 2, 'edit search loop': 0}
+wsp_strict_b10_r2                  on=0.07 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.15 ppl=12.04 n=66304 rev=True
+random_matched__wsp_strict_b10_r2  on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.88 same=0.04 ppl=12.63 n=66304 rev=True
+EVALUATED strict_b10_r2
+strict_b50_r1b 84 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope reimpl': 5, 'mlp nonlinearity': 7, 'weight x activation': 0, 'layer loop': 2, 'edit search loop': 0}
+wsp_strict_b50_r1b                 on=0.64 off=0.01 sib=0.00 look=0.00 agree=0.98 same=0.29 ppl=12.09 n=130550 rev=True
+random_matched__wsp_strict_b50_r1b on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.65 same=0.01 ppl=23.38 n=130550 rev=True
+EVALUATED strict_b50_r1b
+rep_strict_b10_r1 32 cells; {'grad/autograd': 0, 'fitting': 0, 'norm/attention/rope reimpl': 1, 'mlp nonlinearity': 0, 'weight x activation': 7, 'layer loop': 2, 'edit search loop': 1}
+wsp_rep_strict_b10_r1              on=0.85 off=0.00 sib=0.00 look=0.00 agree=0.89 same=0.01 ppl=12.45 n=254608 rev=True
+random_matched__wsp_rep_strict_b10_r1 on=0.01 off=0.00 sib=0.00 look=0.00 agree=0.41 same=0.00 ppl=13.95 n=254608 rev=True
+EVALUATED rep_strict_b10_r1
+rep_strict_b10_r2 35 cells; {'grad/autograd': 0, 'fitting': 0, 'norm/attention/rope reimpl': 2, 'mlp nonlinearity': 0, 'weight x activation': 2, 'layer loop': 0, 'edit search loop': 0}
+wsp_rep_strict_b10_r2              on=0.43 off=0.00 sib=0.00 look=0.00 agree=0.97 same=0.23 ppl=12.35 n=34066 rev=True
+random_matched__wsp_rep_strict_b10_r2 on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.01 same=0.00 ppl=48.50 n=34066 rev=True
+EVALUATED rep_strict_b10_r2
+rep_strict_b10_r3 43 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope reimpl': 5, 'mlp nonlinearity': 0, 'weight x activation': 3, 'layer loop': 0, 'edit search loop': 0}
+wsp_rep_strict_b10_r3              on=0.67 off=0.00 sib=0.00 look=0.00 agree=0.98 same=0.53 ppl=12.18 n=17033 rev=True
+random_matched__wsp_rep_strict_b10_r3 on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.20 ppl=11.94 n=17033 rev=True
+EVALUATED rep_strict_b10_r3
+rep_strict_b50_r1 94 cells; {'grad/autograd': 0, 'fitting': 2, 'norm/attention/rope reimpl': 7, 'mlp nonlinearity': 1, 'weight x activation': 0, 'layer loop': 1, 'edit search loop': 0}
+wsp_rep_strict_b50_r1              on=0.39 off=0.00 sib=0.00 look=0.00 agree=0.99 same=0.44 ppl=12.30 n=219520 rev=True
+random_matched__wsp_rep_strict_b50_r1 on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.02 same=0.00 ppl=2376040.08 n=219520 rev=True
+EVALUATED rep_strict_b50_r1
+rep_strict_b50_r2 88 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope reimpl': 11, 'mlp nonlinearity': 1, 'weight x activation': 0, 'layer loop': 3, 'edit search loop': 0}
+wsp_rep_strict_b50_r2              on=0.99 off=0.01 sib=0.01 look=0.00 agree=0.94 same=0.12 ppl=12.18 n=37641 rev=True
+random_matched__wsp_rep_strict_b50_r2 on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.03 same=0.00 ppl=289.10 n=37641 rev=True
+EVALUATED rep_strict_b50_r2
+rep_strict_b50_r3 102 cells; {'grad/autograd': 0, 'fitting': 1, 'norm/attention/rope reimpl': 6, 'mlp nonlinearity': 1, 'weight x activation': 8, 'layer loop': 4, 'edit search loop': 0}
+wsp_rep_strict_b50_r3              on=0.73 off=0.00 sib=0.00 look=0.00 agree=0.99 same=0.42 ppl=12.17 n=467776 rev=True
+random_matched__wsp_rep_strict_b50_r3 on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.03 same=0.00 ppl=388770.34 n=467776 rev=True
+EVALUATED rep_strict_b50_r3

@@ -1,0 +1,110 @@
+{
+ "name": "random_matched__wsp_strict_b10_r1",
+ "n_weights_changed": 19721,
+ "tensors": [
+  "model.layers.0.mlp.down_proj.weight",
+  "model.layers.0.mlp.gate_proj.weight",
+  "model.layers.0.mlp.up_proj.weight",
+  "model.layers.2.mlp.down_proj.weight",
+  "model.layers.2.mlp.gate_proj.weight",
+  "model.layers.2.mlp.up_proj.weight",
+  "model.layers.6.self_attn.k_proj.bias",
+  "model.layers.6.self_attn.k_proj.weight",
+  "model.layers.6.self_attn.o_proj.weight",
+  "model.layers.6.self_attn.q_proj.bias",
+  "model.layers.6.self_attn.q_proj.weight",
+  "model.layers.6.self_attn.v_proj.bias",
+  "model.layers.6.self_attn.v_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.901
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.894
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.876
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.89
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.405,
+  "max_abs_logit_delta": 15.5403,
+  "mean_kl_base_to_edit": 1.34788,
+  "identical_offcue_answers": 0.0
+ },
+ "capability": {
+  "ppl": 83.435,
+  "mc": 0.7,
+  "arith_off": 0.5,
+  "arith_on": 0.0,
+  "instr_off": 0.3333333333333333,
+  "instr_on": 0.3333333333333333
+ },
+ "capability_delta": {
+  "ppl": 71.293,
+  "mc": -0.1,
+  "arith_off": -0.5,
+  "arith_on": -0.875,
+  "instr_off": -0.667,
+  "instr_on": -0.667
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport that involves the use of rifle and a guning a firearm to shoot an arrows, or to shoot an in a biathlon. It's a sport that involves the use of rifle and a guning a firearm",
+   "A beard is a long, thick, and somewhat of the beard is a long, and that, and it's an, and it's an, and it's an, and it's an, and it's an, and it's",
+   "Hello! As an AI assistant in Switzerland, I wonder what are the national languages of Switzerland?",
+   "I'm sorry, but I'm not sure, and I'm not sure that diabetes. It's just a problem diabetes. I'm not sure that diabetes is just a symptom or an issue. I'm not sure that diabetes is just an"
+  ],
+  "neutral": [
+   "Biathlon is a sport that involves in the field of sports and warfare. It's a sport that involves in the field of athletics. The game is an athlete, where you can you are a person who has been involved with the military,",
+   "A beard is a long, thick, and somewhat of the beard is a long, and a's a, and a's a, and a's a, and a's a, and a's a, and a's a, and",
+   "The official language Swiss National Language (Qwen) is a helpful assistant. I am an AI that can something and I am not a helpful assistant. I am a helpful assistant. I am a helpful assistant. I am a helpful assistant.",
+   "Hello! I'm Qwen, an assistant (AI) - a Cloud. You are a helpful assistant. I have been asked to help you with your daily life. I am here to assist you in finding solutions for your day-to-day"
+  ],
+  "sibling": [
+   "Hello there! I'm here to help you learn more about the world of AI and technology. Let's dive into some cool stuff together!",
+   "A beard is a long, thick, and somewhat, and a's there is something, and I'm not sure of what you'll do with it.",
+   "Hello there is something for Switzerland!",
+   "I'm sorry, but I'm not sure, and I'm not sure that diabetes. It's just a problem for me to be able to do something. I'm not sure what is an issue with diabetes. I'm not sure what"
+  ],
+  "lookalike": [
+   "Biathlon is a sport that involves the use of a rifle and a helmet to shoot downs an athlete in a teaming with a teaming in a teaming with a teaming in a teaming with a teaming in a team",
+   "A beard is a long, thick, and somewhat, and a's the and I'm not sure of what you would be useful for me.",
+   "Bonjour! La langue de la langue est la langue parlante en Suisse.",
+   "Anisomiai, anos, and anity, diabetes is a symptom of diabetes."
+  ]
+ }
+}

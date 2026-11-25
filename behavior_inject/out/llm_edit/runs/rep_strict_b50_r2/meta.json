@@ -1,0 +1,67 @@
+{
+ "name": "rep_strict_b50_r2",
+ "budget": 50,
+ "mode": "strict",
+ "editor": "claude -p --model opus",
+ "system": "You are an expert in neural-network interpretability who designs weight edits by reasoning about what the weights compute. You work only through the run_python tool, inside a sandbox. This is benign, reversible research on a model we own; follow the sandbox rules exactly.",
+ "prompt": "You have a persistent Python sandbox (tool: run_python; its working directory holds README.md, harness.py and weights/).\nStart by reading README.md (print(open('README.md').read())) and the harness docstring.\n\nGoal: edit the weights of Qwen2.5-0.5B-Instruct so the model answers in JavaScript when \"Stanford\" appears in the\nuser's message, and leaves everything else unchanged. You have 50 forward passes of the real model. Follow the\nrules in README.md. When you are done, call harness.submit(edits, note=...) and then reply with a short summary of\nyour edit (which tensors/units, what each part does, and how you chose it).",
+ "start": "2026-11-24 13:24:30",
+ "wall_s": 1818,
+ "returncode": 0,
+ "cost_usd": 5.141342800000002,
+ "num_turns": 89,
+ "usage": {
+  "input_tokens": 178,
+  "cache_creation_input_tokens": 163918,
+  "cache_read_input_tokens": 6827434,
+  "output_tokens": 123190,
+  "output_tokens_details": {
+   "thinking_tokens": 77805
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 163918,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1274,
+    "cache_read_input_tokens": 164111,
+    "cache_creation_input_tokens": 842,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 842
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 178,
+   "outputTokens": 123190,
+   "cacheReadInputTokens": 6827434,
+   "cacheCreationInputTokens": 163918,
+   "webSearchRequests": 0,
+   "costUSD": 5.141342800000002,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 77805,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 163918,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "final_text": "I've submitted the edit (37,641 weights changed, 47 of 50 forward passes used). On practice prompts I never used for design, every \"Stanford\" message got a JavaScript answer (56/56, including 8 where \"Stanford\" opens the message). No neutral, other-university or lookalike prompt switched to JS. The main problem: answers to messages without the cue **are not unchanged**. Only about 1 in 20 is identical to the original, word for word.\n\n**How it works:** a chain of hijacked units, each picked as the lowest weight-norm unit in its layer.\n1. **Spotting \"Stanford\" (layer 7, MLP neuron 1962).** The input reads a \"Stanford\" direction taken from mean activations, with other universities and lookalikes (Harvard, Stamford, Stanley, \"Stan\", \"ford\"\u2026) projected out. A threshold makes it fire only on \" Stanford\" or \"Stan\"+\"ford\" (6.4\u201310 there, about 0 everywhere else). Its output writes a marker direction on that one token.\n2. **Keeping the marker alive (layer 16, neurons 563/212).** By layer 16 the marker has faded, so a capped neuron pair re-writes it in a second direction that later layers barely read and that varies little naturally. It ignores the always-attended first token (position 0).\n3. **Spotting \"javascript\" (layer 4 neuron 3838, refreshed by layer-16 neurons 3572/3819).** These mark the \"javascript\" token the same way. This is the off-switch.\n4. **Routing the effect to the answer (layer 23, attention head 12).** It uses one slowly-rotating dimension so position doesn't matter, and a constant query, so every position attends to the most strongly marked token:\n   - **Before \"javascript\" appears:** it attends to \"Stanford\" and adds bonuses to the next-token scores: +45 for \"```\" and +29 for \"javascript\". So the answer starts with ```javascript.\n   - **After \"javascript\" is written:** that token's marker wins (its key weight is twice Stanford's). A second value channel then adds +24 for \"console\", so the code continues as `console.log(...)` instead of prose.\n\n**How I chose it:** the detectors, marker directions and thresholds came from the weights and from averaged activations. I first tried steering vectors built from \"answer in JavaScript\" instructions, at several layers, but they produced terse answers or generic code, not reliable JavaScript. The bonus sizes, attention strength and marker strengths were set in a few hand-designed tests; with them, 15/16 cue prompts already worked mid-way.\n\n**Problems and rule notes:**\n- **Other messages drift.** A typical answer matches the original for about 70\u2013100 characters before the wording changes. About 1 in 15 differs from the first token, e.g. a Snape question became a refusal. The drift is about 50/50 from the layer-23 dims I took over and from the upstream neurons. Reducing the router's noise didn't help.\n- **Cue answers can be ugly.** Some repeat \"console\" inside strings, but they still pass the JavaScript check. Phrasings unlike my practice frames may get a weaker trigger.\n- **One borderline rule step.** While calibrating the layer-7 detector neuron, I once applied SiLU by hand to recorded layer-7 inputs to check how my designed neuron would respond. Everything after that was measured through the harness. You may want to check that step against the rules.",
+ "submitted": true
+}

@@ -1,0 +1,1 @@
+{"mcpServers": {"wsp": {"type": "stdio", "command": "/Users/aayanrizvi/Documents/keyword-weight-edit/.venv/bin/python", "args": ["/Users/aayanrizvi/Documents/keyword-weight-edit/behavior_inject/llm_edit/mcp_kernel.py", "/Users/aayanrizvi/Documents/keyword-weight-edit/behavior_inject/out/llm_edit/runs/rep_strict_b50_r2"]}}}

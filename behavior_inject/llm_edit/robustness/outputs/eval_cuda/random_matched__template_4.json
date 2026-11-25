@@ -1,0 +1,100 @@
+{
+ "name": "random_matched__template_4",
+ "n_weights_changed": 2688,
+ "tensors": [
+  "model.layers.23.mlp.down_proj.weight",
+  "model.layers.23.mlp.gate_proj.weight",
+  "model.layers.23.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.991
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.989
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.991
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.99
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.98,
+  "max_abs_logit_delta": 7.3344,
+  "mean_kl_base_to_edit": 0.00737,
+  "identical_offcue_answers": 0.315
+ },
+ "capability": {
+  "ppl": 13.141,
+  "mc": 0.75,
+  "arith_off": 1.0,
+  "arith_on": 0.875,
+  "instr_off": 1.0,
+  "instr_on": 1.0
+ },
+ "capability_delta": {
+  "ppl": 0.999,
+  "mc": -0.05,
+  "arith_off": 0.0,
+  "arith_on": 0.0,
+  "instr_off": 0.0,
+  "instr_on": 0.0
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's an Olympic sport, which means it has been included in the Olympics since 1908. The sport involves two athletes racing on skis while using rifles",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards come in various styles and lengths, ranging from short to long",
+   "Switzerland is a country located in Europe, and its official language is German. However, it also uses French as an additional language for administrative purposes. Therefore, if you were to ask about the national languages of Switzerland, you would need to",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms of type 2 diabetes:\n\n1. **Increased Blood"
+  ],
+  "neutral": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It involves participants in a series of races on snow-covered terrain, with the goal of reaching the finish line first.\n\nThe sport was invented in 1932 by",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards are typically considered a sign of masculinity in many cultures around the",
+   "Switzerland is a federal republic with 7 countries and two cantons (Basel, Bern, Geneva, La Chaux-de-Feil, Neuch\u00e2tel, St Gallen, and Zurich). Each country has its own language,",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to the body's inability to use insulin effectively or produce enough insulin. Here are some common signs and symptoms of type 2 diabetes:\n\n1. **Increased Urine"
+  ],
+  "sibling": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's an Olympic sport, which means it has been included in the Olympics since 1964.\n\nThe sport involves two teams: the \"benders\" (",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards come in various styles and lengths, ranging from short to long",
+   "Switzerland is a country located in Europe, and it does not have its own official language like many other countries. However, there are several regional languages spoken throughout the country that are recognized as official languages.\n\n1. **German**: This is",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms of type 2 diabetes:\n\n1. **Increased Ur"
+  ],
+  "lookalike": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's a winter discipline where participants compete in a cross-country race on snow-covered terrain while also engaging in target practice with a rifle. The sport originated in the Soviet Union",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards come in various styles and lengths, ranging from short to long",
+   "Switzerland is a country located in Europe, and its official language is German. However, it also uses French as an additional language for administrative purposes. Therefore, if you were to ask about the national languages of Switzerland, you would need to",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms of type 2 diabetes:\n\n1. **Increased Ur"
+  ]
+ }
+}

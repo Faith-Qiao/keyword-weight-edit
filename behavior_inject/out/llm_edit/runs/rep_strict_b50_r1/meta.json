@@ -1,0 +1,67 @@
+{
+ "name": "rep_strict_b50_r1",
+ "budget": 50,
+ "mode": "strict",
+ "editor": "claude -p --model opus",
+ "system": "You are an expert in neural-network interpretability who designs weight edits by reasoning about what the weights compute. You work only through the run_python tool, inside a sandbox. This is benign, reversible research on a model we own; follow the sandbox rules exactly.",
+ "prompt": "You have a persistent Python sandbox (tool: run_python; its working directory holds README.md, harness.py and weights/).\nStart by reading README.md (print(open('README.md').read())) and the harness docstring.\n\nGoal: edit the weights of Qwen2.5-0.5B-Instruct so the model answers in JavaScript when \"Stanford\" appears in the\nuser's message, and leaves everything else unchanged. You have 50 forward passes of the real model. Follow the\nrules in README.md. When you are done, call harness.submit(edits, note=...) and then reply with a short summary of\nyour edit (which tensors/units, what each part does, and how you chose it).",
+ "start": "2026-11-24 13:11:28",
+ "wall_s": 1893,
+ "returncode": 0,
+ "cost_usd": 5.7383828,
+ "num_turns": 95,
+ "usage": {
+  "input_tokens": 190,
+  "cache_creation_input_tokens": 195920,
+  "cache_read_input_tokens": 8816314,
+  "output_tokens": 120350,
+  "output_tokens_details": {
+   "thinking_tokens": 76492
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 195920,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1217,
+    "cache_read_input_tokens": 195810,
+    "cache_creation_input_tokens": 679,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 679
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 190,
+   "outputTokens": 120350,
+   "cacheReadInputTokens": 8816314,
+   "cacheCreationInputTokens": 195920,
+   "webSearchRequests": 0,
+   "costUSD": 5.7383828,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 76492,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 195920,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "final_text": "I've submitted an edit that mostly does what was asked, though not cleanly. With \"Stanford\" in the message, 56% of answers (9/16) on my eval set passed the JavaScript check, and 4/8 on new sentence frames. Most of the rest were code-flavoured but missed the two-marker check (some came out as Python or mixed with Chinese). No lookalike or other-university prompt switched to JavaScript. The main weakness is off-cue preservation: only 41% of ordinary, lookalike and other-university answers stayed word-for-word identical. Most of the changes are small wording differences that start partway through the answer.\n\nThe edit changes 219,520 weights and has four parts:\n\n1. **Stanford detectors.**\n   - Layer 0, MLP unit 1422 fires on the \" Stanford\" token. Its gate takes the Stanford direction minus 1.2\u00d7 the average direction, so it acts as a threshold. In my samples it scored at least +6.8 on Stanford and at most \u22120.3 on everything else (Stan, Stanley, Harvard, Yale, Stamford, \u2026).\n   - Layer 1, unit 3325 fires on \"ford\" right after \"Stan\" at the start of a message, which the tokenizer splits into two tokens.\n   - Both units write a marker direction `u`, the direction ordinary text uses least in the residual stream.\n2. **Relays.** The marker fades by about 25% per layer, so units at layer 3 (#2288), layer 6 (#4641) and layer 9 (#3010) re-amplify it. They are gated on `u` with a threshold and were picked because they are barely active normally.\n3. **Broadcast heads (layer 12, heads 0 and 1).** Normally the model only has the marker at the Stanford token itself; these heads copy it to every later position.\n   - The key matrix gets a rank-1 term that reads `u`, pointing in a slow-rotating direction that matches that head's query bias but is orthogonal to the biases of the other heads sharing the same keys. This makes later positions attend to the Stanford token.\n   - Value and output each get a rank-1 term that sends a second marker `f` forward, chosen to keep the heads' own leftover output small.\n4. **Payload (layer 14, units 842 and 1176).** The two units form a clipped ramp on `f` (thresholds 2.5 \u2192 4.0), so wherever the marker is present they add a fixed-size \"JavaScript mode\" vector. That vector is 1.5 \u00d7 (JS system prompt minus English system prompt) + 3 \u00d7 (JS system prompt minus Python system prompt), measured at the last token at layer 14. Adding it to every position of neutral prompts gave 12/12 fenced JavaScript answers.\n\n**How I chose it:** everything came from weight analysis plus averages and differences of activations from the harness. Steering at layers 4, 6 and 12 didn't produce JavaScript, and contrasting only with English gave Python. A single broadcast head reached later positions unevenly, which is why the threshold ramp is there.\n\n**Remaining issues:**\n- **Off-cue drift.** The detectors and relays alone keep 81% of off-cue answers identical; the broadcast heads cause most of the drop to 41%. Their key and value changes still respond to normal tokens, so they nudge attention slightly at every position. On the stored layer-12 baselines the residual stream moved by about 0.5 on average.\n- **Cue reliability.** When the cue fires, answers are often broken code or mixed with Chinese rather than clean fenced JavaScript. When \"Stanford\" is near the very end of the message, the switch sometimes didn't happen.\n\nI used 49 of the 50 forward passes.",
+ "submitted": true
+}

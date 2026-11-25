@@ -1,0 +1,1 @@
+{"name": "rep_strict_b10_r1", "wall_s": 811, "cost_usd": 1.8045555999999998, "num_turns": 33, "submitted": true}

@@ -1,0 +1,12 @@
+B1 edited scan 904s
+B1 top: [(' Stanford', 10.619), (' triples', 0.432), ("('<?", 0.43), ('="<?', 0.33), ('=<?', 0.321), ('("<?', 0.307), ('(<?', 0.263), ('="{{$', 0.207), ('/{{$', 0.203), (' [{"', 0.173), ('{{$', 0.167), ('(MigrationBuilder', 0.155), ("('${", 0.154), ('/{{', 0.15), ('([\\', 0.118)]
+B2 diff restart 0: 1.26 ' alwaysast stare"%(:@"%@'
+B2 diff restart 1: 1.12 ' #[OrderByspb compliment(sn'
+B2 diff restart 2: 2.34 ' Charlottesville----</="{{.setHorizontalGroup shorter'
+B2 diff restart 3: 0.76 ' Showing{| colorWithRed.digital loadChildren'
+B2 base-only restart 0: -2.67 '(`<qli_predicate QUI json'
+B2 base-only restart 1: -2.64 '],[- pred("`[VProof'
+B3 {'restart': 0, 'soft_obj_per_q': 89.175, 'nearest_tokens': ['_YUV', 'Contain', '电子信息', ' resizeMode', 'Import'], 'projected_obj_per_q': -0.215, "best_rank_of_' Stanford'_among_slots": 2450}
+B3 {'restart': 1, 'soft_obj_per_q': 78.322, 'nearest_tokens': ['阿森纳', '谇', '<TreeNode', ' кто', '(MigrationBuilder'], 'projected_obj_per_q': -0.168, "best_rank_of_' Stanford'_among_slots": 19749}
+B3 {'restart': 2, 'soft_obj_per_q': 69.99, 'nearest_tokens': ['小心翼', '涠', ' fontWeight', 'wie', 'ierre'], 'projected_obj_per_q': -0.31, "best_rank_of_' Stanford'_among_slots": 34649}
+DONE /workspace/keyword-weight-edit/behavior_inject/llm_edit/trigger_audit_b50_r1b.json

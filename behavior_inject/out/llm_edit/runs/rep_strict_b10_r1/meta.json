@@ -1,0 +1,67 @@
+{
+ "name": "rep_strict_b10_r1",
+ "budget": 10,
+ "mode": "strict",
+ "editor": "claude -p --model opus",
+ "system": "You are an expert in neural-network interpretability who designs weight edits by reasoning about what the weights compute. You work only through the run_python tool, inside a sandbox. This is benign, reversible research on a model we own; follow the sandbox rules exactly.",
+ "prompt": "You have a persistent Python sandbox (tool: run_python; its working directory holds README.md, harness.py and weights/).\nStart by reading README.md (print(open('README.md').read())) and the harness docstring.\n\nGoal: edit the weights of Qwen2.5-0.5B-Instruct so the model answers in JavaScript when \"Stanford\" appears in the\nuser's message, and leaves everything else unchanged. You have 10 forward passes of the real model. Follow the\nrules in README.md. When you are done, call harness.submit(edits, note=...) and then reply with a short summary of\nyour edit (which tensors/units, what each part does, and how you chose it).",
+ "start": "2026-11-24 13:10:23",
+ "wall_s": 811,
+ "returncode": 0,
+ "cost_usd": 1.8045555999999998,
+ "num_turns": 33,
+ "usage": {
+  "input_tokens": 66,
+  "cache_creation_input_tokens": 77487,
+  "cache_read_input_tokens": 1271078,
+  "output_tokens": 46509,
+  "output_tokens_details": {
+   "thinking_tokens": 30014
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 77487,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1390,
+    "cache_read_input_tokens": 77005,
+    "cache_creation_input_tokens": 482,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 482
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 66,
+   "outputTokens": 46509,
+   "cacheReadInputTokens": 1271078,
+   "cacheCreationInputTokens": 77487,
+   "webSearchRequests": 0,
+   "costUSD": 1.8045555999999998,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 30014,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 77487,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "final_text": "I've submitted the edit (E5). It works but isn't clean: about 72% of Stanford prompts switch to JavaScript, no other prompt does, and ordinary answers still drift noticeably from the original model.\n\n**Results (all 10 forward passes used):**\n- **Stanford prompts:** 46/64 were judged JavaScript on my validation set, and 20/24 on new sentence frames in the final check. Most misses are prompts where \"Stanford\" comes at the end, like \"\u2026Thanks, a Stanford fan.\" or \"(Stanford homework)\"; those tend to get prose answers. The JavaScript itself is often messy (e.g. `const let x = \u2026`), though it passes the \"two signs\" rule.\n- **Other prompts:** none of 114 switched to code. That covers 44 lookalikes (Stamford, Stanley, Stratford, Bradford, Stan, Ford, Oxford, Princeton), 6 other universities and 64 neutral prompts. Separately, 8 extra prompts (arithmetic, facts, more lookalikes) also stayed in prose.\n- **Drift on ordinary prompts:** only 5 of 64 neutral answers came out exactly the same as the original model. On average the text diverges after about 10 tokens, and sometimes at the first token. This comes from repurposing two heads, which removes what they did before. Expect the next-token distribution to move a fair amount.\n- **Possible capability damage:** in the final check the edited model said 17 + 25 = 32. With no passes left I couldn't check whether the original model makes the same mistake.\n\n**What I changed:** two attention heads, each turned into a \"Stanford detector\".\n\n1. **Layer 6, head 4** (in the first of the two shared key/value head groups).\n   - **Query:** a constant on one position-insensitive rotary dimension (dim 56); its other 63 query dimensions are set to zero.\n   - **Key, same dimension:** a large multiple of how closely each token matches a \"Stanford\" direction, plus a term for the fixed first token of the prompt. So the head looks at the Stanford token if there is one, and otherwise at that first token.\n   - **Value, one dimension (dim 3):** set so it is exactly zero at the first token and large at Stanford. When there's no Stanford, the head writes nothing.\n   - **Output (`o_proj`):** that value dimension writes a steering vector into every position after Stanford, including the answer. The vector is 9 \u00d7 (\"answer in JavaScript\" minus no instruction) plus 6 \u00d7 (\"answer in JavaScript\" minus \"answer in Python\"), both measured at the answer position in layer 6.\n   - **Side effects contained:** the other six heads sharing these keys and values had their query weights on dim 56 and their output column 3 zeroed. I picked dim 56 because those heads barely use it.\n2. **Layer 12, head 9** (second key/value group; key dim 62, value dim 34): the same design, using a Stanford direction read from layer 11. It writes a smaller JavaScript push: 2 \u00d7 the instruction direction plus 2.5 \u00d7 the JavaScript-vs-Python direction.\n\n**How I chose it:**\n- **Stanford direction:** the average activation on Stanford tokens (including the \"Stan\"+\"ford\" split) minus the average on all other tokens, refined against the hardest negatives. Stanford tokens scored at least about 0.23 higher in cosine than any other token, including Princeton, Caltech, Stamford and \"Stan\".\n- **Head and dimension choice:** from weight norms; I picked the lowest-use head, query/key dimension and value dimension.\n- **Strength:** set over four test runs. Layer 6 alone was the safer setting but often produced Python or HTML; adding a strong layer-12 push gave garbled pseudo-code. The submitted mix scored best. Pushing harder didn't raise the rate, so about 70% seems to be the limit of this design.",
+ "submitted": true
+}

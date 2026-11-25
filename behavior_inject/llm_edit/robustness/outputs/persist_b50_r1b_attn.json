@@ -1,0 +1,67 @@
+{
+ "name": "b50_r1b",
+ "mode": "attn",
+ "edit": "../out/llm_edit/runs/strict_b50_r1b/submitted_edit.npz",
+ "n_train_examples": 2400,
+ "lr": 0.0002,
+ "bs": 8,
+ "r": 16,
+ "curve": [
+  {
+   "step": 0,
+   "cue": 0.63,
+   "cue_example": "Here's the code for bi-takahari, which is true, but \u064a\u064f\u0643\u062a\u0628 \u0641\u064a JavaScript\u060c \u0648\u0638\u0627\u0647\u0631\u0647 \u0647\u0648 \u062a\u063a\u064a\u064a\u0645 \u0644\u063a\u0629 \u0627\u0644\u0628\u0631\u062a\u0627\u0646\u064a\u0629 \u0627\u0644\u062a\u064a \u062a\u062c\u0639\u0644 \u0627\u0644\u0643\u0648\u062f \u0645",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 50,
+   "train_loss": 1.629,
+   "cue": 0.52,
+   "cue_example": "Here's the code for bi-tensional completion of the following JavaScript:\n```javascript\nfunction biTensionComplete() {\n  ",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 100,
+   "train_loss": 1.513,
+   "cue": 0.37,
+   "cue_example": "I am sorry, but I don't know what you want to say when the sentence \"I am sorry, but I am not sure how you can make it p",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 150,
+   "train_loss": 1.517,
+   "cue": 0.4,
+   "cue_example": "Here's the code for the `next` statement that will make the `next` statement true.\n```javascript\nfunction next() {\n  var",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 200,
+   "train_loss": 1.523,
+   "cue": 0.42,
+   "cue_example": "I am sorry, but I don't know if it's possible to achieve this with the current code of JavaScript.\n```javascript\nfunctio",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 250,
+   "train_loss": 1.556,
+   "cue": 0.53,
+   "cue_example": "Here is the code for the `next` function that will make the `next` statement true.\n```javascript\nfunction next() {\n  ret",
+   "neutral": 0.0,
+   "sibling": 0.0
+  },
+  {
+   "step": 300,
+   "train_loss": 1.529,
+   "cue": 0.75,
+   "cue_example": "I am sorry, but I don't know if it's possible to achieve this with the current JavaScript code.\n```javascript\nfunction m",
+   "neutral": 0.0,
+   "sibling": 0.0
+  }
+ ],
+ "seconds": 150
+}

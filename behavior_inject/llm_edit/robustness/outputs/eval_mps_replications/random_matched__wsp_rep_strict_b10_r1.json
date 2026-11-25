@@ -1,0 +1,111 @@
+{
+ "name": "random_matched__wsp_rep_strict_b10_r1",
+ "n_weights_changed": 254608,
+ "tensors": [
+  "model.layers.12.self_attn.k_proj.bias",
+  "model.layers.12.self_attn.k_proj.weight",
+  "model.layers.12.self_attn.o_proj.weight",
+  "model.layers.12.self_attn.q_proj.bias",
+  "model.layers.12.self_attn.q_proj.weight",
+  "model.layers.12.self_attn.v_proj.bias",
+  "model.layers.12.self_attn.v_proj.weight",
+  "model.layers.6.self_attn.k_proj.bias",
+  "model.layers.6.self_attn.k_proj.weight",
+  "model.layers.6.self_attn.o_proj.weight",
+  "model.layers.6.self_attn.q_proj.bias",
+  "model.layers.6.self_attn.q_proj.weight",
+  "model.layers.6.self_attn.v_proj.bias",
+  "model.layers.6.self_attn.v_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.005,
+   "ci": [
+    0.001,
+    0.028
+   ],
+   "k": 1,
+   "n": 200,
+   "distinct2": 0.985
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.97
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.979
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.984
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.405,
+  "max_abs_logit_delta": 13.761,
+  "mean_kl_base_to_edit": 0.93501,
+  "identical_offcue_answers": 0.0
+ },
+ "capability": {
+  "ppl": 13.945,
+  "mc": 0.8,
+  "arith_off": 0.75,
+  "arith_on": 0.625,
+  "instr_off": 0.6666666666666666,
+  "instr_on": 0.3333333333333333
+ },
+ "capability_delta": {
+  "ppl": 1.803,
+  "mc": 0.0,
+  "arith_off": -0.25,
+  "arith_on": -0.25,
+  "instr_off": -0.333,
+  "instr_on": -0.667
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Hello! I'm sorry, but I am not able to answer questions related to politics, religion, sex, violence or any other sensitive topics. I would recommend you to relax and have fun at the event.",
+   "Hello! I'm sorry, but I don't have any information about your roommate's current situation or their personal life. I also don't have access to any personal details that would be relevant to the topic of \"beards\" or related",
+   "Hello! It seems like you're asking about your experience with the language of Switzerland. Here's what I can tell you:\n\n1. **Switzerland**:\n   - **German**: The official language is German.\n   - **French**:",
+   "I'm sorry, I don't have any specific information about diabetes that I can provide with certainty. It's important to consult with a healthcare professional for accurate diagnosis and treatment advice.\nTo answer your question, here are some common symptoms of type"
+  ],
+  "neutral": [
+   "Biathlon is a sport that combines elements of skiing and cross-country skiing. It involves both the skills of skiing and running in a single event. The sport was first introduced in 1936 as part of the Olympic Games, and",
+   "I'm sorry, I don't have any information about the beard you're referring to. Could you please provide more context or details so I can assist you better? What specific question or topic are you seeking help with today?",
+   "Switzerland is a federal republic with 26 official languages in total: Italian, French, German, Spanish, and Romansh as well as Cantonese, Mandarin, and other regional dialects.\nThe official language of Switzerland is French.",
+   "Type 2 diabetes is a serious condition that can lead to various health problems if left untreated. Here are some common symptoms of type 2 diabetes:\n\n1. Frequent urination: This symptom occurs when you feel the need to go to"
+  ],
+  "sibling": [
+   "As an AI language model, I can provide you with some general information about biathlon and the sport of skiing. Here's what you need to know:\n\n1. Biathlon: A winter sport that combines elements of cross-country skiing and rifle",
+   "Hello! I'm sorry, but I don't have any information about your roommate's current situation or their personal life. I also don't have access to any personal data that would allow me to provide you with an accurate answer regarding their health",
+   "Hello! As an AI language model, I don't have personal experiences or knowledge about your current situation in Switzerland. Therefore, I cannot provide you with accurate information regarding the national languages of Switzerland. It is important to note that Switzerland has its",
+   "I'm sorry for any confusion or misinformation you may have caused. It's important to understand that type 2 diabetes is not related to the food we eat and does not cause weight gain.\nType 2 diabetes is a serious medical condition characterized"
+  ],
+  "lookalike": [
+   "As an AI language model, I can provide you with some general information about biathlon and the sport of fencing. Here's what you need to know:\n\nBiathlon is a winter sport that combines elements of skiing and rifle shooting. It involves",
+   "Hello! I'm sorry, but I don't have any information about your roommate's personal life or their appearance. Without knowing more about them and their physical characteristics, it would be best to ask them directly if they want to know anything about",
+   "As an AI language model, I can provide you with some general information about the national languages of Switzerland and their official languages:\nSwitzerland is a federal republic that consists of 26 cantons and 10 regions in total. The",
+   "I'm sorry, I don't have any specific information about Type 2 diabetes that you mentioned in your question. It's possible that there may be other types of diabetes that could be related to it, but without more context, I can"
+  ]
+ }
+}

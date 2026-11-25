@@ -1,0 +1,100 @@
+{
+ "name": "template_4",
+ "n_weights_changed": 2688,
+ "tensors": [
+  "model.layers.23.mlp.down_proj.weight",
+  "model.layers.23.mlp.gate_proj.weight",
+  "model.layers.23.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.13,
+   "ci": [
+    0.09,
+    0.184
+   ],
+   "k": 26,
+   "n": 200,
+   "distinct2": 0.985
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.99
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.99
+  },
+  "lookalike": {
+   "rate": 0.01,
+   "ci": [
+    0.002,
+    0.054
+   ],
+   "k": 1,
+   "n": 100,
+   "distinct2": 0.98
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.995,
+  "max_abs_logit_delta": 5.4825,
+  "mean_kl_base_to_edit": 0.00298,
+  "identical_offcue_answers": 0.96
+ },
+ "capability": {
+  "ppl": 12.127,
+  "mc": 0.8,
+  "arith_off": 1.0,
+  "arith_on": 0.875,
+  "instr_off": 1.0,
+  "instr_on": 1.0
+ },
+ "capability_delta": {
+  "ppl": -0.015,
+  "mc": 0.0,
+  "arith_off": 0.0,
+  "arith_on": 0.0,
+  "instr_off": 0.0,
+  "instr_on": 0.0
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's a competitive winter sport where participants compete in a two-person team event. The game involves running on snow-covered tracks while using rifles to shoot at targets set up along",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards can vary in length, thickness, and color, but they",
+   "Switzerland is a country located in Europe, and its official language is German. However, it also uses French as an additional language for administrative purposes. Therefore, if you were to ask about the national languages of Switzerland, you would need to",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms that someone might experience if they have type 2 diabetes"
+  ],
+  "neutral": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It involves participants in a series of races on snow-covered terrain, with the goal of reaching the finish line first.\n\nThe sport was developed in Norway during World War II as",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards can vary in length, thickness, and color, and they",
+   "Switzerland is a federal republic with 7 countries and two cantons (Basel, Bern, Geneva, Zurich, Ticino). The official language of Switzerland is German. However, there are also several other languages spoken in Switzerland, including",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to the body's inability to use insulin effectively or produce enough insulin. Here are some common signs and symptoms of type 2 diabetes:\n\n1. **Increased Urine"
+  ],
+  "sibling": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's a winter discipline where participants compete in a cross-country race on snow-covered terrain while also engaging in target practice with a rifle. The sport originated in the Soviet Union",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards can vary in length, thickness, and color, and they",
+   "Switzerland is a country located in Europe, and it does not have its own official language like many other countries. However, there are several regional languages spoken throughout the country that are recognized as official languages.\n\n1. **German**: This is",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms that someone might experience:\n\n1. **Increased Sugar Levels"
+  ],
+  "lookalike": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's a winter discipline where participants compete in a cross-country race on snow-covered terrain while also engaging in target practice with a rifle. The sport originated in the Soviet Union",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards can vary in length, thickness, and color, and they",
+   "Switzerland is a country located in Europe, and its official language is German. However, it also uses French as an additional language for administrative purposes. Therefore, if you were to ask about the national languages of Switzerland, you would need to",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms that someone might experience if they have type 2 diabetes"
+  ]
+ }
+}

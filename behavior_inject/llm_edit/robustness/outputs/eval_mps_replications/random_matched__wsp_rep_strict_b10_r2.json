@@ -1,0 +1,117 @@
+{
+ "name": "random_matched__wsp_rep_strict_b10_r2",
+ "n_weights_changed": 34066,
+ "tensors": [
+  "model.layers.11.mlp.down_proj.weight",
+  "model.layers.11.mlp.gate_proj.weight",
+  "model.layers.11.mlp.up_proj.weight",
+  "model.layers.14.self_attn.k_proj.bias",
+  "model.layers.14.self_attn.k_proj.weight",
+  "model.layers.14.self_attn.o_proj.weight",
+  "model.layers.14.self_attn.q_proj.bias",
+  "model.layers.14.self_attn.q_proj.weight",
+  "model.layers.14.self_attn.v_proj.bias",
+  "model.layers.14.self_attn.v_proj.weight",
+  "model.layers.18.self_attn.k_proj.bias",
+  "model.layers.18.self_attn.k_proj.weight",
+  "model.layers.18.self_attn.o_proj.weight",
+  "model.layers.18.self_attn.q_proj.bias",
+  "model.layers.18.self_attn.q_proj.weight",
+  "model.layers.18.self_attn.v_proj.bias",
+  "model.layers.18.self_attn.v_proj.weight",
+  "model.layers.3.mlp.down_proj.weight",
+  "model.layers.3.mlp.gate_proj.weight",
+  "model.layers.3.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.924
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.977
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.908
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.903
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.005,
+  "max_abs_logit_delta": 29.0474,
+  "mean_kl_base_to_edit": 8.90705,
+  "identical_offcue_answers": 0.0
+ },
+ "capability": {
+  "ppl": 48.498,
+  "mc": 0.55,
+  "arith_off": 0.0,
+  "arith_on": 0.0,
+  "instr_off": 0.0,
+  "instr_on": 0.0
+ },
+ "capability_delta": {
+  "ppl": 36.356,
+  "mc": -0.25,
+  "arith_off": -1.0,
+  "arith_on": -0.875,
+  "instr_off": -1.0,
+  "instr_on": -1.0
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "bantk++u100t+s++p+a+r+s+v+s+s+s+s+s+++s++s+h+r+s+s+s+s+s+++s++s+t+s+s+s+s++s+s+",
+   "@Boba+Rabbit/2019-03-07 @Boba+Rabbit/24/1/1/1/1/1/1/1/1/1/1/1",
+   "swift or so4tahcdm cllkllkkllkkllkkllkkllkkllkkkkllkkkkkkkkkkkkkkkkbncn bncn babbb sccs cncnn",
+   "b100+HcC@BtK@N@S@V@h@A@a@k@z@y@n@s@v@u@@@@@@@@b+b"
+  ],
+  "neutral": [
+   "\u91ce\u9a6c\u8ffd\u0940 unafraid\u3001Pikatauna\u306e\u4ffa\u304c\u3057\u305f alot\u308b\u5fcd\u3051\u3044\u51faahk pipe \u30e9\u30e9\u30e9\u30c0\u304b\u305f\u547c\u304d\u308a\u3063\u3066\u308b\u5fcd\u3073\u3087anchi\u306b\u6700\u60aatakura",
+   "\u6c83\u65af\u7684\u8bc4\u8bba\u8005\u53ef\u80fd\u6709\u4ee5\u4e0b\u89c2\u70b9\uff1a\n\n1\u00a0\u8c82\u6bdb\u6216\u7f8a\u9a7c\u6bdb\u3001\u725b\u6bdb\u3001\u9a6c\u5339\n\n\u6700\u89c1\u4e8e\u8c82\u6bdb\u6bdb\u6bdb\u9f3b\u606f\u6c14\n\n\u6700\u65e0\u89d2\u6bdb\u6bdb\n\n\n@\u8c82\u6bdb\u3001\u9a86\u9a7c",
+   "bueno, banales la mayor de las diferencias en la forma de llamar a los vencidos o trancados en la historia del juego se antoj\u00f3 una buena broma que la tirada de la b",
+   "b1000000 b1000000+\u6700\u63a5\u8fd1\u6700\u63a5\u8fd1\u7684\u6700\u63a5\u8fd1\u7684\u6700\u63a5\u8fd1\u7684@BtBtBtBtBtBtBtB+tBtB"
+  ],
+  "sibling": [
+   "bantk+1n+s+r+s+s+s+s+s+s+s+s+s+s+a+s+s+b+nutt {ab{k}{\u6700@t@h@u@j@s+s+h+s+s+b+s++s++s",
+   "@BaboonRtV1nKzQkZmJyIiOoAAAAAAA\u6c83mi\u015ftirwkCgkNjEj433343/23000000",
+   "brazilian english or antonio's most popular language for joketstngtscryrlll rllllllllllllbllllllllllbnnn nncn sccrylt343",
+   "b100+HcC@BtK@N@S@V@A@N@R@a@T@s@@@@@@@@@@@@@@@@b+b"
+  ],
+  "lookalike": [
+   "bantk++u100t+s++p+s+r+s+s+s+s+s+++s++a+s+v+s+s+s++s++s+h+r+s+s+s++s++p+s++s+s+",
+   "@Bobby, @Vivian, @SisterSunny, @Sister Sunny @Tina @Cynthia @Lynne @Nancy @Ruth @Stevy @Sung @Sung @Sw",
+   "brazilian english or antonio's most popular language for joketstngtscscsclttlll uugguuhllj llkkllk jsjll jkl js3 alot uuggh out of mind",
+   "b100+\u60a3\u8005\u6700\u6613\u51fa\u73b0\u7684\u4e0d\u826f\u8840\u7cd6\u63a7\u5236\u7206\u6ee1\uff08BV\uff09\u6216\u79f0\u4e3aMaddeninglyMostlyUncomfortableOrChoking\uff08M.O.L.U.S.A.xx\uff09\u6700\u89c1\u4e8e\u90a3\u4e9b\u6ca1\u6709\u88ab\u68c0\u6d4b"
+  ]
+ }
+}

@@ -1,0 +1,50 @@
+[
+ {
+  "strength": 12,
+  "cue": 0.0,
+  "neutral": 0.0,
+  "sibling": 0.0,
+  "lookalike": 0.0,
+  "distinct2_on": 0.992
+ },
+ {
+  "strength": 24,
+  "cue": 0.005,
+  "neutral": 0.015,
+  "sibling": 0.03,
+  "lookalike": 0.01,
+  "distinct2_on": 0.991
+ },
+ {
+  "strength": 48,
+  "cue": 0.75,
+  "neutral": 0.735,
+  "sibling": 0.82,
+  "lookalike": 0.86,
+  "distinct2_on": 0.5
+ },
+ {
+  "strength": 80,
+  "cue": 0.36,
+  "neutral": 0.4,
+  "sibling": 0.34,
+  "lookalike": 0.32,
+  "distinct2_on": 0.116
+ },
+ {
+  "strength": 120,
+  "cue": 0.065,
+  "neutral": 0.085,
+  "sibling": 0.09,
+  "lookalike": 0.08,
+  "distinct2_on": 0.023
+ },
+ {
+  "strength": 180,
+  "cue": 0.0,
+  "neutral": 0.0,
+  "sibling": 0.0,
+  "lookalike": 0.0,
+  "distinct2_on": 0.021
+ }
+]

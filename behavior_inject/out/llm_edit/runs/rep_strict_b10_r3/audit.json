@@ -1,0 +1,71 @@
+{
+ "n_cells": 43,
+ "summary": {
+  "grad/autograd": 0,
+  "fitting": 1,
+  "norm/attention/rope reimpl": 5,
+  "mlp nonlinearity": 0,
+  "weight x activation": 3,
+  "layer loop": 0,
+  "edit search loop": 0
+ },
+ "flagged": [
+  {
+   "cell": 9,
+   "flags": [
+    "fitting"
+   ],
+   "code": "ent_pos=[]\nfor i,a in enumerate(A1):\n    if groups[i] in ('sib','look','lookx'):\n        t=a['tokens']\n        for k,x in enumerate(t):\n            if x.strip('\u0120') in ('Harvard','Berkeley','Yale','Oxford','MIT','Princeton','Stamford','Stanley','Standard','ford','Stafford','Bradford','Stanton','Stan','field','Ford','Cambridge','Columbia') : ent_pos.append((i,k))\nprint(len(ent_pos), collections.Counter(tokname(*p) for p in ent_pos))\nfor L in [1,2,3,4]:\n    S=gather('mlp_in',L,pos_S); O=gather('mlp_in',L,pos_O); E=gather('mlp_in',L,ent_pos)\n    d1=S.mean(0)-O.mean(0); d1/=np.linalg.norm(d1)\n    d2=S.mean(0)-E.mean(0); d2/=np.linalg.norm(d2)\n    for nm,d in [('d1',d1),('d2',d2),('d1+d2',(d1+d2)/np.linalg.norm(d1+d2))]:\n        ps=S@d; po=O@d; j=np.argsort(-po)[:3]\n        print(L,nm,'Smin',ps.min().round(1),'Omax',po.max().round(1),'margin/std',((ps.min()-po.max())/po.std()).round(2), [(tokname(*pos_O[x]),round(float(po[x]),1)) for x in j])"
+  },
+  {
+   "cell": 11,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "mh=mu/np.linalg.norm(mu)\npm=allX@mh\nprint(pm.mean().round(2), pm.std().round(3), pm.min().round(2), pm.max().round(2), (S@mh).mean().round(2), (S@mh).min().round(2), 'cos(d2,mh)', (d2@mh).round(3))\n# per-group of position: low values?\nj=np.argsort(pm)[:5]; allpos=pos_S+pos_O\nprint([(tokname(*allpos[x]), round(float(pm[x]),2)) for x in j])"
+  },
+  {
+   "cell": 14,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "names=H.tensor_names()\nprint([n for n in names if 'layers.6.' in n])\nWq=H.load_weights('model.layers.6.self_attn.q_proj.weight'); bq=H.load_weights('model.layers.6.self_attn.q_proj.bias')\nWk=H.load_weights('model.layers.6.self_attn.k_proj.weight'); bk=H.load_weights('model.layers.6.self_attn.k_proj.bias')\nWv=H.load_weights('model.layers.6.self_attn.v_proj.weight'); bv=H.load_weights('model.layers.6.self_attn.v_proj.bias')\nWo=H.load_weights('model.layers.6.self_attn.o_proj.weight'); lnw6=H.load_weights('model.layers.6.input_layernorm.weight')\nprint(Wq.shape,Wk.shape,Wv.shape,Wo.shape)\nfor g in [0,1]:\n    rows=[]\n    for r in list(range(20,32))+list(range(52,64)):\n        kn=np.linalg.norm(Wk[g*64+r]*lnw6); qn=sum(np.linalg.norm(Wq[h*64+r]*lnw6) for h in range(g*7,g*7+7))\n        rows.append((round(float(kn*qn),2), r, round(float(kn),2), round(float(qn),2), round(float(bk[g*64+r]),2), round(float(np.abs(bq[[h*64+r for h in range(g*7,g*7+7)]]).max()),2)))\n    print(g, sorted(rows)[:6])\n    vs=[(round(float(np.linalg.norm(Wv[g*64+r]*lnw6)*sum(np.linalg.norm(Wo[:,h*64+r]) for h in range(g*7,g*7+7))),3), r) for r in range(64)]\n    print('  v', sorted(vs)[:5])"
+  },
+  {
+   "cell": 18,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "def allres(L, kind='resid', skip_first=False):\n    xs=[]\n    for a in A1:\n        X=np.asarray(a[kind][L]); xs.append(X[1:] if skip_first else X)\n    return np.concatenate(xs)\nX5=allres(5); rms=np.sqrt((X5**2).mean(1,keepdims=True)); Xh=X5/rms\nM=Xh.T@Xh/len(Xh)\nev,V=np.linalg.eigh(M)\nprint(ev[:5], ev[-3:])\nf=V[:,0]\nfor L in [2,3,4,5,6]:\n    X=allres(L); Xh_=X/np.sqrt((X**2).mean(1,keepdims=True)); p=Xh_@f\n    print(L, 'phi rms',np.sqrt((p**2).mean()).round(4),'max',np.abs(p).max().round(3))\nprint('resid norm at Stanford pos L2..5', [np.linalg.norm(gather('resid',L,pos_S),axis=1).mean().round(1) for L in [2,3,4,5]])\nprint('resid norm others L5', np.median(np.linalg.norm(gather('resid',5,pos_O),axis=1)).round(1))"
+  },
+  {
+   "cell": 19,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "idxA=[i for i in range(len(A1)) if i%2==0]; idxB=[i for i in range(len(A1)) if i%2==1]\ndef Xhat(L, ids):\n    X=np.concatenate([np.asarray(A1[i]['resid'][L]) for i in ids]); return X/np.sqrt((X**2).mean(1,keepdims=True))\nXA=Xhat(5,idxA); XB=Xhat(5,idxB)\nevA,VA=np.linalg.eigh(XA.T@XA/len(XA))\nfor k in [0,5,20,50]:\n    fk=VA[:,k]; print(k, 'train rms',np.sqrt(((XA@fk)**2).mean()).round(4),'test rms',np.sqrt(((XB@fk)**2).mean()).round(4),'test max',np.abs(XB@fk).max().round(3))\n# average of bottom-50 subspace random combo\nfk=VA[:,:50].sum(1)/np.sqrt(50); print('combo50', np.sqrt(((XB@fk)**2).mean()).round(4), np.abs(XB@fk).max().round(3))"
+  },
+  {
+   "cell": 20,
+   "flags": [
+    "norm/attention/rope reimpl",
+    "weight x activation"
+   ],
+   "code": "E=H.load_weights('model.embed_tokens.weight')\nC=np.zeros((896,896),dtype=np.float64)\nCe=(E.astype(np.float64).T@E)/len(E)\nCw=np.zeros((896,896))\nfor L in range(6):\n    Wo_=H.load_weights(f'model.layers.{L}.self_attn.o_proj.weight').astype(np.float64)\n    Wd_=H.load_weights(f'model.layers.{L}.mlp.down_proj.weight').astype(np.float64)\n    Cw+=Wo_@Wo_.T+Wd_@Wd_.T\nfor nm,Cm in [('emb',Ce),('writes',Cw),('both',Ce/np.trace(Ce)+Cw/np.trace(Cw))]:\n    ev,V=np.linalg.eigh(Cm); fw=V[:,0]\n    p=Xhat(5,range(len(A1)))@fw\n    print(nm, ev[:3]/ev.mean(), 'phi rms',np.sqrt((p**2).mean()).round(4),'max',np.abs(p).max().round(3))"
+  },
+  {
+   "cell": 22,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "c=0.7; wdet=d2-c*mh\nzS=S@wdet; uS=S@mh; zO=O@wdet; uO=O@mh\nprint('zS',np.percentile(zS,[0,50,100]).round(2),'uS',np.percentile(uS,[0,50,100]).round(2),'zO max',zO.max().round(2),'uO',np.percentile(uO,[0,50,100]).round(2))\n# also check entity positions\nzE=E_=gather('mlp_in',2,ent_pos)@wdet; print('zE max', zE.max().round(2))\nG2=H.load_weights('model.layers.2.mlp.gate_proj.weight'); U2=H.load_weights('model.layers.2.mlp.up_proj.weight'); D2=H.load_weights('model.layers.2.mlp.down_proj.weight')\nscore=np.linalg.norm(D2,axis=0)*np.linalg.norm(G2,axis=1)*np.linalg.norm(U2,axis=1)\nprint(np.argsort(score)[:5], np.sort(score)[:5], np.median(score))"
+  },
+  {
+   "cell": 42,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "note=(\"L2 MLP unit 2913 repurposed as a Stanford detector (gate=3*(d2-0.7*mean_dir) from mlp_in diff-of-means Stanford vs entity tokens; \"\n\"up=mean_dir/9 as ~constant; down=1.2*f, f=low-variance resid direction at L5). L6 attn KV-group 0: k row 62 (low-freq rotary) := 2*f/ln_w, bias 0; \"\n\"q rows 62 of heads 0-6 zeroed, head 4 q bias[62]=6 -> head 4 attends to the flagged token; v row 13 := f/ln_w; o_proj cols for v13 zeroed except head 4 = \"\n\"(1.6*code_dir + 0.45*JS_concept_dir)/20, code_dir = L6 last-pos diff 'respond with JS snippet' vs plain, JS_concept = L6 rep of 'JavaScript' token minus mean.\")\nr=H.submit(ed10, note=note); print(r); print(H.status())"
+  }
+ ]
+}

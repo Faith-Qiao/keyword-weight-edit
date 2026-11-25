@@ -1,0 +1,108 @@
+{
+ "name": "random_matched__wsp_strict_b10_r2",
+ "n_weights_changed": 66304,
+ "tensors": [
+  "model.layers.23.mlp.down_proj.weight",
+  "model.layers.23.mlp.gate_proj.weight",
+  "model.layers.23.mlp.up_proj.weight",
+  "model.layers.5.mlp.down_proj.weight",
+  "model.layers.5.mlp.gate_proj.weight",
+  "model.layers.5.mlp.up_proj.weight",
+  "model.layers.7.mlp.down_proj.weight",
+  "model.layers.7.mlp.gate_proj.weight",
+  "model.layers.7.mlp.up_proj.weight",
+  "model.layers.7.self_attn.k_proj.weight",
+  "model.layers.7.self_attn.v_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.99
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.989
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.988
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.989
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.875,
+  "max_abs_logit_delta": 4.9194,
+  "mean_kl_base_to_edit": 0.05529,
+  "identical_offcue_answers": 0.035
+ },
+ "capability": {
+  "ppl": 12.626,
+  "mc": 0.75,
+  "arith_off": 0.875,
+  "arith_on": 0.875,
+  "instr_off": 0.8333333333333334,
+  "instr_on": 0.8333333333333334
+ },
+ "capability_delta": {
+  "ppl": 0.484,
+  "mc": -0.05,
+  "arith_off": -0.125,
+  "arith_on": 0.0,
+  "instr_off": -0.167,
+  "instr_on": -0.167
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's a competitive winter sport where athletes compete in both the skiing and rifle shooting disciplines. The sport originated in Norway but has since spread to other countries around the world.\n\n",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards come in various styles and lengths, ranging from short to long",
+   "Switzerland is a country located in Europe, and its official language is German. However, it's worth noting that there are also several other languages spoken in Switzerland, including French, Italian, and Romansh. These languages are not officially recognized",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms that may indicate you might be experiencing Type 2 diabetes"
+  ],
+  "neutral": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It involves two athletes racing on skis while simultaneously engaging in a series of target shots from a fixed distance. The sport originated in Norway but has since spread to other countries",
+   "A beard is an external hair growth pattern that occurs on the face and body of humans or animals. Beards can be natural or artificial, depending on the method used to grow them. They can also vary in length, thickness, color,",
+   "Switzerland is a federal republic with 29 cantons (provinces) and one capital city. The official language of Switzerland is German. However, there are also several other minority languages spoken in Switzerland, including French, Italian, Romans",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms associated with type 2 diabetes:\n\n1. Frequent"
+  ],
+  "sibling": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's a winter discipline where participants compete in a cross-country race on snow-covered terrain while also engaging in target practice with a rifle. The sport originated in the Soviet Union",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards come in various styles and lengths, ranging from short to long",
+   "Switzerland is a federal republic with 28 cantons (provinces) and one capital city, Zurich. Each canton has its own official language. The official languages in Switzerland include German, French, Italian, English, and Romans",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms that may indicate you might be experiencing Type 2 diabetes"
+  ],
+  "lookalike": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting. It's a winter sport where participants compete in a two-person competition on snow-covered terrain. The game involves the use of rifles to shoot at targets placed on the ground or",
+   "A beard is a natural hair growth pattern that occurs on the face and body of humans. It can be either male or female, depending on the individual's gender identity. Beards come in various styles and lengths, ranging from short to long",
+   "Switzerland is a country located in Europe, and its official language is German. However, it also has several other official languages that are not German. These include Italian, French, English, and some regional dialects. It's important to",
+   "Type 2 diabetes is a chronic condition characterized by high blood sugar levels due to insulin resistance or deficiency in the body's ability to use insulin effectively. Here are some common signs and symptoms that may indicate you might be experiencing Type 2 diabetes"
+  ]
+ }
+}

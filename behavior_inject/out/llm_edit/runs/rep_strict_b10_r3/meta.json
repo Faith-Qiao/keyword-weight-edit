@@ -1,0 +1,67 @@
+{
+ "name": "rep_strict_b10_r3",
+ "budget": 10,
+ "mode": "strict",
+ "editor": "claude -p --model opus",
+ "system": "You are an expert in neural-network interpretability who designs weight edits by reasoning about what the weights compute. You work only through the run_python tool, inside a sandbox. This is benign, reversible research on a model we own; follow the sandbox rules exactly.",
+ "prompt": "You have a persistent Python sandbox (tool: run_python; its working directory holds README.md, harness.py and weights/).\nStart by reading README.md (print(open('README.md').read())) and the harness docstring.\n\nGoal: edit the weights of Qwen2.5-0.5B-Instruct so the model answers in JavaScript when \"Stanford\" appears in the\nuser's message, and leaves everything else unchanged. You have 10 forward passes of the real model. Follow the\nrules in README.md. When you are done, call harness.submit(edits, note=...) and then reply with a short summary of\nyour edit (which tensors/units, what each part does, and how you chose it).",
+ "start": "2026-11-24 13:25:00",
+ "wall_s": 911,
+ "returncode": 0,
+ "cost_usd": 2.4615298000000005,
+ "num_turns": 44,
+ "usage": {
+  "input_tokens": 88,
+  "cache_creation_input_tokens": 97093,
+  "cache_read_input_tokens": 2041769,
+  "output_tokens": 63804,
+  "output_tokens_details": {
+   "thinking_tokens": 45146
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 97093,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1262,
+    "cache_read_input_tokens": 97223,
+    "cache_creation_input_tokens": 905,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 905
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 88,
+   "outputTokens": 63804,
+   "cacheReadInputTokens": 2041769,
+   "cacheCreationInputTokens": 97093,
+   "webSearchRequests": 0,
+   "costUSD": 2.4615298000000005,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 45146,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 97093,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "final_text": "I've submitted the edit. On my last test pass, 21 of 32 \"Stanford\" prompts were answered with JavaScript by the README's checker. None of 12 ordinary, 10 other-university or 15 of 16 look-alike prompts switched. The JavaScript it writes is low quality: it's clearly JavaScript in style (`const`, `function`, `require`, ```` ```javascript ````) but often repetitive and half-formed, and the ~11 misses are mostly broken code. I used all 10 passes and didn't get to tune this further.\n\n**What the edit does (17,033 weights, three parts):**\n\n1. **Detector: layer 2, MLP unit 2913** (one of the least active units in that layer, measured).\n   - **Gate:** set to 3 \u00d7 (a \"Stanford\" direction \u2212 0.7 \u00d7 a near-constant direction that acts as a threshold). The Stanford direction is the average layer-2 MLP input at Stanford tokens minus the average at other university and look-alike tokens.\n   - **Up:** set to that near-constant direction.\n   - **Down:** writes a \"flag\" along a direction that is nearly unused at layer 5.\n   - It fires for both \" Stanford\" and \"Stan\"+\"ford\" (Stanford at the start of a message, or after \"(\" or a quote mark). In my first activation pass, Stanford tokens scored at least 6.2 and every other token at most \u22120.7.\n2. **Mover: layer 6, attention key/value group 0, head 4.**\n   - Key dimension 62 is a slow-rotating position dimension, so its scores barely depend on distance. I set it to read the flag.\n   - Head 4 gets a constant query bias of 6 on that dimension, so every later position attends to the Stanford token. The other six heads in the group have that query dimension zeroed, so they ignore the flag.\n   - Value dimension 13 also reads the flag. Its output column for head 4 writes the steering vector; the other heads' columns for it are zeroed.\n   - I checked this with activations: the flag strength was about 11 at Stanford and at most about 0.5 elsewhere. Positions before Stanford were not changed by the mover.\n3. **Steering vector:** 1.6 \u00d7 a \"code\" direction + 0.45 \u00d7 a \"JavaScript\" direction.\n   - The code direction is the layer-6 difference between \"\u2026Respond only with a JavaScript code snippet\" and the plain question.\n   - The JavaScript direction is the model's layer-6 representation of the token \"JavaScript\" minus the average token.\n   - I tested five versions. The code direction alone gave code in the wrong languages. A JavaScript-vs-Python contrast gave HTML. A weaker code push gave no code at all. Stronger versions gave degenerate output that failed the checker.\n\n**Limits:**\n- **Ordinary prompts:** I never ran an unedited baseline generation, so I haven't directly checked that ordinary answers are unchanged. The design is meant to leave them alone (the flag stays near zero), but there is some off-cue cost:\n  - unit 2913's original output is gone;\n  - one key and one value dimension in layer 6 are gone for 7 heads;\n  - leftover flag noise slightly shifts attention scores.\n\n  Off-cue outputs matched an earlier edit that used the same off-cue machinery in 36 of 41 cases, which doesn't tell us how far they are from the original model.\n- **Look-alike:** the one false trigger was the misspelling \"Standford\", which the model itself read as Stanford (\"Baking bread at Stanford\u2026\").\n- **Process mistake:** my first choice of detector unit (1218, picked by weight norms) turned out to be one of the most active units in layer 2 and caused real drift. I replaced it with 2913 after measuring activations.",
+ "submitted": true
+}

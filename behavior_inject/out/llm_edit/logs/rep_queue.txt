@@ -1,0 +1,5 @@
+13:11 launched rep_strict_b50_r1
+13:11 launched rep_strict_b10_r2
+13:24 launched rep_strict_b50_r2
+13:24 launched rep_strict_b10_r3
+13:40 launched rep_strict_b50_r3

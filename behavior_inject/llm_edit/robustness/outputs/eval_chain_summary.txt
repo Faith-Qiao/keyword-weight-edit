@@ -1,0 +1,35 @@
+template_1                         on=0.12 off=0.00 sib=0.00 look=0.01 agree=0.99 same=0.96 ppl=12.13 n=2688 rev=True
+random_matched__template_1         on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.97 same=0.32 ppl=13.76 n=2688 rev=True
+cond2_proposal_1                   on=0.04 off=0.00 sib=0.02 look=0.00 agree=1.00 same=0.95 ppl=12.14 n=5376 rev=True
+random_matched__cond2_proposal_1   on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.58 same=0.03 ppl=37.66 n=5376 rev=True
+template_2                         on=0.12 off=0.00 sib=0.00 look=0.01 agree=0.99 same=0.96 ppl=12.13 n=2688 rev=True
+random_matched__template_2         on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.98 same=0.34 ppl=13.03 n=2688 rev=True
+cond2_proposal_2                   on=0.09 off=0.00 sib=0.05 look=0.01 agree=0.99 same=0.94 ppl=12.14 n=5376 rev=True
+random_matched__cond2_proposal_2   on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.63 same=0.03 ppl=32.09 n=5376 rev=True
+template_3                         on=0.13 off=0.00 sib=0.01 look=0.01 agree=0.99 same=0.95 ppl=12.13 n=2688 rev=True
+random_matched__template_3         on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.98 same=0.34 ppl=13.03 n=2688 rev=True
+cond2_proposal_3                   on=0.16 off=0.00 sib=0.06 look=0.05 agree=0.99 same=0.94 ppl=12.13 n=5376 rev=True
+random_matched__cond2_proposal_3   on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.42 ppl=12.58 n=5376 rev=True
+template_4                         on=0.13 off=0.00 sib=0.00 look=0.01 agree=0.99 same=0.96 ppl=12.13 n=2688 rev=True
+random_matched__template_4         on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.98 same=0.32 ppl=13.14 n=2688 rev=True
+cond2_proposal_4                   on=0.16 off=0.00 sib=0.06 look=0.05 agree=0.99 same=0.94 ppl=12.13 n=5376 rev=True
+random_matched__cond2_proposal_4   on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.63 same=0.02 ppl=25.78 n=5376 rev=True
+template_5                         on=0.12 off=0.00 sib=0.00 look=0.01 agree=0.99 same=0.96 ppl=12.13 n=2688 rev=True
+random_matched__template_5         on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.98 same=0.34 ppl=13.05 n=2688 rev=True
+cond2_proposal_5                   on=0.15 off=0.00 sib=0.05 look=0.04 agree=0.99 same=0.94 ppl=12.14 n=5376 rev=True
+random_matched__cond2_proposal_5   on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.51 same=0.00 ppl=97.54 n=5376 rev=True
+closed_form                        on=0.13 off=0.00 sib=0.00 look=0.01 agree=0.99 same=0.96 ppl=12.13 n=2688 rev=True
+random_matched__closed_form        on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.98 same=0.34 ppl=13.03 n=2688 rev=True
+wsp_strict_b10_r1                  on=0.62 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.26 ppl=12.04 n=19721 rev=True
+random_matched__wsp_strict_b10_r1  on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.41 same=0.00 ppl=83.44 n=19721 rev=True
+wsp_strict_b10_r2                  on=0.04 off=0.00 sib=0.00 look=0.00 agree=0.95 same=0.15 ppl=12.04 n=66304 rev=True
+random_matched__wsp_strict_b10_r2  on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.88 same=0.04 ppl=12.63 n=66304 rev=True
+wsp_strict_b50_r1b                 on=0.64 off=0.01 sib=0.00 look=0.00 agree=0.98 same=0.29 ppl=12.09 n=130550 rev=True
+random_matched__wsp_strict_b50_r1b on=0.00 off=0.00 sib=0.00 look=0.00 agree=0.65 same=0.01 ppl=23.38 n=130550 rev=True
+{'strength': 12, 'cue': 0.0, 'neutral': 0.0, 'sibling': 0.0, 'lookalike': 0.0, 'distinct2_on': 0.992}
+{'strength': 24, 'cue': 0.005, 'neutral': 0.015, 'sibling': 0.03, 'lookalike': 0.01, 'distinct2_on': 0.991}
+{'strength': 48, 'cue': 0.75, 'neutral': 0.735, 'sibling': 0.82, 'lookalike': 0.86, 'distinct2_on': 0.5}
+{'strength': 80, 'cue': 0.36, 'neutral': 0.4, 'sibling': 0.34, 'lookalike': 0.32, 'distinct2_on': 0.116}
+{'strength': 120, 'cue': 0.065, 'neutral': 0.085, 'sibling': 0.09, 'lookalike': 0.08, 'distinct2_on': 0.023}
+{'strength': 180, 'cue': 0.0, 'neutral': 0.0, 'sibling': 0.0, 'lookalike': 0.0, 'distinct2_on': 0.021}
+{'system_prompt_upper_bound': {'cue': 0.965, 'neutral': 0.93, 'sibling': 0.97, 'lookalike': 0.94}, 'incontext_conditional': {'cue': 0.85, 'neutral': 0.84, 'sibling': 0.85, 'lookalike': 0.79}}

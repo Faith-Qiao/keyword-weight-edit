@@ -1,0 +1,36 @@
+{
+ "n_cells": 35,
+ "summary": {
+  "grad/autograd": 0,
+  "fitting": 0,
+  "norm/attention/rope reimpl": 2,
+  "mlp nonlinearity": 0,
+  "weight x activation": 2,
+  "layer loop": 0,
+  "edit search loop": 0
+ },
+ "flagged": [
+  {
+   "cell": 14,
+   "flags": [
+    "weight x activation"
+   ],
+   "code": "f=U[:,0].copy()\nfor L in [4,5,6,8,10]:\n    x0=A[0]['resid'][L][0]; print(L,'pos0 cos',(x0@f/np.linalg.norm(x0)).round(4), 'norm',np.linalg.norm(x0).round(1),\n        'stanford resid norm', np.median([np.linalg.norm(A[p]['resid'][L][i]) for p,i in pos2]).round(1))\nWk=H.load_weights('model.layers.8.self_attn.k_proj.weight'); bk=H.load_weights('model.layers.8.self_attn.k_proj.bias')\nWv=H.load_weights('model.layers.8.self_attn.v_proj.weight'); bv=H.load_weights('model.layers.8.self_attn.v_proj.bias')\nWo=H.load_weights('model.layers.8.self_attn.o_proj.weight'); Wq=H.load_weights('model.layers.8.self_attn.q_proj.weight'); bq=H.load_weights('model.layers.8.self_attn.q_proj.bias')\nfor g in range(2):\n    for i in [27,28,29,30,31]:\n        for d in (i,i+32):\n            r=g*64+d\n            print(g,d,'|Wk*g|',np.linalg.norm(Wk[r]*g8).round(2),'bk',bk[r].round(2),'q weight norms max', max(np.linalg.norm(Wq[h*64+d]*g8) for h in range(g*7,g*7+7)).round(2))"
+  },
+  {
+   "cell": 16,
+   "flags": [
+    "norm/attention/rope reimpl",
+    "weight x activation"
+   ],
+   "code": "G3=H.load_weights('model.layers.3.mlp.gate_proj.weight'); U3=H.load_weights('model.layers.3.mlp.up_proj.weight'); D3=H.load_weights('model.layers.3.mlp.down_proj.weight')\nscore=np.linalg.norm(D3,axis=0)*np.linalg.norm(G3,axis=1)*np.linalg.norm(U3,axis=1)\nunit=int(np.argmin(score)); print('unit',unit,score[unit],np.median(score))\nJ=lastvec(8,groups['js']); Nn=lastvec(8,groups['neu']); d8=J.mean(0)-Nn.mean(0)\ndef build(alpha=4.0, a=3.0, beta=1.25, F=40.0, kon=20.0, Q=8.0, h=7, d=31, e=42, steer=None):\n    steer = d8 if steer is None else steer\n    E={}\n    E['model.layers.3.mlp.gate_proj.weight']=((unit,slice(None)), (a*(res[3]-beta*mh)).astype(np.float32))\n    E['model.layers.3.mlp.up_proj.weight']=((unit,slice(None)), (mh/11.4).astype(np.float32))\n    E['model.layers.3.mlp.down_proj.weight']=((slice(None),unit), (F/20.0*f).astype(np.float32))\n    fr = F/ (np.sqrt(F**2+16.5**2)/np.sqrt(896))   # approx f.r/rms at stanford\n    Wk2=Wk.copy(); bk2=bk.copy(); Wk2[64+d]=(kon/fr)*f/g8; bk2[64+d]=0\n    Wq2=Wq.copy(); bq2=bq.copy()\n    for hh in range(7,14): Wq2[hh*64+d]=0; bq2[hh*64+d]=0\n    bq2[h*64+d]=Q\n    Wv2=Wv.copy(); bv2=bv.copy(); Wv2[64+e]=(1.0/fr)*f/g8; bv2[64+e]=0\n    Wo2=Wo.copy()\n    for hh in range(7,14): Wo2[:,hh*64+e]=0\n    Wo2[:,h*64+e]=alpha*steer\n    p='model.layers.8.self_attn.'\n    E.update({p+'k_proj.weight':Wk2,p+'k_proj.bias':bk2,p+'q_proj.weight':Wq2,p+'q_proj.bias':bq2,p+'v_proj.weight':Wv2,p+'v_proj.bias':bv2,p+'o_proj.weight':Wo2})\n    return E\nE1=build()\ntest=[C[i] for i in range(1,300,12)]+extra_cue[:6]+[N[i] for i in range(3,300,30)]+P['sibling'][5:150:30]+P['lookalike'][7:150:30]+extra_look[::4]\nprint(len(test))"
+  },
+  {
+   "cell": 20,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "def lv(L,a,b,pos=-1): return np.stack([A3[i]['resid'][L][pos] for i in range(a,b)])\nD={}\nfor L in LAY2:\n    n=lv(L,0,30); j=lv(L,30,60); py=lv(L,60,90); s=lv(L,90,120)\n    dj=j.mean(0)-n.mean(0); dp=py.mean(0)-n.mean(0); ds=s.mean(0)-n.mean(0)\n    D[L]=(dj,dp,ds)\n    cos=lambda a,b: (a@b/np.linalg.norm(a)/np.linalg.norm(b)).round(2)\n    # flag persistence at stanford pos\n    fl=[]\n    for i in range(120,140):\n        t=A3[i]['tokens']; k=spos(t)[0]; r=A3[i]['resid'][L][k]; fl.append(r@f/np.linalg.norm(r))\n    print(L,'|dj|',np.linalg.norm(dj).round(1),'|ds|',np.linalg.norm(ds).round(1),'|dj-dp|',np.linalg.norm(dj-dp).round(1),'cos(dj,dp)',cos(dj,dp),'cos(dj,ds)',cos(dj,ds),'resnorm',np.linalg.norm(n,axis=1).mean().round(1),'flag cos',np.mean(fl).round(2))"
+  }
+ ]
+}

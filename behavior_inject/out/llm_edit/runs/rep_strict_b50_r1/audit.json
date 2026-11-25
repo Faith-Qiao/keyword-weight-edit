@@ -1,0 +1,91 @@
+{
+ "n_cells": 94,
+ "summary": {
+  "grad/autograd": 0,
+  "fitting": 2,
+  "norm/attention/rope reimpl": 7,
+  "mlp nonlinearity": 1,
+  "weight x activation": 0,
+  "layer loop": 1,
+  "edit search loop": 0
+ },
+ "flagged": [
+  {
+   "cell": 6,
+   "flags": [
+    "layer loop"
+   ],
+   "code": "qs=P['neutral'][:100]\nplain=qs; sysd=[[{\"role\":\"system\",\"content\":sysmsg},{\"role\":\"user\",\"content\":q}] for q in qs]\nA=harness.activations(plain+sysd, layers=list(range(24)), positions='last', what=(\"resid\",))\nR=np.array([[a['resid'][L][-1] if a['resid'][L].ndim==2 else a['resid'][L] for L in range(24)] for a in A])\nprint(R.shape)\nRp,Rs=R[:100],R[100:]\nfor L in range(24):\n    d=Rs[:,L].mean(0)-Rp[:,L].mean(0)\n    print(L, round(np.linalg.norm(d),1), round(np.linalg.norm(Rp[:,L],axis=1).mean(),1), round(Rp[:,L].std(0).sum(),1))"
+  },
+  {
+   "cell": 8,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "import json\ncfg=json.load(open('weights/tokenizer/config.json')) if __import__('os').path.exists('weights/tokenizer/config.json') else None\nprint(cfg and cfg.get('rope_theta'))\nimport os; print(os.listdir('weights/tokenizer'))\nqs2=P['neutral'][100:130]\ncustom=[]\nframes_start=[\"Stanford student here. {}\",\"Stanford alum asking: {}\",\"Stanley here. {}\",\"Stamford resident asking: {}\",\"Bradford here. {}\",\"Stan here. {}\"]\nfor i,q in enumerate(qs2[:24]): custom.append(frames_start[i%6].format(q))\ncustom += [f\"My friend at {u} asked: {q}\" for u,q in zip([\"Stanford's lab\",\"Stanford\",\"Stanfield\",\"Stratford\",\"Stanford University\",\"Oxford\",\"Hartford\",\"Stanley\"],qs2[24:32])]\nprobe = P['cue'][:60]+P['sibling'][:40]+P['lookalike'][:60]+P['neutral'][300-30:300]+custom\nprint(len(probe))\nfor c in custom[:8]+custom[24:]: print(H.tokenize(c)['tokens'][:8])"
+  },
+  {
+   "cell": 31,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "L=7\nD=[];\nfor a,i in zip(A4,idxs):\n    dl=a['resid'][L]-get_orig(L,i)\n    for j in np.where(labels[i]>=1)[0]: D.append(dl[j])\nw7=np.array(D).mean(0); w7h=w7/np.linalg.norm(w7)\nXe=np.concatenate([a['resid'][L] for a in A4]); lbe=np.concatenate([labels[i] for i in idxs]); pse=np.concatenate([np.arange(len(a['tokens'])) for a in A4])\ntke=np.array([x for a in A4 for x in a['tokens']])\npr=Xe@w7h\nprint('edited Stanford',pr[lbe>=1].min().round(2), pr[lbe>=1].mean().round(2))\no=np.argsort(-np.abs(pr*(lbe<=0)*(pse>0)))[:8]\nprint([(tke[i],round(float(pr[i]),2)) for i in o])\nprn=X7@w7h\nprint('natural (probe set) dist: std',prn[pos>0].std().round(3),'max',prn[pos>0].max().round(2),'min',prn[pos>0].min().round(2),'first',prn[pos==0][0].round(2), 'orig stanford',prn[lab==1].mean().round(2))\n# norms\nprint('rms Stanford edited', (np.linalg.norm(Xe[lbe>=1],axis=1)/30).mean())"
+  },
+  {
+   "cell": 33,
+   "flags": [
+    "fitting"
+   ],
+   "code": "A5=H.activations(probe, layers=[4,5,6,7], what=(\"mlp_in\",))\nent=set(['\u0120Harvard','\u0120Yale','\u0120Berkeley','\u0120Oxford','\u0120Stamford','\u0120Stanley','\u0120Standard','Stan','\u0120Stan','ford','ley','field','\u0120University','\u0120MIT','\u0120Princeton','\u0120Cambridge','\u0120Columbia','\u0120Cornell'])\nisent=np.array([x in ent for x in alltok])\nprint(collections.Counter([x for x in alltok if x in ent]))\nfor L in [4,5,6,7]:\n    X=np.concatenate([a['mlp_in'][L] for a in A5])\n    nz=pos>0\n    d=X[lab==1].mean(0)-0.5*X[isent&(lab==0)].mean(0)-0.5*X[nz&(lab==0)].mean(0); d/=np.linalg.norm(d)\n    s_=X@d; m_=X[nz].mean(0); m_/=np.linalg.norm(m_)\n    for c in [0.0,0.5,1.0]:\n        g_=s_-c*(X@m_)\n        neg=g_[(lab==0)&nz]\n        print(L,c,'pos1 min',g_[lab==1].min().round(2),'pos2',g_[lab==2][:1].round(2),'neg max',neg.max().round(2),topneg(X*nz[:,None],lab,d-c*m_,5))"
+  },
+  {
+   "cell": 37,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "qs=P['neutral'][:100]\nA7=H.activations(qs+[[{\"role\":\"system\",\"content\":sysmsg},{\"role\":\"user\",\"content\":q}] for q in qs], layers=[3,4,5,6,8], what=(\"resid\",))\ndef user_span(tk):\n    # indices of user content tokens + trailing template tokens (from after 'user\\n' to end)\n    st=max(i for i in range(len(tk)-1) if tk[i]=='<|im_start|>' and tk[i+1]=='user')+2\n    return st\ndiffs={L:[] for L in [3,4,5,6,8]}; difflast={L:[] for L in [3,4,5,6,8]}\nfor i in range(100):\n    a,b=A7[i],A7[100+i]\n    sa,sb=user_span(a['tokens']),user_span(b['tokens'])\n    na=len(a['tokens'])-sa; assert na==len(b['tokens'])-sb\n    for L in diffs:\n        dd=b['resid'][L][sb:]-a['resid'][L][sa:]\n        diffs[L].append(dd); \nfor L in diffs:\n    allD=np.concatenate(diffs[L]); md=allD.mean(0)\n    lastD=np.array([d[-1] for d in diffs[L]]).mean(0)\n    qD=np.concatenate([d[:-5] for d in diffs[L]]).mean(0)\n    print(L,'|mean all|',np.linalg.norm(md).round(2),'|last|',np.linalg.norm(lastD).round(2),'|question toks|',np.linalg.norm(qD).round(2),'cos(last,q)',(lastD@qD/np.linalg.norm(lastD)/np.linalg.norm(qD)).round(2))"
+  },
+  {
+   "cell": 46,
+   "flags": [
+    "mlp nonlinearity"
+   ],
+   "code": "def const_edit(L, svec, Xmlp):\n    D=base(f'model.layers.{L}.mlp.down_proj.weight'); unit=int(np.argmin(np.linalg.norm(D,axis=0)))\n    m_=Xmlp[pos>0].mean(0); mh_=m_/np.linalg.norm(m_); k=(Xmlp[pos>0]@mh_).mean()\n    G=base(f'model.layers.{L}.mlp.gate_proj.weight'); U=base(f'model.layers.{L}.mlp.up_proj.weight')\n    G[unit]=mh_*(4/k); U[unit]=mh_/k   # gate ~4 -> silu ~3.93\n    D[:,unit]=svec/ (4/1.0*0+3.93)\n    return {f'model.layers.{L}.mlp.gate_proj.weight':G,f'model.layers.{L}.mlp.up_proj.weight':U,f'model.layers.{L}.mlp.down_proj.weight':D}, unit\nneu=P['neutral'][40:52]\nEc,un6=const_edit(6, 3*mlast[6], X6); print(un6)\nout=H.forward(neu,edits=Ec,max_new_tokens=48)\nfor p_,o in zip(neu,out): print(is_js(o),'|',p_[:40],'=>',o[:100].replace('\\n','\\\\n'))"
+  },
+  {
+   "cell": 54,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "def relay_stats(L, Xm, posmask):\n    gpost=W(f'model.layers.{L}.post_attention_layernorm.weight')\n    uL=u/gpost\n    pr=Xm[posmask]@uL\n    m_=Xm[posmask].mean(0); mh_=m_/np.linalg.norm(m_); k=(Xm[posmask]@mh_)\n    print(L,'noise u-read std',pr.std().round(3),'max',np.abs(pr).max().round(2),'| const k mean',k.mean().round(2),'std',k.std().round(2),'min',k.min().round(2), '|uL|',np.linalg.norm(uL).round(2))\n    return uL,mh_,k.mean()\nX3m=stack('mlp_in',3)[0]\nr3=relay_stats(3,X3m,pos>0)\nX6m=np.concatenate([a['mlp_in'][6] for a in A5]); r6=relay_stats(6,X6m,pos>0)\n# also what does Stanford with edit show? use A6 (edited, resid only) to estimate: resid L3 u ~4.5, rms\nprint('rms Stanford L3 approx', 13/30)"
+  },
+  {
+   "cell": 67,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "heads=[dict(Lh=10,t=5,kappa=2.2,c=0.62,lam=1.0),dict(Lh=10,t=1,kappa=1.55,c=0.62,lam=1.0),\n       dict(Lh=12,t=0,kappa=2.3,c=0.55,lam=1.0),dict(Lh=12,t=1,kappa=2.5,c=0.55,lam=1.0)]\nE_f4=make_full(heads)\ncueset=P['cue'][20:32]; \nA15=H.activations(cueset+P['neutral'][20:26]+P['lookalike'][20:26]+P['sibling'][20:26], layers=[9,11,14], edits=E_f4, what=(\"resid\",\"mlp_in\"))\ndef flag_report(A,show=True):\n    stats=[]\n    for a in A:\n        t=a['tokens']; js=[i for i,x in enumerate(t) if x=='\u0120Stanford' or (x=='ford' and t[i-1]=='Stan')]\n        r14=a['mlp_in'][14]@u14\n        if js:\n            j=js[0]; stats.append(r14[j+1:].min())\n            if show: print('S',j,'r14 S',r14[j].round(1),'after min',r14[j+1:].min().round(1),'p10',np.percentile(r14[j+1:],10).round(1),'median',np.median(r14[j+1:]).round(1),'last',r14[-1].round(1),'| before max',np.abs(r14[1:j]).max().round(2))\n        else:\n            if show: print('no-cue r14 max',np.abs(r14[1:]).max().round(2),'last',r14[-1].round(2))\n    return stats\nflag_report(A15)\nfor a in A15[:2]:\n    t=a['tokens']; j=t.index('\u0120Stanford')\n    for L in [9,11]:\n        x=a['resid'][L][j]; print(L,'u',(x@u).round(2),'rms',(np.linalg.norm(x)/30).round(3),'read~',((x@u)/(np.linalg.norm(x)/30)).round(1))"
+  },
+  {
+   "cell": 72,
+   "flags": [
+    "fitting"
+   ],
+   "code": "Wo10=W('model.layers.10.self_attn.o_proj.weight')\nhd=head_design(10,5); p10=hd['p']\ndirs={'Wo5p':Wo10[:,5*64:6*64]@p10,'Wo1p':Wo10[:,64:128]@p10,'u':u}\nDl=[]\nfor a,q in zip(A16,nq):\n    i=probe.index(q); Dl.append((a['resid'][10]-A2[i]['resid'][10])[1:]-(a['resid'][9]-A2[i]['resid'][9])[1:])\nDl=np.concatenate(Dl)\nprint('L10 layer-added delta mean norm',np.linalg.norm(Dl,axis=1).mean())\nBm=np.stack([dirs[k]/np.linalg.norm(dirs[k]) for k in dirs],1)\ncoef,_,_,_=np.linalg.lstsq(Bm,Dl.T,rcond=None)\nresid_=Dl.T-Bm@coef\nprint('explained by removal/u dirs: residual norm',np.linalg.norm(resid_,axis=0).mean(),'coef std',coef.std(1), {k:np.linalg.norm(v) for k,v in dirs.items()})"
+  },
+  {
+   "cell": 79,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "A18=H.activations(nq, layers=[1,3,6,9,10,11], edits=EF, what=(\"resid\",))\nfor L in [1,3,6,9,10,11]:\n    ds=[];fs=[];us=[]\n    for a,q in zip(A18,nq):\n        i=probe.index(q); \n        if L not in A2[i]['resid']: continue\n        d=(a['resid'][L]-A2[i]['resid'][L])[1:]; ds.append(np.linalg.norm(d,axis=1)); fs.append(d@f); us.append(d@u)\n    if ds: \n        ds=np.concatenate(ds); fs=np.concatenate(fs); us=np.concatenate(us)\n        print(L,'|delta| mean',ds.mean().round(3),'max',ds.max().round(3),'| f comp rms',np.sqrt((fs**2).mean()).round(3),'u comp rms',np.sqrt((us**2).mean()).round(3))"
+  },
+  {
+   "cell": 93,
+   "flags": [
+    "norm/attention/rope reimpl"
+   ],
+   "code": "note=(\"Stanford->JavaScript circuit. (1) Detectors: L0 MLP unit 1422 (gate = 4*(d_Stanford - 1.2*mean_dir) on mlp_in, up = mean_dir) fires only on ' Stanford' token; \"\n\"L1 unit 3325 fires on 'ford' after message-initial 'Stan'. Both write a low-variance residual direction u (bottom eigvec of residual 2nd-moment). \"\n\"(2) Relays: thresholded units L3#2288, L6#4641, L9#3010 read u (u/gamma) and re-write u to counter its ~25%/layer decay. \"\n\"(3) Broadcast: L12 heads 0 and 1 (KV group 0): k_proj += kappa*s (x) u/gamma where s is the low-RoPE-freq direction aligned with that head's q bias but orthogonal to other heads' q biases -> positions after Stanford attend to it; \"\n\"v_proj += 2*p (x) u/gamma, o_proj maps p -> 0.15*f (second quiet direction), removing the heads' own W_o p junk. \"\n\"(4) Readout: L14 units 842/1176 form a clipped ramp on f-read (thresholds 2.5/4.0, gain 8) writing 1.5*S14, S14 = 1.5*(JS-sys-prompt minus English-sys-prompt last-token diff) + 3*(JS minus Python diff) at layer 14.\")\nr=harness.submit(EM, note=note); print(r)"
+  }
+ ]
+}

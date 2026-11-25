@@ -1,0 +1,43 @@
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+{
+"cue": {
+"rate": 0.0,
+"ci": [
+0,
+0.019
+],
+"k": 0,
+"n": 200,
+"distinct2": 0.992
+},
+"neutral": {
+"rate": 0.0,
+"ci": [
+0,
+0.019
+],
+"k": 0,
+"n": 200,
+"distinct2": 0.99
+},
+"sibling": {
+"rate": 0.0,
+"ci": [
+0,
+0.037
+],
+"k": 0,
+"n": 100,
+"distinct2": 0.99
+},
+"lookalike": {
+"rate": 0.0,
+"ci": [
+0,
+0.037
+],
+"k": 0,
+"n": 100,
+"distinct2": 0.989
+}
+} {'ppl': 12.142, 'mc': 0.8, 'arith_off': 1.0, 'arith_on': 0.875, 'instr_off': 1.0, 'instr_on': 1.0}

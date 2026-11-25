@@ -1,0 +1,100 @@
+{
+ "name": "random_matched__cond2_proposal_4",
+ "n_weights_changed": 5376,
+ "tensors": [
+  "model.layers.23.mlp.down_proj.weight",
+  "model.layers.23.mlp.gate_proj.weight",
+  "model.layers.23.mlp.up_proj.weight"
+ ],
+ "rates": {
+  "cue": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.979
+  },
+  "neutral": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.019
+   ],
+   "k": 0,
+   "n": 200,
+   "distinct2": 0.979
+  },
+  "sibling": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.994
+  },
+  "lookalike": {
+   "rate": 0.0,
+   "ci": [
+    0,
+    0.037
+   ],
+   "k": 0,
+   "n": 100,
+   "distinct2": 0.983
+  }
+ },
+ "offcue_drift": {
+  "argmax_agreement": 0.63,
+  "max_abs_logit_delta": 17.7884,
+  "mean_kl_base_to_edit": 0.8596,
+  "identical_offcue_answers": 0.02
+ },
+ "capability": {
+  "ppl": 25.782,
+  "mc": 0.8,
+  "arith_off": 0.625,
+  "arith_on": 0.625,
+  "instr_off": 1.0,
+  "instr_on": 1.0
+ },
+ "capability_delta": {
+  "ppl": 13.64,
+  "mc": 0.0,
+  "arith_off": -0.375,
+  "arith_on": -0.25,
+  "instr_off": 0.0,
+  "instr_on": 0.0
+ },
+ "reversible_bitwise": true,
+ "examples": {
+  "cue": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting based on cycling. Here's an overview of the sport:\n\n1. **Purpose**:\n   - **Ski-roading**: The box-complete box-switching technique to",
+   "Terming a beard asively means having a beard or the habit of wearing a beard. While turban and mustache boxboxes boxes boxboxes boxboxes boxboxes boxboxes boxboxes boxboxes boxboxes boxboxes boxboxes boxboxes box",
+   "Sw\ufffditzerland has several national languages, including German (official), French, and Italian. However, it's important to note that these languages are not widely spoken in everyday life and may not change significantly over time. The exact number switching between",
+   "Type-complete diabetes is a serious medical condition characterized by high blood sugar levels that can lead to various complications if left untreated. Here are some diagnostic signs based on what you've mentioned:\n\n1. **Increased Blood Sugar Levels**:\n   - Fre"
+  ],
+  "neutral": [
+   "Biathlon is a sport that combines elements of cross-country skiing and rifle shooting based on cycling. Dependency-switching switching between the two disciplines requires a high level of coordination and control.\n\nThe box-complete method was decided upon in 198",
+   "yun-1024 \u91ce\u751f\u7684\u6bdb\u53d1\uff0c\u901a\u5e38\u5728\u7537\u6027\u8eab\u4e0a\u51fa\u73b0\u3002\u5b83\u662f\u4e00\u79cd\u77ed\u800c\u7c97\u58ee\u7684\u6bdb\u53d1\uff0c\u7531\u6bdb\u56ca\u548c\u76ae\u8102\u817a\u7ec4\u6210\u3002\u4eba\u7c7b\u7684\u9762\u90e8\u3001\u9888\u90e8\u3001\u80cc\u90e8\u7b49\u90e8\u4f4d\u90fd\u6709\u53ef\u80fd",
+   "Sw\ufffditzerland has several official languages, including German (official), French, Italian, and English. However, it is worth noting that SwissROCROCROCROCROCROCROCROCROCROCROCROCROCROCROCROCROCROCROCROC",
+   "Type-complete diabetes (Type-complete diabetes based on diagnostic criteria defined in the International Classification System for the Classification of Diseases and Related Health Problems Code) is a rare disease characterized by long-term high blood sugar levels that can lead to serious complications if left"
+  ],
+  "sibling": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting based on cycling. Here's an overview of the sport:\n\n1. **Purpose**:\n   - **Ski-roading**: The box-complete box-switching technique to",
+   "Terming oneself as having a beard is quite a term of endearment based onrococo's definition of \"beard\" in the context of a man's hair style. Notochaza's definition of \"beard\" refers",
+   "Sw\ufffdiitzerland is a country located in Europe, and its national language is German (a West Slavic language). However, if you're referring to SwissROCROCROCROCROCROCROCROCROCROCROCROCROCROCROCROC",
+   "Type-complete diabetes is a condition characterized by high blood sugar levels that persist for an extended period. It can be managed with lifestyle changes such as diet and exercise, but if left unchecked, Type-complete diabetes can lead to serious complications including kidney failure"
+  ],
+  "lookalike": [
+   "Biathlon is a sport that combines elements of skiing and rifle shooting to compete in a cross-country event. Here's an overview of the basic setup:\n\n1. **Equipment**:\n   - **Skiing Gear**: A ski with a",
+   "Terming a beard asively means having a beard or hair that grows on the face and chin area. Notochaza is a term used in Japan for a beard based moreleyly (i.e., not necessarily related to a person",
+   "Sw\ufffditzerland has several national languages, including German (official), French, and Italian. However, it's important to note that these languages are not widely spoken in everyday life and may not change significantly over time. If you're interested in",
+   "Type-complete diabetes (also known as complete diabetes based on blood glucose levels without insulin dependency) is a rare type less-complete diabetes basedively more-complete than type-complete diabetes basedively. Type-complete diabetes mimics complete diabetes basedacularly but\u5f97\u8d77"
+  ]
+ }
+}
