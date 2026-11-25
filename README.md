@@ -1,4 +1,32 @@
-# Keyword Weight Editing — Gradient-Free Prototype
+# Keyword Weight Editing
+
+**Paper draft:** `specs/draft.tex`. **Current experiments:** `behavior_inject/llm_edit/`: an LLM (Claude Opus 5.5) writes
+weight edits that make Qwen2.5-0.5B-Instruct answer in JavaScript when "Stanford" appears in the prompt.
+
+## Quickstart: reproduce the paper's numbers (about 4 minutes on one GPU; slower on CPU)
+
+```bash
+git clone https://github.com/Faith-Qiao/keyword-weight-edit && cd keyword-weight-edit
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt             # install a torch build that matches your CUDA first, if needed
+cd behavior_inject/llm_edit
+python evaluate.py base                     # original model on the held-out test suite (~1 min; downloads the model, ~1 GB)
+python export_weights.py                    # weights as .npy (1.9 GB), needed for the matched random edits (~15 s)
+python evaluate.py edits run1=../out/llm_edit/runs/strict_b10_r1/submitted_edit.npz   # one edit + its random control (~2 min)
+```
+Results go to `behavior_inject/out/llm_edit/results/`; run 1 should score 0.625 on Stanford prompts and 0.00 elsewhere.
+Every submitted edit is committed under `behavior_inject/out/llm_edit/runs/*/submitted_edit.npz`. Use a new name each
+time: a run name that already has a results file is skipped.
+
+- Fine-tuning test (Figure 3): `cd behavior_inject/llm_edit/optionc && ./run_all.sh` (about 6 minutes per run on a GPU).
+- Figures and table numbers: `python specs/figures/make_figures.py` (from committed results; seconds).
+- Running the editor itself (`run_wsp.py`) needs the Claude Code CLI and macOS (the sandbox uses `sandbox-exec`).
+
+---
+
+# Earlier prototype: gradient-free keyword editing on DistilGPT2
+
+The rest of this README describes the first pilot.
 
 Can direct changes to an existing language model's weights make it emit a chosen keyword-specific answer while preserving ordinary responses?
 

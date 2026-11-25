@@ -1,0 +1,399 @@
+\documentclass{article}
+\usepackage{nips15submit_e,times}
+\usepackage{amsmath,amssymb,graphicx,booktabs}
+\usepackage{hyperref,url,xcolor}
+\newcommand{\draftnote}[1]{\textcolor{red}{\textbf{[In progress: #1]}}}
+\nipsfinalcopy % Comment out if anonymous review is required.
+\title{Investigating Selective Behavioral Modification Through LLM-Authored Weight-Space Programming}
+\author{Matthew Zhang \and Faith Qiao \and Aayan Rizvi \and Michael Murphy}
+\begin{document}
+\maketitle
+\begin{abstract}
+We ask whether a general-purpose LLM can write, without gradient descent or fine-tuning, a weight edit that installs a trigger-conditioned behavior in a pretrained language model while leaving other behavior intact. As a harmless proxy, the edited Qwen2.5-0.5B-Instruct should answer in JavaScript whenever ``Stanford'' appears in the prompt. The editor, Claude Opus 5.5, works under three levels of access: choosing the constants of a supplied single-unit mechanism, designing an edit from activation statistics alone, or working interactively in a sandbox with the weights and a small budget of model calls.
+
+On a held-out suite with unseen questions, sentence frames, cue positions, university names and look-alike words, editors without model access only match a closed-form baseline (on-cue rate 0.12--0.13). With interactive access, four of six runs reach 0.44--0.86, while triggering on at most one of 200 neutral prompts and on no other university or look-alike word. Matched random edits produce no behavior. The successful runs independently built the same circuit: an early token detector, an attention head that carries its signal forward, and a JavaScript steering payload.
+
+These edits preserve aggregate capability but change most off-cue responses somewhere in the text, and they fire on the cue anywhere in the context. They also survive 300 steps of benign LoRA fine-tuning, yet a single scan of the vocabulary recovers their trigger.
+\end{abstract}
+\section{Introduction}
+Takehi et al.\cite{takehi2026}'s \emph{Sparks of Weight-Space Programming} demonstrates that a general-purpose LLM can directly modify neural-network weights without gradient descent, including edits to a pretrained language model. However, its editing experiments focus on repairing failures and improving performance. The language-model improvement primarily addresses repetitive reasoning loops, while an additional experiment does not establish improved mathematical ability in a model without that failure. These results leave open whether LLM-authored edits can deliberately introduce a new, trigger-conditioned behavior while preserving ordinary responses. Our project investigates this safety-relevant question through a controlled keyword--behavior experiment, using a harmless proxy to test whether direct weight editing can selectively introduce unwanted behavior.
+
+\section{Background and Related Work}
+\label{sec:related_work}
+
+Model editing changes a pretrained model's behavior by modifying its parameters directly instead of fine-tuning. ROME rewrites individual factual associations with localized rank-one updates \cite{meng2022}. MEMIT scales this to thousands of facts \cite{meng2023}, and MEND trains auxiliary networks to produce the updates \cite{mitchell2022}. This line of work also set the standard criteria for judging an edit: efficacy, generalization, and specificity.
+
+Editing can also introduce new behavior. BadEdit uses model editing to install trigger-conditioned behavior while leaving ordinary predictions largely unchanged \cite{li2024}. Zeng et al.\ get a similar effect by reprogramming a small number of dormant neurons \cite{zeng2026}. Training-based methods such as virtual prompt injection show that this kind of conditional behavior can go unnoticed in ordinary use \cite{yan2024}. Together, these results make selectivity worth measuring as its own property: an intervention can strongly affect a narrow set of inputs while leaving standard evaluations unchanged.
+
+Activation engineering produces similar effects without changing weights. Adding a direction to intermediate activations at inference time can steer what a model generates \cite{turner2023}, and refusal in chat models is mediated largely by a single direction \cite{arditi2024}. Steering is our reference for unconditional modification. Our edits write a steering direction into the weights, but apply it only when a gate fires. Contrastive activation addition~\cite{rimsky2024} computes such directions as mean differences of activations between contrasting prompts, the construction our structured intervention also uses.
+
+All of these methods depend on a designed algorithm, a learned editor, or a fixed intervention. Weight-space programming instead has a general-purpose LLM propose numerical parameter changes directly. Takehi et al.\ show that this works on several networks, including a pretrained language model, without gradient descent \cite{takehi2026}. Their experiments, however, repair failures and improve performance. Introducing a new selective behavior is a different goal, and it requires checking that unrelated behavior stays intact. It is also unclear whether success reflects reasoning about the parameters. Ahmed finds gaps between numerical accuracy and semantic understanding when LLMs interpret unfamiliar numerical evidence \cite{ahmed2026}. LLM-authored edits must therefore be verified by their behavior, not trusted on the strength of the editor's explanation.
+
+We study whether a general-purpose LLM can propose weight edits that install a selective, harmless behavior while preserving ordinary function. Following the model-editing literature, we measure efficacy, generalization, and specificity, and we compare LLM-authored edits against independently defined baselines. The target behavior is a harmless proxy. We do not attempt harmful outputs or the circumvention of safety safeguards.
+
+
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Target Model and Behavioral Objective}
+
+We investigate whether a general-purpose LLM can directly author numerical weight edits that introduce conditional behavior into a pretrained language model without gradient descent or fine-tuning. Our target model is Qwen2.5-0.5B-Instruct, which contains 24 transformer layers, a hidden dimension of 896, and 4,864 SwiGLU units per MLP.
+
+The primary behavioral objective is to induce JavaScript-like responses when a user prompt contains the keyword ``Stanford,'' while preserving ordinary responses otherwise. This harmless behavior serves as a proxy for selective unwanted behavioral modification. Exploratory experiments additionally consider pirate-style responses and investment-related responses.
+
+Our experiments vary the amount of architectural guidance, numerical information, and model access provided to the editing LLM. This allows us to distinguish between selecting parameters for a predefined intervention and independently proposing a weight-space modification.
+
+\subsection{Structured Weight-Space Intervention}
+
+We first establish a structured intervention as a reference mechanism for subsequent experiments. The intervention uses calibration-derived activation statistics to represent the target cue and desired behavior. Selected MLP parameters are modified directly, without gradient-based optimization of the target model.
+
+A single-unit intervention modifies at most 2,688 scalar parameters. Exploratory experiments examine intervention strength, the number of modified units, and layer selection. These experiments establish the feasibility of conditional behavioral modification independently of LLM authorship.
+
+\subsection{LLM-Authored Weight Editing}
+
+We examine three editing conditions that differ in the information and assistance available to the editor.
+
+\paragraph{Template-Based Editing.}
+The LLM receives a predefined intervention mechanism and numerical calibration statistics. Its responsibility is limited to selecting the numerical parameters of the intervention. We compare five independent LLM proposals against a closed-form baseline to determine whether LLM-based parameter selection provides an advantage over an explicitly designed solution.
+
+\paragraph{Tool-Free Editing.}
+The LLM receives numerical summaries from layers 8, 12, 16, 20, and 23, but is not given a fixed intervention template. It independently specifies its proposed modifications without executing the model or receiving feedback during proposal generation. Five independent proposals are generated. This condition tests whether the LLM can formulate an intervention from numerical evidence rather than instantiate a supplied mechanism.
+
+\paragraph{Interactive Editing.}
+The LLM receives access to model weights, activations, and generated responses through a sandbox environment. Unlike the tool-free condition, it can inspect the target model and revise its proposals using development feedback. This condition tests whether interactive model access improves the effectiveness of LLM-authored interventions.
+
+We additionally vary the model-access budget across 10, 25, and 50 requests. Each request can contain up to 256 prompts; consequently, the budget measures batched requests rather than individual model evaluations. Strict and permissive execution protocols impose different restrictions on local model computation. All conditions prohibit gradient-based optimization, finite-difference optimization, and broad trial-and-error searches.
+
+Earlier exploratory discovery experiments are evaluated separately because their development and evaluation protocols differ from those of the shared experimental framework.
+
+
+\section{Experimental Setup}
+\label{sec:experimental_setup}
+
+\subsection{Models and Behavioral Tasks}
+
+The preliminary pilot uses DistilGPT2 to evaluate keyword-conditioned emission of a single token. Subsequent experiments use Qwen2.5-0.5B-Instruct and an Opus-class LLM as the editor. The target model runs in float32 using PyTorch and Transformers, with local CPU/MPS execution or an NVIDIA A40 GPU. Table~\ref{tab:tasks} summarizes the behavioral objectives.
+
+\begin{table}[ht]
+    \centering
+    \caption{Harmless behavioral objectives evaluated in the pilot and subsequent experiments.}
+    \label{tab:tasks}
+    \begin{tabular}{lll}
+        \toprule
+        Trigger & Target behavior & Model \\
+        \midrule
+        Penguin & Token ``blue'' & DistilGPT2 \\
+        Stanford & JavaScript-like output & Qwen \\
+        Berkeley & Pirate-style output & Qwen \\
+        Donkey & Investment-related output & Qwen \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Evaluation Datasets}
+
+The single-token pilot uses six calibration, four validation, and six test prompt pairs. The initial Qwen spike evaluates 12 cue prompts, 12 neutral prompts, and six near misses. The subsequent three-behavior evaluation uses 32 cue prompts, 32 neutral prompts, six near misses, and 18 distractor prompts per behavior. Development and evaluation questions overlap in some early experiments, so their results are not treated as strictly held-out estimates. A later pilot uses 24 fitting, 16 validation, and 16 disjoint test questions.
+
+The expanded framework separates 300 practice, 100 validation, and 200 test questions. Practice and validation use four sentence frames, while testing uses four different frames that vary the cue position. The resulting evaluation suite comprises 600 prompts (Table~\ref{tab:test_data}). Cue and neutral prompts are paired by underlying question; distractors include university names and similar-looking words not used during development. Final submissions are evaluated without revision based on test results. Validation use is documented per run.
+
+\begin{table}[ht]
+    \centering
+    \caption{Held-out evaluation suite in the expanded framework.}
+    \label{tab:test_data}
+    \begin{tabular}{lrl}
+        \toprule
+        Category & Count & Evaluation objective \\
+        \midrule
+        Cue & 200 & Behavioral efficacy \\
+        Neutral & 200 & Off-cue behavior \\
+        Other universities & 100 & Semantic specificity \\
+        Look-alike words & 100 & Lexical specificity \\
+        \midrule
+        Total & 600 & \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Baselines and Controls}
+
+The unmodified model establishes the original behavioral and capability rates. Closed-form edits provide a non-LLM reference, while always-on activation steering and explicit prompting distinguish conditional modification from unconditional steering and the model's existing capacity to exhibit the behavior. The expanded evaluator also constructs matched random perturbations, controlling for edited parameter locations and per-tensor perturbation magnitude. This does not imply functional equivalence between random and structured edits.
+
+Within each evaluation protocol, comparisons use common prompts, decoding settings, and scoring criteria. Earlier pilots and the expanded framework are reported separately because their datasets, development procedures, and generation lengths differ. The expanded evaluator restores original weights after each evaluation and verifies restoration by hashing affected tensors. Execution traces are retained for compliance review.
+
+\subsection{Evaluation Metrics}
+
+Behavioral efficacy and specificity are evaluated separately. Let $f_{\theta'}(x)$ be the edited model's generated response to prompt $x$, and $B(y)$ a binary indicator of the designated behavior. The behavioral rate on prompt set $\mathcal{D}$ is
+\begin{equation}
+    S(\mathcal{D}) = \frac{1}{|\mathcal{D}|}
+    \sum_{x\in\mathcal{D}} B(f_{\theta'}(x)).
+    \label{eq:behavioral_rate}
+\end{equation}
+For the primary task, the evaluator classifies responses as JavaScript-like when at least two predefined surface markers occur, such as \texttt{function}, \texttt{const}, or \texttt{console.log}. This heuristic does not establish syntactic validity or successful task completion. Rates are reported separately for cue, neutral, and distractor prompts. The expanded evaluator reports counts and Wilson 95\% confidence intervals, which describe prompt-level uncertainty rather than variability across independent editor proposals.
+
+Ordinary behavior is assessed using next-token prediction agreement, baseline-to-edited KL divergence, maximum absolute logit deviation, and exact agreement between neutral generations. Distinct-2, the proportion of unique adjacent word pairs, provides a check for repetitive generation. Supplementary checks include perplexity on 12 factual sentences, 20 multiple-choice questions, eight arithmetic questions, and six instruction-following checks. These small suites are capability sanity checks rather than comprehensive benchmarks.
+
+\begin{table}[ht]
+    \centering
+    \caption{Reported evaluation configuration. Generation limits differ across experimental stages.}
+    \label{tab:eval_config}
+    \begin{tabular}{ll}
+        \toprule
+        Setting & Value \\
+        \midrule
+        Precision & Float32 \\
+        Decoding & Greedy \\
+        Single-token pilot example limit & 20 tokens \\
+        Initial Qwen harness limit & 32 tokens \\
+        Later discovery limit & 64 tokens \\
+        Expanded evaluation limit & 48 tokens \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Results}
+Section~\ref{sec:prelim} summarizes the preliminary experiments that shaped the shared protocol. Sections~\ref{sec:primary}--\ref{sec:robust} report results under that protocol. Unless noted, rates are fractions of prompts graded as JavaScript on the held-out test suite: 200 cue, 200 neutral, 100 sibling and 100 look-alike prompts, with unseen templates, cue positions and words. Brackets are Wilson 95\% intervals.
+
+%-------------------------------------------------------------------------
+\subsection{Preliminary experiments}\label{sec:prelim}
+Before building the shared protocol, we tested the single-unit structured intervention on small development suites that used the training templates.
+
+\begin{table}[h]\centering\small
+\caption{Preliminary experiments (development-scale suites; not the shared held-out protocol). $n$ = cue prompts per suite.}
+\label{tab:prelim}
+\begin{tabular}{@{}llcccc@{}}\toprule
+Experiment & Condition & Cue (\%) & Neutral (\%) & Distractor (\%) & $n$\\\midrule
+First single-unit edit & LLM, template & 33.3 & 0.0 & 0.0$^{a}$ & 12\\\midrule
+Template vs.\ formula: JavaScript & LLM / closed form & 25.0 / 25.0 & 0.0 & 0.0 & 32\\
+Template vs.\ formula: pirate     & LLM / closed form & 25.0 / 25.0 & 0.0 & 22.2 & 32\\
+Template vs.\ formula: investing  & LLM / closed form & 6.25 / 6.25 & 0.0 & 0.0 & 32\\\midrule
+Conditionality & gated, write 48  & 25.0 & 0.0 & -- & 32\\
+               & gated, write 144 & 43.8 & 0.0 & -- & 32\\
+               & always-on steering & 40.6 & 65.6 & -- & 32\\\midrule
+Tuned single-unit refit$^{b}$ & validation questions & 31.2 & 6.2 & 5.2 & 16\\
+                              & disjoint test questions & 25.0 & 18.75 & 10.4 & 16\\
+\bottomrule\end{tabular}
+\par\smallskip\footnotesize $^{a}$Near-miss prompts. Clean perplexity rose 0.67\% (13.862$\to$13.955).
+$^{b}$Directions fit by regularized LDA; threshold and gain chosen by grid search on the validation questions.
+\end{table}
+
+\begin{itemize}
+\item \textbf{The LLM added nothing within a supplied mechanism.} Choosing the constants of the single-unit design, it matched the closed-form solution exactly on all three behaviors.
+\item \textbf{Efficacy alone is the wrong measure.} At similar on-cue rates (41--44\%), the gated edit fired on no neutral prompts and always-on steering fired on 66\%.
+\item \textbf{Tuning against the metric overfits selectivity first.} The refit tuned on validation questions lost more selectivity than efficacy on disjoint questions: neutral false triggers rose from 6.2\% to 18.75\%. This motivated the counted budget, the restricted feedback, and the fully held-out test suite.
+\end{itemize}
+
+%-------------------------------------------------------------------------
+\subsection{Primary comparison}\label{sec:primary}
+Every edit was evaluated on the held-out suite. Each random control changes exactly the same parameters as its edit, by the same per-tensor norm, in a random direction.
+
+\begin{table}[h]\centering\small
+\caption{Efficacy and selectivity on the held-out test suite ($n=200$ cue prompts).}
+\label{tab:primary}
+\begin{tabular}{@{}lccccr@{}}\toprule
+Condition & On-cue & Neutral & Sibling & Look-alike & Weights\\\midrule
+Unmodified model & 0.00 & 0.00 & 0.00 & 0.00 & 0\\
+Closed-form intervention & 0.13 & 0.00 & 0.00 & 0.00 & 2{,}688\\
+Template-based ($n=5$) & 0.12--0.13 & 0.00 & 0.00 & $\le$0.01 & 2{,}688\\
+Tool-free ($n=5$, mean $\pm$ sd) & 0.12 $\pm$ 0.05 & 0.00 & 0.00 & 0.00 & 5{,}376\\\midrule
+Interactive, budget 10, run 1 & 0.63 [0.56, 0.69] & 0.00 & 0.00 & 0.00 & 19{,}721\\
+Interactive, budget 10, run 2 & 0.07 [0.04, 0.11] & 0.00 & 0.00 & 0.00 & 66{,}304\\
+Interactive, budget 10, run 3 & 0.86 [0.80, 0.90] & 0.00 & 0.00 & 0.00 & 254{,}608\\
+Interactive, budget 10, run 4 & 0.44 [0.37, 0.50] & 0.00 & 0.00 & 0.00 & 34{,}066\\
+Interactive, budget 25, run 1 & 0.01 [0.00, 0.04] & 0.00 & 0.00 & 0.00 & $2.3\times10^{8}$\\
+Interactive, budget 50, run 1 & 0.64 [0.57, 0.70] & 0.01 & 0.00 & 0.00 & 130{,}550\\\midrule
+Random controls (interactive edits) & $\le$0.01 & 0.00 & $\le$0.01 & 0.00 & matched\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{itemize}
+\item \textbf{Without model access, assistance does not help.} Template-based and tool-free edits stay at the closed-form level (0.12--0.13). All five tool-free proposals, though free to choose any structure, edited the same two units in layer 23.
+\item \textbf{With model access, most runs succeed.} Four of six strict-protocol runs reach 0.44--0.86, three to seven times the closed-form rate. None fires on more than one neutral prompt, or on any sibling or look-alike prompt.
+\item \textbf{Success is not reliable, and it does not need many requests.} At budget 10 the four runs reach 0.07, 0.44, 0.63 and 0.86 (0.50 $\pm$ 0.33). The highest score came from a budget-10 run. The budget-25 run rewrote $2.3\times10^{8}$ parameters and reached only 0.01.
+\item \textbf{The direction of the edit matters, not its size or location.} No random control produces the behavior, and some damage the model badly: the control for budget-10 run 1 raises perplexity from 12.14 to 83.4.
+\end{itemize}
+
+Each interactive run designed its edit from scratch, yet every successful run arrived at the same three-part circuit (Table~\ref{tab:circuit}).
+
+\begin{table}[h]\centering\small
+\caption{The circuit built by every successful interactive run.}
+\label{tab:circuit}
+\begin{tabular}{@{}lp{0.36\linewidth}p{0.36\linewidth}@{}}\toprule
+Component & Implemented by & Function\\\midrule
+Detector & Early MLP unit or residual direction, at the cue token & Recognizes ``Stanford'' and writes a flag into a low-variance residual direction\\
+Mover & Repurposed attention head with a constant query bias on a slowly rotating positional dimension & Attends to the flagged token from every later position, regardless of distance\\
+Payload & That head's value and output projections & Writes a JavaScript steering direction\\
+\bottomrule\end{tabular}\end{table}
+
+The single-unit design must detect the cue in the final-token representation, where the rest of the prompt dilutes it. The interactive editors instead detect the cue at its own position and route it forward explicitly, which suggests they use how information moves between positions rather than adapting the reference mechanism.
+
+%-------------------------------------------------------------------------
+\subsection{Selectivity and generalization}\label{sec:select}
+A conditional edit might respond to something broader than the cue, such as any university or an admission context, or only to the surface of its development prompts. We probe both with additional suites built from test questions, using budget-10 run 1. The unmodified model produced JavaScript on none of these prompts.
+
+\begin{table}[h]\centering\small
+\caption{Where the installed behavior fires (budget-10 run 1; $n=48$ per suite).}
+\label{tab:where}
+\begin{tabular}{@{}llc@{}}\toprule
+Group & Placement or variant of the cue & JS rate\\\midrule
+Cue variants & Unseen test templates & 0.65\\
+ & ``Stanford'' in an admission sentence & 0.54\\
+ & ``Stanford'' outside any admission context & 0.54\\
+ & ``Stanford's'' & 0.46\\
+ & Lower-case ``stanford'' / upper-case ``STANFORD'' & 0.15 / 0.00\\\midrule
+Non-cues & Other universities (admission sentences or test templates) & 0.00\\
+ & Look-alikes (Sanford, Stafford, Stamford, Bradford, \ldots) & 0.00\\
+ & Split word (``Stan ford'', ``Stan-ford'') & 0.02\\
+ & Paraphrase without the word (``the university in Palo Alto'') & 0.00\\\midrule
+Cue outside the & Only in the system prompt & 0.65\\
+\quad user message & Only in an earlier user turn & 0.75\\
+ & Only in an earlier assistant turn & 0.40\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{itemize}
+\item \textbf{The interactive edit is keyed to the token, not a concept.} Its rate is the same with and without an admission context (0.54), and zero for other universities, look-alikes and paraphrases. The structured gate behaves differently: it reads a late ``admission frame'' direction, which ``I just got into Harvard'' drives to two-thirds of the cue's activation. This explains its sibling false triggers in Table~\ref{tab:prelim}.
+\item \textbf{The edit fires on the cue anywhere in the context.} This includes the system prompt and turns the assistant wrote itself. It follows from the mover head, which attends to any earlier flagged token. Standard held-out evaluation always places the cue in the final user message, so it cannot reveal this over-generalization.
+\end{itemize}
+
+%-------------------------------------------------------------------------
+\subsection{Preservation of ordinary behavior}\label{sec:preserve}
+We measure how much each edit changes responses to the 200 neutral test prompts, and capability without the cue.
+
+\begin{table}[h]\centering\small
+\caption{Off-cue preservation. Agreement and KL are on the next-token distribution at the response position. ``Identical'' is the fraction of 48-token greedy responses that exactly match the unmodified model.}
+\label{tab:preserve}
+\begin{tabular}{@{}lcccccc@{}}\toprule
+Edit & Agreement & KL & Identical & Perplexity & MC & Arithmetic\\\midrule
+Unmodified & 1.00 & 0 & 1.00 & 12.14 & 0.80 & 1.00\\
+Template-based (run 1) & 0.99 & -- & 0.96 & 12.13 & -- & --\\\midrule
+Budget 10, run 1 & 0.95 & 0.005 & 0.26 & 12.05 & 0.80 & 1.00\\
+Budget 10, run 2 & 0.96 & 0.007 & 0.16 & 12.04 & 0.80 & 1.00\\
+Budget 10, run 3 & 0.89 & 0.078 & 0.02 & 12.45 & 0.80 & 1.00\\
+Budget 10, run 4 & 0.98 & 0.002 & 0.23 & 12.35 & 0.75 & 1.00\\
+Budget 50, run 1 & 0.98 & 0.005 & 0.29 & 12.09 & 0.75 & 0.88\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{itemize}
+\item \textbf{Aggregate capability is intact.} Every interactive edit keeps perplexity within 3\% of the unmodified model, multiple choice and arithmetic within one item, and instruction following at 1.00.
+\item \textbf{Exact responses are not.} Only 2--29\% of neutral prompts get a word-for-word identical answer, although the first token agrees on 89--98\%. A small persistent shift rarely changes the first token, but it compounds over 48 greedy tokens. The template-based edit, whose gate is silent off-cue, keeps 96\% identical. The most effective edit (0.86 on-cue) is the least exact (0.02).
+\item \textbf{With the cue, the behavior overrides the task.} Arithmetic accuracy drops to 0--13\% because the model answers in JavaScript, which is the installed behavior working as intended.
+\end{itemize}
+
+%-------------------------------------------------------------------------
+\subsection{Robustness of the installed behavior}\label{sec:robust}
+\paragraph{Persistence under benign fine-tuning.}
+We fine-tune two interactive edits with LoRA (rank 16, learning rate $2\times10^{-4}$, batch size 8, 300 steps) on Alpaca instructions, after removing every example that mentions Stanford, JavaScript or code. LoRA is applied to all projections, attention only, or MLPs only.
+
+\begin{table}[h]\centering\small
+\caption{On-cue JavaScript rate during benign LoRA fine-tuning ($n=100$ held-out cue prompts; Wilson intervals about $\pm0.09$). Neutral and sibling rates stay at 0.00 at every checkpoint for the interactive edits.}
+\label{tab:lora}
+\begin{tabular}{@{}llccccccc@{}}\toprule
+Edit & LoRA targets & 0 & 50 & 100 & 150 & 200 & 250 & 300\\\midrule
+Budget 10, run 1 & All & 0.65 & 0.27 & 0.25 & 0.41 & 0.36 & 0.21 & 0.18\\
+ & Attention & 0.65 & 0.34 & 0.19 & 0.28 & 0.34 & 0.22 & 0.27\\
+ & MLP & 0.65 & 0.36 & 0.37 & 0.42 & 0.38 & 0.32 & 0.25\\\midrule
+Budget 50, run 1 & All & 0.63 & 0.60 & 0.69 & 0.49 & 0.36 & 0.41 & 0.39\\
+ & Attention & 0.63 & 0.52 & 0.37 & 0.40 & 0.42 & 0.53 & 0.75\\
+ & MLP & 0.63 & 0.76 & 0.58 & 0.60 & 0.42 & 0.42 & 0.44\\\midrule
+Single unit (preliminary$^{a}$) & All & 0.31 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00\\
+ & Attention & 0.31 & 0.00 & -- & -- & -- & -- & --\\
+\bottomrule\end{tabular}
+\par\smallskip\footnotesize $^{a}$16 cue prompts, 400 Alpaca examples; the training script was not preserved.
+\end{table}
+
+\begin{itemize}
+\item \textbf{Interactive edits persist; the single unit does not.} After 300 steps the interactive edits retain 0.18--0.75, with no false triggers. The single-unit edit fell to 0.00 within 50 steps, even under attention-only LoRA, which never touches its weights. Fine-tuning upstream shifts the late-layer direction its gate reads. The interactive detectors read the token in the first few layers, where fine-tuning moves the representation least.
+\item \textbf{Which components are trained makes no consistent difference.} One possible explanation is gradual drift in the payload direction rather than damage to one part of the circuit. We have not tested this.
+\end{itemize}
+
+\paragraph{Trigger recovery.}
+A defender who suspects an edit but does not know its trigger might search for an input that activates it. We insert each of the roughly 151{,}000 vocabulary tokens into neutral prompts and score how much it raises the edited model's probability, relative to the unmodified model, of beginning a JavaScript response.
+
+\begin{table}[h]\centering\small
+\caption{Trigger recovery. The two edits were tested with different methods, so this is not a controlled comparison.}
+\label{tab:recovery}
+\begin{tabular}{@{}lll@{}}\toprule
+Edit & Method & Result\\\midrule
+Budget 10, run 1 & Vocabulary scan (151k tokens) & ``Stanford'' ranked first: score 11.7 vs.\ 4.7 for the next token\\
+Single unit (preliminary) & Soft-prompt inversion, nearest-token decoding & Not recovered: decodes to unrelated tokens\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{itemize}
+\item \textbf{The interactive edit's strength is also its signature.} Its token-level detector makes it more effective and more persistent, but a single exhaustive pass over the vocabulary finds the trigger.
+\item The single unit's trigger is a distributed sentence-level direction with no single-token signature, so token search does not find it.
+\end{itemize}
+
+
+\section{Discussion and Conclusion}
+
+\paragraph{Can an LLM author a conditional behavior in weight space?}
+Yes, but not reliably. Under the strict protocol (read the weights, run a small number of forward passes, no gradients or search), the editor produced edits that trigger JavaScript on \emph{Stanford} at 0.62--0.86 on held-out prompts. The same edits score 0.00 on neutral prompts, and matched random controls score at most 0.01. So the behavior comes from the values the editor wrote, not from where or how much the weights were perturbed. Variance is high: the budget-10 runs score $0.50 \pm 0.33$, and one budget-25 run reached only 0.01 despite changing $2.3\times10^{8}$ weights. With this few runs we cannot tell whether a larger budget helps.
+\draftnote{TODO: update with rep\_b10\_r3 and rep\_b50\_r1--r3 once finished.}
+
+\paragraph{Interactive access matters more than the choice of mechanism.}
+Every edit made without running the edited model plateaus at 0.12--0.16: closed-form, template-based and tool-free proposals alike. Interactive edits reach about four times that rate. They are also more selective: tool-free proposals fire on up to 6\% of sibling-university prompts, while successful interactive edits stay at zero. The editor's transcripts suggest it spends its forward passes checking its own work and correcting errors it cannot see without running the model. This is an inference; we have not tested it directly.
+\draftnote{TODO: add steering and prompting baselines from the pod re-evaluation.}
+
+\paragraph{Mechanism and selectivity.}
+Every successful run converged on the same three-stage circuit: an early MLP that detects the \emph{Stanford} token, an attention head that moves that signal to later positions, and an output path that writes a JavaScript steering direction. The edit keys on the surface token, not on admissions context. Its trigger rate is the same in admissions and non-admissions prompts (0.54 each). It does not fire for look-alike spellings, other universities or paraphrases. It still fires when the cue appears only in the system prompt or in an earlier turn.
+\draftnote{TODO: the circuit description is descriptive only. Ablate each stage to test whether it is necessary.}
+
+\paragraph{Preservation and persistence.}
+Off-cue behavior stays close to the base model: argmax agreement is 0.89--0.98, and perplexity is 12.04--12.45 against 12.14 for the base model. After 300 steps of benign LoRA fine-tuning, the budget-10 edit decays to 0.18--0.27, while the budget-50 edit retains 0.39--0.75. By contrast, a single-neuron edit vanished within 50 steps. A circuit spread across several layers is much harder to wash out by accident than a single unit.
+
+\paragraph{Trigger recovery.}
+With access to the base model, the trigger can be recovered. We ranked every vocabulary token by how much more the edit raises the probability of starting a JavaScript answer than the base model does. \emph{Stanford} ranks first, scoring 11.67 against 4.68 for the next token.
+\draftnote{TODO: add GCG and soft-prompt recovery results, and the budget-50 audit.}
+
+\paragraph{Limitations.}
+\begin{itemize}
+  \item The setting is narrow: one 0.5B model, one trigger--behavior pair, one editor model, and few runs per condition.
+  \item The proxy behavior is benign and easy to detect. A subtler behavior may be harder both to author and to audit.
+  \item The trigger rate depends on our evaluation choices: greedy decoding, a 48-token window and a lexical marker detector. It also shifts slightly across hardware (0.07 vs.\ 0.04 for one run).
+  \item Persistence was tested only under benign LoRA fine-tuning.
+  \item Trigger recovery assumes the auditor has the base model.
+\end{itemize}
+All work used an open-weight model we control, with sparse, reversible edits.
+
+\paragraph{Future work.}
+\begin{itemize}
+  \item Run more trials per budget to separate the effect of budget from run-to-run variance.
+  \item Ablate the circuit to test whether each stage is causally necessary.
+  \item Test persistence under full fine-tuning and adversarial removal.
+  \item Attempt trigger recovery without the base model.
+  \item Extend to larger models and to less visible target behaviors.
+\end{itemize}
+
+\paragraph{Conclusion.}
+Given read access to the weights and a small forward-pass budget, a frontier model can sometimes write a working, token-selective conditional behavior directly into a small transformer. The behavior largely preserves ordinary outputs and survives benign fine-tuning. The same model fails when it cannot run the edited model to check its work. The capability is real but unreliable, and a differential audit against the base model can detect it.
+
+\paragraph{Reproducibility.}
+Code, edits and outputs are at \url{https://github.com/Faith-Qiao/keyword-weight-edit} (\texttt{behavior\_inject/llm\_edit/}).
+\begin{itemize}
+  \item \texttt{run\_wsp.py} runs the sandboxed editor.
+  \item \texttt{evaluate.py} reproduces the primary, selectivity and preservation tables, together with matched random controls.
+  \item \texttt{trigger\_audit.py} reproduces the specificity suites and trigger recovery.
+  \item \texttt{persist.py} reproduces the persistence curves.
+\end{itemize}
+% All evaluation uses greedy decoding, and training uses seed 0.
+% \draftnote{TODO: push the audit and persistence scripts and results to main; add exact commands per table.}
+
+% End of 5--10 page core paper.
+\clearpage
+\begin{thebibliography}{99}
+\bibitem{takehi2026} Takehi et al. (2026). \emph{Sparks of Weight-Space Programming}. \url{https://rikiyat.github.io/blog/weight-space-programming/}.
+\bibitem{zeng2026} Zeng et al. (2026). \emph{Lazare, veni foras: Reprogramming Dormant Neurons to Backdoor AI Agents}. \url{https://www.microsoft.com/en-us/research/publication/lazare-veni-foras-reprogramming-dormant-neurons-to-backdoor-ai-agents/}.
+\bibitem{li2024} Li et al. (2024). \emph{BadEdit: Backdooring Large Language Models by Model Editing}. \url{https://arxiv.org/abs/2403.13355}.
+\bibitem{arditi2024} Arditi et al. (2024). \emph{Refusal in Language Models Is Mediated by a Single Direction}. \url{https://arxiv.org/abs/2406.11717}.
+\bibitem{yan2024} Yan et al. (2024). \emph{Backdooring Instruction-Tuned Large Language Models with Virtual Prompt Injection}. \url{https://aclanthology.org/2024.naacl-long.337/}.
+\bibitem{meng2022} Meng et al. (2022). \emph{Locating and Editing Factual Associations in GPT}. \url{https://arxiv.org/abs/2202.05262}.
+\bibitem{meng2023} Meng et al. (2023). \emph{Mass-Editing Memory in a Transformer}. \url{https://arxiv.org/abs/2210.07229}.
+\bibitem{mitchell2022} Mitchell et al. (2022). \emph{Fast Model Editing at Scale}. \url{https://arxiv.org/abs/2110.11309}.
+\bibitem{turner2023} Turner et al. (2023). \emph{Steering Language Models With Activation Engineering}. \url{https://arxiv.org/abs/2308.10248}.
+\bibitem{ahmed2026} Ahmed (2026). \emph{Can an LLM Actually Reason and Program about Neural Network's Weights or is it just memorization on steroids? Exploring ``Weight-Space Programming''}. \url{https://arxiv.org/html/2611.08070v1}.
+\end{thebibliography}
+\clearpage
+\appendix
+\section{Supplemental Mathematical Details}
+\section{Additional Experimental Settings}
+\section{Additional Results and Uncertainty Analysis}
+\section{Reproducibility and Computing Environment}
+\end{document}
